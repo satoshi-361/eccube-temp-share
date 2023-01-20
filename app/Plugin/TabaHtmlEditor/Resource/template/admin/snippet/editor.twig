@@ -1,0 +1,38 @@
+{#
+Copyright (C) SPREAD WORKS Inc. All Rights Reserved.
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% set const = TabaHtmlEditorConstants %}
+{% set bind_prefix = constant('ADMIN_BIND_PREFIX',const) %}
+{% set trans_prefix = constant('PLUGIN_CODE_LC',const)~'.admin' %}
+{% set userConfig = TabaHtmlEditorUserConfig %}
+
+<script src="{{ path(bind_prefix~'_assets',{file:'js/sw-html-editor.js'}) }}"></script>
+<script>
+$(function() {
+    {% for selector in selectors %}
+        if ($("{{ selector|raw }}")[0]) {
+            $("{{ selector|raw }}").trumbowyg({
+                lang: 'ja',
+                {% if userConfig.get('editor') is empty or userConfig.get('editor').semantic is not defined %}
+                    semantic: {'div':'div','i':'i'},
+                {% else %}
+                    {% if userConfig.get('editor').semantic is iterable %}
+                        semantic: {
+                            {% for row in userConfig.get('editor').semantic %}{% for key in row|keys %}
+                                '{{ key }}': '{{ attribute(row,key) }}',
+                            {% endfor %}{% endfor %}
+                        },
+                    {% elseif userConfig.get('editor').semantic == true %}
+                        semantic: true,
+                    {% else %}
+                        semantic: {'div':'div','i':'i'},
+                    {% endif %}
+                {% endif %}
+                {% if userConfig.get('editor') is empty or (userConfig.get('editor').script is not defined or (userConfig.get('editor').script is not empty and userConfig.get('editor').script == true)) %}tagsToRemove: ['script'],{% endif %}
+           });
+        }
+    {% endfor %}
+});
+</script>

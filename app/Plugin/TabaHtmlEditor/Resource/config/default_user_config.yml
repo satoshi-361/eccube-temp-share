@@ -1,0 +1,8 @@
+page:
+  - template: '@admin/Product/product.twig'
+    selector:
+#      - 'textarea[name=''admin_product[description_detail]'']'
+      - 'textarea[name=''admin_product[free_area]'']'
+  - template: '@admin/Content/news_edit.twig'
+    selector: '#admin_news_description'
+
