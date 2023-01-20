@@ -1,0 +1,34 @@
+{% macro review( review_point, reviewer, product_id ) %}
+    {% set review_point = review_point|number_format(2) %}
+    {% if review_point == 0 or reviewer == 0 %}
+        {% set review_point = 0 %}
+        {% set reviewer = 0 %}
+    {% endif %}
+    {% if reviewer == 0 %}
+        <i class="far fa-star reviewList star_disabled"></i><!--
+        --><i class="far fa-star reviewList star_disabled"></i><!--
+        --><i class="far fa-star reviewList star_disabled"></i><!--
+        --><i class="far fa-star reviewList star_disabled"></i><!--
+        --><i class="far fa-star reviewList star_disabled"></i><!--
+        -->&nbsp;<span class="reviewList">{{ 0|number_format(2) }}</span>
+    {% else %}
+        <i class="fas fa-star reviewList star"></i><!--
+        {% for i in 1..4 %}
+            {% if review_point - i < 0.2 %}
+            --><i class="far fa-star reviewList star"></i><!--
+            {% elseif review_point - i >= 0.7 %}
+            --><i class="fas fa-star reviewList star"></i><!--
+            {% else %}
+            --><i class="fas fa-star-half-alt reviewList star"></i><!--
+            {% endif %}
+        {% endfor %}
+        -->&nbsp;<span class="reviewList">{{ review_point }}</span>
+    {% endif %}
+    {% if product_id %}
+        {% if reviewer %}
+            <span class="reviewList"><a href="{{ url('review_list', {'id': product_id}) }}">({{reviewer}}件)</a></span>
+        {% else %}
+            <span class="reviewList">({{reviewer}}件)</span>
+        {% endif %}
+    {% endif %}
+{% endmacro %}

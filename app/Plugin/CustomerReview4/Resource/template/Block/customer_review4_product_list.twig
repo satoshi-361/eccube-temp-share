@@ -1,0 +1,33 @@
+{% include('@CustomerReview4/Block/customer_review4_recommend_css.twig') %}
+{% import('@CustomerReview4/Block/customer_review4_recommend_macro.twig') as recommend_macro %}
+
+{% if pagination.totalItemCount > 0 %}
+    {% for Product in pagination %}
+{% set review_list = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal').getRecommend(Product.id) %}
+{% set reviewer_total = 0 %}
+{% set review_total_point = 0 %}
+{% set count = 5 %}
+{% for i in review_list %}
+    {% set reviewer_total = reviewer_total + i %}
+    {% set review_total_point = review_total_point + i * count %}
+    {% set count = count - 1 %}
+{% endfor %}
+{% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+
+<div id="plg_customer_review{{Product.id}}" class="review-layoutRole product_list">
+<p>{{ recommend_macro.review( review_point, reviewer_total, Product.id ) }}</p>
+</div>
+
+<script>
+  $(function () {
+    if ( $('#plg_customer_review_anchor{{Product.id}}').length) {
+        $('#plg_customer_review{{Product.id}}').insertAfter($('#plg_customer_review_anchor{{Product.id}}'));
+    } else if ( $('#productForm{{Product.id}}').length) {
+        $('#plg_customer_review{{Product.id}}').insertBefore($('#productForm{{Product.id}}'));
+    } else {
+        $('#plg_customer_review{{Product.id}}').hide();
+    }
+  });
+</script>
+    {% endfor %}
+{% endif %}

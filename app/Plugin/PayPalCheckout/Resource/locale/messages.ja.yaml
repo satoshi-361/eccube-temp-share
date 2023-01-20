@@ -1,0 +1,114 @@
+paypal:
+  shopping:
+    login:
+      title: PayPalで購入手続きに進む
+    acdc:
+      acdc: クレジットカード決済
+      use_vault: 前回保存したクレジットカードを使う
+      card_last_digits: 下4桁
+      user_other_card: 別のクレジットカードを使う
+      card_number: カード番号
+      card_expiration_date: 有効期限
+      cvv: セキュリティコード
+      save_vault: このクレジットカードを保存する
+      usable_card_brand: Visa / Mastercard / JCB / American Express をご利用できます。
+      usable_card_brand_wo_jcb: Visa / Mastercard / American Express をご利用できます。
+      error:
+        invalid_card: エラーが発生しました。クレジットカード情報に誤りがないかお確かめください。
+        unknown: エラーが発生しました。しばらくして再度お試しください。
+        jcb_error: JCBカードは使用できません。
+
+  admin:
+    nav:
+      transactions: 決済状況一覧
+      subscribing_customers: 定期購入受注管理
+    product:
+      product_class:
+        subscription_pricing: 継続次回金額
+        use_subscription: 継続有効
+    config:
+      title: ペイパル チェックアウト 決済
+      header: 基本設定
+      header2: 継続決済設定
+      header3: ペイパル チェックアウト 決済モジュール
+      header4: ロゴ設定
+      back: 戻る
+      form:
+        label_production: ［PayPal 本番アカウント］
+        label_sandbox: ［PayPal Sandboxアカウント］
+        label_acdc: ［クレジットカード決済］
+        label_ISU_button: PayPal本番アカウントのClient ID/Secret取得
+        description_prod1: ・PayPal本番アカウントのClient ID/Secretは、上の［PayPal本番アカウントのClient ID/Secret取得］をクリックしてください。
+        description_prod2: ・PayPal本番アカウントを持っていない場合は、表示される画面からPayPalアカウントを作成できます（Client ID/Secretは自動的に反映されます）。
+        description_prod3: ・既にPayPal本番アカウントをお持ちの場合は、表示される画面でお持ちのPayPalアカウントでログインすることでClient ID/Secretが自動的に反映されます。
+        description_prod4: ・表示されるPayPal画面での設定が完了したら、PayPal画面は閉じてください。
+        description_note: （[Sandbox(開発用テストツール)の使用]のチェックを外した状態でクリックできます）
+        description_error: （PayPalサーバと正常に通信できないため、このボタンは利用できません）
+        description_prod5_1: （※本稼働前には、
+        description_prod5_2: を必ずご確認ください）
+        description_prod6: （※詳細は本プラグインのマニュアルをご参照ください）
+        description: ・Sandboxでのテストの場合のClient ID/Secretの取得、設定方法については、本プラグインのマニュアルをご参照ください。
+        description_acdc1: ・クレジットカード決済の利用には申込みが必要です。申し込みは以下のサイトから行えます。
+        description_acdc2: ・「カード情報保存機能」、「3Dセキュア」はクレジットカード決済でのみ有効です。
+        description_acdc3: ・クレジットカード決済を本番アカウントで利用する場合は、改めて上の［PayPal本番アカウントのClient ID/Secret取得］ボタンでClient ID/Secret取得し直してください。
+        client_id: Client ID
+        client_secret: Secret
+        use_express_btn: カート画面での「PayPal」ボタンの使用
+        use_express_btn_tooltip: 購入時にカート画面に「PayPal」ボタンを表示させる場合はチェックを入れて下さい。顧客は PayPal でお支払い方法と配送先を選択しますので、スムーズに購入を完了できます。
+        use_sandbox: Sandbox(開発用テストツール)の使用
+        use_vault: カード情報保存機能の使用
+        use_3dsecure: 3Dセキュアの使用
+        reference_day: 基準日
+        cut_off_day: 締日
+        submit: 更新する
+        logo: PayPal決済ページショップロゴ画像の設定
+        paypal_logo: PayPalロゴ
+        paypal_logo_tooltip: PayPalのロゴを選択できます。
+        payment_paypal_logo: 「お支払い方法」に表示するロゴ
+        payment_paypal_logo_tooltip: お客様が決済方法を選択する際に表示されるロゴです。
+    payment_status:
+      title: 決済状況一覧
+      sub_title: 受注管理
+      search_condition_payment: 支払方法
+      search_condition_payment_status: 決済状況
+      search_condition_order_status: 対応状況
+      search: 検索
+      search_result_count: '検索結果：%count%件が該当しました'
+      col_pay_status: 決済状況
+      col_order_payment: 支払方法
+      col_order_status: 対応状況
+      col_order_no: 注文番号
+      col_order_date: 受注日時
+      col_order_name: お名前
+      col_order_price: 購入金額
+      col_payment_date: 決済日
+      col_payment_date_not: 未入金
+    subscribing_customer:
+      title: 定期購入受注管理
+      sub_title: 受注管理
+      search_condition_subscribing_customer: お名前検索
+      search_condition_plan: プラン検索
+      search_condition_deleted: 解約済みの継続決済のみを表示
+      search_condition_failed: 失敗の継続決済のみを表示
+      search: 検索
+      search_result_count: '検索結果：%count%件が該当しました'
+      col_plan: 契約プラン名称
+      col_subscription_pricing: 次回決済金額
+      col_next_payment_date: 次回決済日
+      col_contracted_at: 契約日
+      btn_subscription: 継続決済する
+      col_error_message: 失敗理由
+    shipping_address:
+      title: 次回以降の定期購入の配送先
+      tooltip: 次回以降の定期購入の配送先を更新する
+      submit: 更新する
+    subscription_configure:
+      title: 継続決済の設定
+      tooltip: 継続決済の設定を更新する
+      form:
+        next_payment_date: 次回決済日
+        is_deleted: 解約済みにする
+        submit: 更新する
+      assert:
+        not_blank: 文字を入力してください
+        date: 日付の書式を入力してください

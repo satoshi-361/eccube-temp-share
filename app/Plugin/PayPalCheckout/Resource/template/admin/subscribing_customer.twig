@@ -1,0 +1,267 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['order', 'paypal_admin_subscribing_customer_pageno'] %}
+
+{% block title %}{{ 'paypal.admin.subscribing_customer.title'|trans }}
+{% endblock %}
+
+{% block sub_title %}{{ 'paypal.admin.subscribing_customer.sub_title'|trans }}
+{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+  <style type="text/css">
+    .datepicker-days th.dow:first-child,
+    .datepicker-days td:first-child {
+      color: #f00;
+    }
+
+    .datepicker-days th.dow:last-child,
+    .datepicker-days td:last-child {
+      color: #00f;
+    }
+  </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+{{ include('@admin/Order/confirmationModal_js.twig') }}
+{{ include('@PayPalCheckout/admin/subscribing_customer_js.twig') }}
+{% endblock javascript %}
+
+{% block main %}
+  <div class="c-outsideBlock">
+    <form name="search_form" method="POST" action="{{ url('paypal_admin_subscribing_customer_pageno') }}">
+      {{ form_widget(searchForm._token) }}
+      <div class="c-outsideBlock__contents">
+        <div class="row">
+          <div class="col-12">
+            <div class="form-row">
+              <div class="form-group col-4">
+                <p class="col-form-label">{{ 'paypal.admin.subscribing_customer.search_condition_subscribing_customer'|trans }}</p>
+                {{ form_widget(searchForm.name) }}
+                {{ form_errors(searchForm.name) }}
+              </div>
+              <div class="form-group col-4">
+                <p class="col-form-label">{{ 'paypal.admin.subscribing_customer.search_condition_plan'|trans }}</p>
+                {{ form_widget(searchForm.price_courses, {'label_attr': {'class': 'checkbox-inline'}}) }}
+                {{ form_errors(searchForm.price_courses) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="form-row">
+              <div class="form-group col-3">
+                <p class="col-form-label">{{ 'paypal.admin.subscribing_customer.search_condition_deleted'|trans }}</p>
+                {{ form_widget(searchForm.is_deleted) }}
+                {{ form_errors(searchForm.is_deleted) }}
+              </div>
+              <div class="form-group col-2">
+                <p class="col-form-label">{{ 'paypal.admin.subscribing_customer.search_condition_failed'|trans }}</p>
+                {{ form_widget(searchForm.is_failed) }}
+                {{ form_errors(searchForm.is_failed) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="c-outsideBlock__contents">
+        <div class="row">
+          <div class="mb-4">
+            <div class="col-12">
+              <button class="btn btn-ec-conversion px-5" type="submit">{{ 'paypal.admin.subscribing_customer.search'|trans }}</button>
+              {% if pagination %}
+                <span class="font-weight-bold ml-2">{{ 'paypal.admin.subscribing_customer.search_result_count'|trans({ '%count%': pagination.totalItemCount }) }}</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+      <div class="c-primaryCol">
+        {% if pagination and pagination.totalItemCount %}
+          <div class="modal fade" id="confirmBulkModal" tabindex="-1" role="dialog" aria-labelledby="confirmModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">{{ 'paypal.admin.subscribing_customer.bulk_modal_title'|trans }}</h5>
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>{{ 'paypal.admin.subscribing_customer.bulk_modal_body'|trans }}</p>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-ec-conversion" data-action="execute" type="button" data-dismiss="modal">
+                    {{ 'paypal.admin.subscribing_customer.bulk_modal_action_exec'|trans }}
+                  </button>
+                  <button class="btn btn-ec-sub" data-action="cancel" type="button" data-dismiss="modal">
+                    {{ 'paypal.admin.subscribing_customer.bulk_modal_action_cancel'|trans }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <form id="form_bulk" method="POST" action="">
+            <input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
+            <div class="row justify-content-between mb-2">
+              <div class="col-7">
+                <div class="row justify-content-between">
+                  <div class="col-auto d-none btn-bulk-wrapper">
+                    <label class="mr-2" data-tooltip="true" data-placement="top" title="{{ 'tooltip.order.bulk_actions'|trans }}">{{ 'admin.common.bulk_actions'|trans }}
+                      <i class="fa fa-question-circle fa-lg ml-1"></i>
+                    </label>
+                    <button id="bulkSubscription" type="button" class="btn btn-ec-regular mr-2" data-type="mail" data-bulk-update="true">
+                      {{ 'paypal.admin.subscribing_customer.btn_subscription'|trans }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card rounded border-0 mb-4">
+              <div class="card-body p-0">
+                <table class="table table-sm" id="search_result">
+                  <thead>
+                  <tr>
+                    <th class="border-top-0 pt-2 pb-2 text-center pl-3">
+                      <input type="checkbox" id="toggle_check_all" name="filter" value="open">
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.subscribing_customer.col_plan'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.order.orderer'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.order.order_status'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.subscribing_customer.col_subscription_pricing'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.subscribing_customer.col_next_payment_date'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.subscribing_customer.col_contracted_at'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.subscribing_customer.col_error_message'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center pr-3"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for SubscribingCustomer in pagination %}
+                    {% set Customer = SubscribingCustomer.Customer %}
+                    {% set ProductClass = SubscribingCustomer.ProductClass %}
+                    {% set Transaction = SubscribingCustomer.ReferenceTransaction %}
+                    {% set Order = Transaction.Order %}
+                    <tr>
+                      <td class="align-middle text-center pl-3">
+                        <input type="checkbox" id="check_{{ SubscribingCustomer.id }}" data-id="{{ SubscribingCustomer.id }}" name="ids[]" value="{{ SubscribingCustomer.id }}"
+                               data-subscription-url="{{ url('admin_paypal_subscription', { id: SubscribingCustomer.id}) }}"
+                        />
+                      </td>
+                      <td class="align-middle text-center">
+                        {{ ProductClass.ClassCategory1.name }}
+                      </td>
+                      <td class="align-middle text-center">
+                        <a class="action-edit" href="{{ url('admin_order_edit', { id : Order.id }) }}">{{ Order.order_no }}<br>{{ Order.name01 ~ Order.name02 }}<br>{{ Order.order_date|date_min }}</a>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="badge badge-ec-blue" style="background-color: #fff; color: {{ Order.OrderStatusColor }}; border-color: {{ Order.OrderStatusColor }}">{{ Order.OrderStatus }}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        {{ ProductClass.subscription_pricing }}
+                      </td>
+                      <td class="align-middle text-center">
+                        {{ SubscribingCustomer.next_payment_date ? SubscribingCustomer.next_payment_date|date_day : 'admin.order.not_payment'|trans }}
+                      </td>
+                      <td class="align-middle text-center">
+                        {{ SubscribingCustomer.contracted_at ? SubscribingCustomer.contracted_at|date_day : 'admin.order.not_payment'|trans }}
+                      </td>
+                      <td class="align-middle text-center">
+                        {% if SubscribingCustomer.error_message %}
+                          <i class="fa fa-exclamation-triangle fa-lg text-danger fa-fw" aria-hidden="true"></i>{{ SubscribingCustomer.error_message }}
+                        {% endif %}
+                      </td>
+                      <td class="align-middle pr-3">
+                        <div class="text-right">
+                          <div class="px-1 d-inline-block">
+                            <div class="px-1 d-inline-block">
+                              <a class="btn btn-ec-actionIcon shipping-address" href="{{ url('paypal_admin_shipping_address', { id: SubscribingCustomer.id}) }}" data-tooltip="true" data-placement="top" title="{{ 'paypal.admin.shipping_address.tooltip'|trans }}">
+                                <i class="fa fa-address-card fa-lg text-secondary" aria-hidden="true"></i>
+                              </a>
+                              <a class="btn btn-ec-actionIcon shipping-address" href="{{ url('paypal_admin_subscription_configure', { id: SubscribingCustomer.id}) }}" data-tooltip="true" data-placement="top" title="{{ 'paypal.admin.subscription_configure.tooltip'|trans }}">
+                                <i class="fa fa-cog fa-lg text-secondary" aria-hidden="true"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+                <div class="row justify-content-md-center mb-4"></div>
+              </div>
+              <div class="row justify-content-md-center mb-4">
+                <div class="navigation">
+                  <div class="row justify-content-md-center mb-4 pb-4">
+                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'paypal_admin_subscribing_customer_pageno' } %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        {% elseif has_errors %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_invalid_condition'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+            </div>
+          </div>
+        {% endif %}
+        <!-- 出荷済にする確認モーダル -->
+        <div class="modal fade" id="sentUpdateModal2" tabindex="-1" role="dialog" aria-labelledby="sentUpdateModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title font-weight-bold"><!--confirmationModal_js.twig--></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+              </div>
+              <div class="modal-body">
+                <p class="modal-message"></p>
+                <ul id="bulkErrors"></ul>
+                <div id="bulk-options">
+                  <div class="font-weight-bold mb-2 notificationMail">{{ 'admin.order.to_shipped__confirm_send_mail'|trans }}</div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="notificationMail">
+                    <label class="form-check-label notificationMail">
+                      {{ 'admin.order.to_shipped__confirm_send_mail_in_same_time'|trans }}
+                    </label>
+                  </div>
+                  <div>
+                    <div class="d-inline-block" data-toggle="collapse" href="#viewEmail" aria-expanded="false" aria-controls="viewEmail"><a><i class="fa fa-plus-square-o font-weight-bold mr-1"></i><span class="font-weight-bold">{{ 'admin.order.bulk_action__confirm_view_mail_body'|trans }}</span></a></div>
+                    <div class="collapse bg-light p-4 ec-collapse bg-ec-formGray" id="viewEmail" style="word-wrap: break-word; word-break:break-all">
+                      <pre></pre>
+                    </div>
+                  </div>
+                </div>
+                <div class="progress" style="display: none">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">{{ 'admin.common.cancel'|trans }}</button>
+                <button id="bulkChange" class="btn btn-ec-conversion" type="button"><!--confirmationModal_js.twig--></button>
+                <button id="bulkChangeComplete" class="btn btn-ec-regular" style="display: none" type="button">{{ 'admin.common.close'|trans }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

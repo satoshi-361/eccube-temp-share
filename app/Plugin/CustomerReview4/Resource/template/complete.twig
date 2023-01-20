@@ -1,0 +1,34 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'registration_page' %}
+
+{% block main %}
+    <div class="ec-registerRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'レビューを投稿(完了)'|trans }}</h1>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <div class="ec-imageGrid">
+                    <div class="ec-imageGrid__img">
+                        <img src="{{ asset(Product.main_list_image|no_image_product, 'save_image') }}">
+                    </div>
+                    <div class="ec-imageGrid__content">
+                        <a href="{{ url('product_detail', {'id': Product.id}) }}">{{ Product.name }}</a>
+                    </div>
+                </div>
+                <div class="ec-borderedDefs"></div>
+            </div>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <div class="ec-reportHeading" style="border-top:0;">
+                    <h2>{{ '投稿ありがとうございます。'|trans }}</h2>
+                </div>
+                <div class="ec-off2Grid">
+                    <div class="ec-off2Grid__cell"><a class="ec-blockBtn--cancel" href="{{ url('homepage') }}">{{ 'トップページへ'|trans }}</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% block stylesheet %}
+<style>
+#plg_customer_review_detail.review_detail_default {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.review-productLayout {
+    border: solid 2px #ddd;
+}
+.review-sortLayout {
+    margin: 10px 0px 0px 0px;
+    border: solid 2px #ddd;
+}
+.review-sortLayout .reviewSort {
+    vertical-align: middle;
+    margin: auto auto auto 0;
+}
+.review-sortLayout .reviewPost {
+    padding-top: 12px;
+    margin: 0 0 0 auto;
+}
+.review-sortLayout .reviewPost a{
+    margin: 0 0 0 auto;
+}
+.review-sortLayout span{
+    margin-left: 10px;
+}
+.review-commentLayout {
+    margin: 10px 0px;
+    padding: 10px;
+    border: solid 2px #ddd;
+}
+.review-commentLayout .reviewTitle {
+    font-size: 14px;
+}
+.review-commentLayout .reviewAuthor {
+    font-weight: 500;
+    border-bottom: solid 1px #ccc;
+    background: #fff;
+    padding-bottom: 4px;
+    margin: 2px 0px 8px 0px;
+    font-size: 14px;
+}
+.review-commentLayout .reviewTitle .star {
+    color: #ffbb00;
+}
+.review-commentLayout .reviewAuthor span {
+    margin-left: 10px;
+}
+.review-commentLayout .reviewComment {
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.review-layoutRole {
+    padding-bottom: 10px;
+}
+.review-layoutRole.list {
+    padding: 5px 0px 5px 10px;
+    width:320px;
+}
+.review-layoutRole.product_list {
+    text-align: center;
+    width:100%;
+    padding-bottom:0px;
+}
+.review-layoutRole.product_detail {
+    text-align: left;
+    width:100%;
+    padding-bottom:0px;
+}
+.review-layoutRole .reviewAvarage {
+    border: solid 2px #FFD040;
+    width:280px;
+    text-align:center;
+    background-color:#FFFFE8;
+    padding: 3px;
+    margin-top:10px;
+    margin-bottom: 10px;
+    font-size:16px;
+    font-weight: 500;
+    color:#643300;
+}
+.review-layoutRole .reviewAvarage .reviewList {
+    color:#f00;
+}
+.review-layoutRole .reviewAllView {
+    margin-left: 35px;
+    margin-bottom: 10px;
+}
+.review-layoutRole .reviewAllView.list {
+    margin-bottom: 0px;
+}
+.review-layoutRole .reviewPost {
+    margin-left: 63px;
+}
+.review-layoutRole .reviewSimplePost {
+    padding: 3px 12px;
+}
+.review-layoutRole .review-detail_inlineBtn {
+    padding: 3px 12px;
+    line-height: 1.42857;
+}
+.review-layoutRole .reviewList {
+    font-size: 16px;
+}
+.review-layoutRole .reviewList a,
+.review-layoutRole .reviewList a,
+.review-layoutRole .review-layoutGauge a,
+.review-layoutRole .review-layoutGauge a,
+.review-layoutRole .reviewAllView a,
+.review-layoutRole .reviewAllView a {
+    color: #337ab7;
+    text-decoration: underline;
+}
+.review-layoutRole .reviewList a:active,
+.review-layoutRole .reviewList a:hover,
+.review-layoutRole .review-layoutGauge a:active,
+.review-layoutRole .review-layoutGauge a:hover,
+.review-layoutRole .reviewAllView a:active,
+.review-layoutRole .reviewAllView a:hover {
+    color: #23527c;
+    text-decoration: none;
+}
+.review-layoutRole .reviewList.star {
+    color: #ffbb00;
+}
+.review-layoutRole .reviewList.star_disabled {
+    color: #808080;
+}
+.review-layoutRole .reviewReccomendLevel {
+    margin-right: 5px;
+}
+.review-layoutRole .reviewReccomendReviewer {
+    margin-left: 5px;
+}
+.review-layoutRole .review-layoutGauge {
+    display: flex;
+}
+.review-layoutRole .review-gaugeWrap {
+    background: -moz-linear-gradient(top, #c3c3c3, #e9e9e9);
+    background: -webkit-gradient(linear, left top, left bottom, from(#c3c3c3), to(#e9e9e9));
+    background: linear-gradient(to bottom, #c3c3c3, #e9e9e9);
+    border: solid 1px #646464;
+    width: 200px;
+    height: 18px;
+}
+ 
+.review-layoutRole .review-gaugeWrap .gaugeMain {
+    background: -moz-linear-gradient(top, #ffd840, #ffaa00);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffd840), to(#ffaa00));
+    background: linear-gradient(to bottom, #ffd840, #ffaa00);
+    border: solid 1px #bf9900;
+    height: 16px;
+}
+.review-layoutRole .review-gaugeWrap .gaugeMainNone {
+    background: -moz-linear-gradient(top, #ffd840, #ffaa00);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffd840), to(#ffaa00));
+    background: linear-gradient(to bottom, #ffd840, #ffaa00);
+    height: 16px;
+}
+@media only screen and (min-width: 768px){
+.review-sortLayout {
+    display: flex;
+}
+.review-sortLayout .reviewPost {
+    padding-top: 0px;
+}
+</style>
+{% endblock %}

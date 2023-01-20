@@ -1,0 +1,129 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'registration_page' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .ec-borderedDefsReview {
+            width: 100%;
+            border-top: 1px dotted #ccc;
+            margin-bottom: 16px; }
+        .ec-borderedDefsReview dl {
+            display: -ms-flexbox;
+            display: flex;
+            border-bottom: 1px dotted #ccc;
+            margin: 0;
+            padding: 10px 0 0;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap; }
+        .ec-borderedDefsReview dt, .ec-borderedDefsReview dd {
+            padding: 0; }
+        .ec-borderedDefsReview dt {
+            font-weight: normal;
+            width: 100%;
+            padding-top: 0; }
+        .ec-borderedDefsReview dd {
+            padding: 0;
+            width: 100%;
+            line-height: 1.2; }
+        .ec-borderedDefsReview p {
+            line-height: 1.2; }
+
+    @media only screen and (min-width: 768px){
+        .ec-borderedDefsReview dl{
+            -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+            padding: 15px 0 4px;
+        }
+        .ec-borderedDefsReview dt{
+            line-height: 1.2;
+            width: 30%;
+        }
+        .ec-borderedDefsReview dd{
+            width: 70%;
+            line-height: 1.2;
+        }
+    }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-registerRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'レビューを投稿(確認)'|trans }}</h1>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <div class="ec-imageGrid">
+                    <div class="ec-imageGrid__img">
+                        <img src="{{ asset(Product.main_list_image|no_image_product, 'save_image') }}">
+                    </div>
+                    <div class="ec-imageGrid__content">
+                        <a href="{{ url('product_detail', {'id': Product.id}) }}">{{ Product.name }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <form method="post" action="{{ url('review_post', {'id': Product.id}) }}" novalidate class="h-adr">
+                {{ form_widget(form._token) }}
+                    <div class="ec-borderedDefsReview">
+                        <dl>
+                            <dt>
+                                {{ form_label(form.reviewer_name, 'レビュアー名', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                {{ form.reviewer_name.vars.data }}
+                                {{ form_widget(form.reviewer_name, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.recommend_level, 'お勧め度', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                {%- for choice in form.recommend_level.vars.choices -%}
+                                        {%- if choice is selectedchoice(form.recommend_level.vars.value) -%}
+                                            {{ choice.label|trans }}
+                                        {%- endif %}
+                                {%- endfor -%}
+                                {{ form_widget(form.recommend_level, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.title, 'タイトル', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                {{ form.title.vars.data }}
+                                {{ form_widget(form.title, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.comment, 'コメント', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                {{ form.comment.vars.data|nl2br }}
+                                {{ form_widget(form.comment, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="ec-RegisterRole__actions">
+                        <div class="ec-off1Grid">
+                            <div class="ec-off1Grid__cell">
+                                <button type="submit" class="ec-blockBtn--action" name="mode" value="complete">{{ '投稿する'|trans }}</button>
+                            </div>
+                            <div class="ec-off1Grid__cell">
+                                <button type="submit" class="ec-blockBtn--cancel" name="back" value="complete">{{ '戻る'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

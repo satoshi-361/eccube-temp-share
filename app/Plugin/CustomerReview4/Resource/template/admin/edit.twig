@@ -1,0 +1,161 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['product', 'review_list_admin'] %}
+{% block title %}{{ 'customer_review4.admin.review_list.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'customer_review4.admin.review_edit.review_detail'|trans }}{% endblock %}
+
+
+{% block main %}
+    <form role="form" method="post"
+          action="{{ url('admin_review_edit', { id : Review.id }) }}">
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+
+                        <div class="card-header">
+                            <div class="row mb-2">
+                                <div class="col-2">
+                                    <span>{{ 'customer_review4.admin.review_edit.product_info'|trans }}</span>
+                                </div>
+                                <div style="display:table;">
+                                    <div style="display:table-cell;padding-left:16px;">
+                                        <img src="{{ asset(Product.main_list_image|no_image_product, 'save_image') }}" style="width:130px;">
+                                    </div>
+                                    <div style="display:table-cell;padding-left:16px;vertical-align: middle;">
+                                        <div>{{ Product.name }}</div>
+                                        <div>{{ 'customer_review4.admin.th_product_id'|trans }}： {{ Product.id }}</div>
+                                        <div style="height:4px;"></div>
+                                        <div class="d-block">
+                                            <a class="btn btn-ec-regular" target="_blank"
+                                               href="{{ url('review_list', {id:Product.id}) }}"
+                                               title="{{ 'customer_review4.admin.review_edit.disp_review'|trans }}">{{ 'customer_review4.admin.review_edit.disp_review'|trans }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-header">
+                            <div class="row mb-2">
+                                <div class="col-2">
+                                    <span>{{ 'customer_review4.admin.review_edit.customer_info'|trans }}</span>
+                                </div>
+                                <div style="display:table;">
+                                {% if Customer is not null %}
+                                    <div style="display:table-cell;padding-left:16px; min-width:162px; vertical-align: middle;">
+                                        <div>{{ Customer.name01 }}&nbsp;{{ Customer.name02 }}</div>
+                                        <div>{{ 'customer_review4.admin.th_customer_id'|trans }}： {{ Customer.id }}</div>
+                                    </div>
+                                    <div style="display:table-cell;">
+                                        <div style="height:4px;"></div>
+                                        <div class="d-block">
+                                            <a class="btn btn-ec-regular" target="_blank"
+                                               href="{{ url('admin_customer_edit', {id:Customer.id}) }}"
+                                               title="{{ 'customer_review4.admin.review_edit.disp_customer'|trans }}">{{ 'customer_review4.admin.review_edit.disp_customer'|trans }}</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="collapse show ec-cardCollapse" id="basicConfig">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.th_posted_date'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ Review.create_date|date_min }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.review_edit.is_purchase'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {% if Review.purchase %}
+                                            {{ 'customer_review4.admin.review_edit.purchase_true'|trans }}&nbsp;<i class="far fa-thumbs-up fa-lg text-secondary"></i>
+                                        {% else %}
+                                            {{ 'customer_review4.admin.review_edit.purchase_false'|trans }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.th_contributor'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'customer_review4.admin.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.reviewer_name) }}
+                                        {{ form_errors(form.reviewer_name) }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.th_level'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'customer_review4.admin.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.recommend_level) }}
+                                        {{ form_errors(form.recommend_level) }}
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.th_title'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'customer_review4.admin.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.title) }}
+                                        {{ form_errors(form.title) }}
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-2">
+                                        <span>{{ 'customer_review4.admin.th_comment'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'customer_review4.admin.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        {{ form_widget(form.comment, {'attr': {'rows': '10'}}) }}
+                                        {{ form_errors(form.comment) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_review_list_page', { page_no : app.session.get('eccube.admin.review.search.page_no')|default('1')}) }}"><i class="fa fa-backward" aria-hidden="true"></i><span>{{ '戻る'|trans }}</span></a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                {{ form_widget(form.Status) }}
+                                {{ form_errors(form.Status) }}
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ '登録'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

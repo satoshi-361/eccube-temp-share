@@ -1,0 +1,60 @@
+<script src="{{ PayPalCheckout.widget_url }}"></script>
+<script lang="js">
+  $(function () {
+    const messageBeforeInputId = '#paypal-inline-guest-message-before-input';
+    const messageAfterInputId = '#paypal-inline-guest-message-after-input';
+    const messageErrorId = '#paypal-inline-guest-message-error';
+    const messageTagClass = '.paypal-inline-guest-message';
+    const confirmButtonClass = 'button.ec-blockBtn--action';
+
+    $(messageBeforeInputId).show();
+
+    window.paypal.Buttons({
+      commit: false,
+      style: {
+        layout: 'vertical',
+        fundingicons: 'false',
+        tagline: false,
+        height: 55
+      },
+      fundingSource: paypal.FUNDING.CARD,
+      createOrder: function () {
+        loadingOverlay();
+        $(messageTagClass).hide();
+        $(messageBeforeInputId).show();
+        $(confirmButtonClass).prop('disabled', true);
+        return new Promise(function(resolve) {
+          $.ajax({
+            type: 'POST',
+            url: "{{ PayPalCheckout.inline_guest_api_url }}"
+          }).then(function (data) {
+            resolve(data.result.id);
+            loadingOverlay('hide');
+          }).catch(function (err) {
+            $(messageTagClass).hide();
+            $(messageErrorId).show();
+            loadingOverlay('hide');
+            throw new Error(err);
+          });
+        });
+      },
+      onApprove: function (data) {
+        $(confirmButtonClass).prop('disabled', false);
+        $(messageTagClass).hide();
+        $(messageAfterInputId).show();
+        $('iframe.component-frame').css('pointer-events', 'none');
+        $('#paypal-button-container').css('cursor', 'not-allowed');
+        return;
+      },
+      onCancel: function (data) {
+        // 何もしない
+        console.log('onCancel', data);
+      },
+      onError: function (data) {
+        console.log('onError', data);
+        $(messageTagClass).hide();
+        $(messageErrorId).show();
+      }
+    }).render('#paypal-button-container');
+  });
+</script>

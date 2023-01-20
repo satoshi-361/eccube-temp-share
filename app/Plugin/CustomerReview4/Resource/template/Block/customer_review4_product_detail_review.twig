@@ -1,0 +1,70 @@
+{% set review_config = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewConfig').get() %}
+{% if review_config.isDetailInReview %}
+{% set review_list = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewList').getReviewList(Product.id) %}
+<div id="plg_customer_review_detail">
+    <div class="review-sortLayout">
+        <div class="reviewSort">
+            <span>
+                <i class="far fa-comment-dots"></i>
+                <strong>レビュー</strong>
+            </span>
+        </div>
+        <div class="reviewPost">
+            <a class="ec-inlineBtn--action" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a>
+        </div>
+    </div>
+{% if review_list|length == 0 %}
+    <div>
+        <span><strong>レビューはまだありません。</strong></span>
+    </div>
+{% else %}
+    <ul style="list-style: none; padding-left: 0;">
+{% for Review in review_list %}
+        <li>
+            <div class="review-commentLayout">
+                <div class="reviewTitle">
+                    <span class="star">{% for i in 1..5 %}{% if i <= Review.recommend_level %}<i class="fas fa-star reviewList star"></i>{% else %}<i class="far fa-star reviewList star"></i>{% endif %}{% endfor %}</span>
+                    <strong>&nbsp;{{ Review.title }}</strong>
+                </div>
+                <div class="reviewAuthor">
+                    <span>{{ Review.reviewer_name }}さん</span>
+                    <p><span>{{ Review.create_date|date("Y/m/d") }}</span></p>
+                    {% if Review.purchase and review_config.isPurchaseMark %}<p><span style="color:#ee6400;">購入済み</span></p>{% endif %}
+                </div>
+                <div class="reviewComment">
+                    {{ Review.comment|nl2br }}
+                </div>
+            </div>
+        </li>
+{% endfor %}
+    </ul>
+    {% if review_list|length > 2 %}
+    <div class="ec-off1Grid__cell">
+        <div class="ec-RegisterRole__actions">
+            <div class="ec-off4Grid">
+                <div class="ec-off4Grid__cell">
+                    <a id="review_show_all" class="ec-blockBtn--cancel" href="">レビューをすべて見る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+</div>
+<script>
+  $(function () {
+    if ( $('#plg_customer_review_detail_area').length ) {
+        $('#plg_customer_review_detail').insertAfter($('#plg_customer_review_detail_area'));
+    } else {
+        $('#plg_customer_review_detail').addClass('review_detail_default');
+        $('#plg_customer_review_detail').appendTo($('div.ec-layoutRole__main, div.ec-layoutRole__mainWithColumn, div.ec-layoutRole__mainBetweenColumn'));
+    }
+    $('#plg_customer_review_detail ul li:gt(1)').hide();
+    $('#review_show_all').click(function(){
+        $(this).fadeOut();
+        $('#plg_customer_review_detail ul li:gt(1)').slideDown();
+        return false;
+    });
+  });
+</script>
+{% endif %}

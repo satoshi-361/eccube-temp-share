@@ -5,7 +5,7 @@
 common.select: 選択してください
 common.select__pref: 都道府県を選択
 common.select__unspecified: 指定なし
-common.select__all_products: 全ての商品
+common.select__all_products: 全ての記事
 common.required: 必須
 common.back: 戻る
 common.close: 閉じる
@@ -62,7 +62,7 @@ common.total: 合計
 common.total__with_separator: 合計：
 common.payment_total: お支払い合計
 common.reduced_tax_rate_symbol: ※
-common.reduced_tax_rate_messeage: ※ は軽減税率対象商品です。
+common.reduced_tax_rate_messeage: ※ は軽減税率対象記事です。
 common.tax_rate_target: '税率 %rate% %対象'
 common.delivery_fee: 送料
 common.charge: 手数料
@@ -92,7 +92,7 @@ common.name.suffix: ' 様'
 #------------------------------------------------------------------------------------
 
 front.block.cart.go_to_cart: カートへ進む
-front.block.cart.no_item: 現在カート内に商品はございません。
+front.block.cart.no_item: 現在カート内に記事はございません。
 front.block.footer.about_us: 当サイトについて
 front.block.footer.privacy_policy: プライバシーポリシー
 front.block.footer.inquiry: お問い合わせ
@@ -117,7 +117,7 @@ front.block.eyecatch.description: |
   さらにジェラートの製法を活かした、アイスキャンディ・アイスサンドも販売しております。
 front.block.eyecatch.view_list: 一覧を見る
 front.block.new_item.title__en: NEW ITEM
-front.block.new_item.title__ja: 新着商品
+front.block.new_item.title__ja: 新着記事
 front.block.new_item.more: more
 front.block.new_item.item_1_name: 彩のジェラート"CUBE"
 front.block.new_item.item_1_price: ￥1,200(税込)
@@ -210,7 +210,7 @@ front.forgot.reset_not_found: 入力内容を確認してください。
 
 front.about.title: 当サイトについて
 front.about.business_hour: 店舗営業時間
-front.about.good_traded: 取り扱い商品
+front.about.good_traded: 取り扱い記事
 front.about.message: メッセージ
 front.agreement.title: 利用規約
 front.tradelaw.title: 特定商取引法に基づく表記
@@ -250,7 +250,7 @@ front.mypage.reorder: 再注文する
 front.mypage.payment_info: お支払い情報
 front.mypage.payment: お支払い方法
 front.mypage.message: お問い合わせ
-front.mypage.reorder_message: ※金額が変更されている商品があるため、再注文時はご注意ください。
+front.mypage.reorder_message: ※金額が変更されている記事があるため、再注文時はご注意ください。
 front.mypage.mail_not_found: メール履歴はありません。
 front.mypage.mail_list: メール配信履歴一覧
 front.mypage.customer_complete_message__title: 会員登録内容の変更が完了いたしました
@@ -272,17 +272,17 @@ front.mypage.withdraw_complete_message__body: |
   またのご来店をお待ちしております。
 
 #------------------------------------------------------------------------------------
-# 商品
+# 記事
 #------------------------------------------------------------------------------------
 
 front.product.all_category: 全て
 front.product.search_result: 検索結果
-front.product.all_products: 全商品
+front.product.all_products: 全記事
 
 front.product.search__category_not_found: ご指定のカテゴリは存在しません
-front.product.search__product_not_found: お探しの商品は見つかりませんでした
+front.product.search__product_not_found: お探しの記事は見つかりませんでした
 front.product.search_result__keyword: '「%name%」の検索結果'
-front.product.search_result__detail: '<span class="ec-font-bold">%count%件</span><span>の商品が見つかりました</span>'
+front.product.search_result__detail: '<span class="ec-font-bold">%count%件</span><span>の記事が見つかりました</span>'
 front.product.add_cart: カートに入れる
 front.product.add_cart_complete: カートに追加しました。
 front.product.add_cart_error: カートへの追加に失敗しました。
@@ -293,7 +293,7 @@ front.product.out_of_stock_label: (品切れ中)
 front.product.added_to_favorite: お気に入りに追加済です。
 front.product.normal_price: 通常価格
 front.product.sale_price: 販売価格
-front.product.code: 商品コード
+front.product.code: 記事コード
 front.product.related_category: 関連カテゴリ
 front.product.continue: お買い物を続ける
 front.product.invalid_quantity: 1以上で入力してください。
@@ -304,19 +304,19 @@ front.product.product_class_unselected: 項目が選択されていません
 #------------------------------------------------------------------------------------
 
 front.cart.title: ショッピングカート
-front.cart.nav__cart_items: カートの商品
+front.cart.nav__cart_items: カートの記事
 front.cart.nav__customer_info: お客様情報
 front.cart.nav__order: ご注文手続き
 front.cart.nav__confirm: ご注文内容確認
 front.cart.nav__complete: 完了
-front.cart.total_price: '商品の合計金額は「<strong>%price%</strong>」です。'
-front.cart.divide_cart: 同時購入できない商品がカートに含まれています。
+front.cart.total_price: '記事の合計金額は「<strong>%price%</strong>」です。'
+front.cart.divide_cart: 同時購入できない記事がカートに含まれています。
 front.cart.delete: 削除
-front.cart.delete__confirm: カートから商品を削除してよろしいですか？
-front.cart.product: 商品内容
+front.cart.delete__confirm: カートから記事を削除してよろしいですか？
+front.cart.product: 記事内容
 front.cart.checkout: レジに進む
 front.cart.continue: お買い物を続ける
-front.cart.no_items: 現在カート内に商品はございません。
+front.cart.no_items: 現在カート内に記事はございません。
 front.cart.delivery_fee_free__now: 現在送料無料です。
 front.cart.delivery_fee_free__price_and_quantity: 'あと「<strong>%price%</strong>」または「<strong>%quantity%個</strong>」のお買い上げで<strong class="ec-color-red">送料無料</strong>になります。'
 front.cart.delivery_fee_free__price: 'あと「<strong>%price%</strong>」のお買い上げで<strong class="ec-color-red">送料無料</strong>になります。'
@@ -353,8 +353,8 @@ front.shopping.shipping_add_new_shipping__short: お届け先追加
 front.shopping.shipping_unselected: お届け先を指定してください
 front.shopping.shipping_send_selected_shipping: 選択したお届け先に送る
 front.shopping.shipping_multiple_title: お届け先の複数指定
-front.shopping.shipping_multiple_message: 各商品のお届け先を選択してください。
-front.shppping.shipping_multiple_add_shipping: 各商品のお届け先を選択してください。
+front.shopping.shipping_multiple_message: 各記事のお届け先を選択してください。
+front.shppping.shipping_multiple_add_shipping: 各記事のお届け先を選択してください。
 front.shopping.confirm_title: ご注文内容のご確認
 front.shopping.checkout: 注文する
 front.shopping.back_to_order: ご注文手続きに戻る
@@ -367,7 +367,7 @@ front.shopping.continue: 購入を続ける
 front.shopping.guest_purchase_message: 会員登録をせずに購入手続きをされたい方は、下記よりお進みください。
 front.shopping.guest_purchase: ゲスト購入
 front.shopping.nonmember: お客様情報の入力
-front.shopping.shipping_edit_title_nomember: 商品購入/お届け先の変更
+front.shopping.shipping_edit_title_nomember: 記事購入/お届け先の変更
 front.shopping.shipping_edit_header_customer: お届け先の追加
 front.shopping.shipping_edit_header_nonmember: お届け先の変更
 front.shopping.error: 購入エラー
@@ -376,14 +376,14 @@ front.shopping.system_error: 購入処理で予期しないエラーが発生し
 front.shopping.empty_items_error: ご注文手続きが正常に完了しませんでした。大変お手数ですが、再度ご注文手続きをお願いします。
 front.shopping.out_of_stock: '「%product%」の在庫が不足しております。一度に在庫数を超える購入はできません。'
 front.shopping.over_sale_limit: '「%product%」は販売制限しております。一度に販売制限数を超える購入はできません。'
-front.shopping.out_of_stock_zero: '「%product%」の在庫が不足しております。該当商品をカートから削除しました。'
-front.shopping.over_price_limit: 商品を購入できる金額の上限を超えております。数量を調整してください。
+front.shopping.out_of_stock_zero: '「%product%」の在庫が不足しております。該当記事をカートから削除しました。'
+front.shopping.over_price_limit: 記事を購入できる金額の上限を超えております。数量を調整してください。
 front.shopping.in_preparation: '「%product%」はまだ配送の準備ができておりません。恐れ入りますがお問い合わせページよりお問い合わせください。'
-front.shopping.not_purchase: 現時点で購入できない商品が含まれておりました。該当商品をカートから削除しました。
-front.shopping.not_purchase_product_class: '「%product%」は現時点で購入できません。該当商品をカートから削除しました。'
+front.shopping.not_purchase: 現時点で購入できない記事が含まれておりました。該当記事をカートから削除しました。
+front.shopping.not_purchase_product_class: '「%product%」は現時点で購入できません。該当記事をカートから削除しました。'
 front.shopping.price_changed: '「%product%」の販売価格が変更されました。'
 front.shopping.payment_total_invalid: 合計金額が不正です。
-front.shopping.different_payment_methods: 支払い方法が異なる商品が含まれているため、同時に購入することはできません。
+front.shopping.different_payment_methods: 支払い方法が異なる記事が含まれているため、同時に購入することはできません。
 front.shopping.payment_method_unselected: お支払い方法を選択してください。
 front.shopping.payment_method_not_fount: 選択できるお支払い方法がありません。配送方法が異なる場合は同じ配送方法を選んでください。
 
@@ -545,8 +545,8 @@ admin.login: ログイン
 # ラベル
 admin.home.order_status_title: 注文状況
 admin.home.shop_status_title: ショップ状況
-admin.home.shop_status_out_of_stock: 在庫切れ商品数
-admin.home.shop_status_products: 取扱商品数
+admin.home.shop_status_out_of_stock: 在庫切れ記事数
+admin.home.shop_status_products: 取扱記事数
 admin.home.shop_status_customers: 会員数
 admin.home.sales_summary_title: 売上状況
 admin.home.sales_summary_value: '%amount% / %count% 件'
@@ -581,32 +581,32 @@ admin.change_password.password_changed: パスワードを更新しました
 admin.error.go_to_login: ログイン画面へ
 
 #------------------------------------------------------------------------------------
-# 商品管理
+# 記事管理
 #------------------------------------------------------------------------------------
 
 # 機能名称
-admin.product.product_management: 商品管理
-admin.product.product_list: 商品一覧
-admin.product.product_registration: 商品登録
-admin.product.product_class_registration: 商品規格登録
+admin.product.product_management: 記事管理
+admin.product.product_list: 記事一覧
+admin.product.product_registration: 記事登録
+admin.product.product_class_registration: 記事規格登録
 admin.product.class_management: 規格管理
 admin.product.class_category_management: 規格分類管理
 admin.product.category_management: カテゴリ管理
 admin.product.tag_management: タグ管理
-admin.product.product_csv_upload: 商品CSV登録
+admin.product.product_csv_upload: 記事CSV登録
 admin.product.category_csv_upload: カテゴリCSV登録
 
 # flashメッセージ
 admin.product.bulk_change_status_complete: '%status%: %count%件が正常に適用されました'
-admin.product.copy_complete: 商品を複製しました
-admin.product.copy_error: 商品の複製に失敗しました
-admin.product.reset_complete: 商品規格を初期化しました
+admin.product.copy_complete: 記事を複製しました
+admin.product.copy_error: 記事の複製に失敗しました
+admin.product.reset_complete: 記事規格を初期化しました
 
 # ラベル/メッセージ
-admin.product.product: 商品
-admin.product.product__card_title: 商品情報
-admin.product.preview: 商品を確認
-admin.product.product_id: 商品ID
+admin.product.product: 記事
+admin.product.product__card_title: 記事情報
+admin.product.preview: 記事を確認
+admin.product.product_id: 記事ID
 admin.product.product_id__short: ID
 admin.product.display_status: 公開ステータス
 admin.product.display_status__short: 公開状態
@@ -614,23 +614,23 @@ admin.product.display_status__show: 公開
 admin.product.display_status__hide: 非公開
 admin.product.display_status__abolished: 廃止
 admin.product.permanently_delete: 削除
-admin.product.permanently_delete__confirm_title: 商品を削除します
-admin.product.permanently_delete__confirm_message: 商品を削除してよろしいですか？
+admin.product.permanently_delete__confirm_title: 記事を削除します
+admin.product.permanently_delete__confirm_message: 記事を削除してよろしいですか？
 admin.product.permanently_delete__in_progress: 削除中...
-admin.product.permanently_delete__complete_message: 商品の削除処理が完了しました
+admin.product.permanently_delete__complete_message: 記事の削除処理が完了しました
 admin.product.permanently_delete__complete: 完了
 admin.product.permanently_delete__system_error: システムエラーが発生しました
-admin.product.copy__confirm_title: 商品を複製します
-admin.product.copy__confirm_message: 商品を複製してよろしいですか？
-admin.product.name: 商品名
-admin.product.image: 商品画像
+admin.product.copy__confirm_title: 記事を複製します
+admin.product.copy__confirm_message: 記事を複製してよろしいですか？
+admin.product.name: 記事名
+admin.product.image: 記事画像
 admin.product.image__short: 画像
 admin.product.image_size: '推奨サイズ : 600px x 600px以上'
 admin.product.image__invalid_path: 画像のパスが不正です。
 admin.product.sale_type: 販売種別
-admin.product.description_detail: 商品説明
-admin.product.description_list: 商品説明(一覧)
-admin.product.description_list__add: 商品説明(一覧)を追加
+admin.product.description_detail: 記事説明
+admin.product.description_list: 記事説明(一覧)
+admin.product.description_list__add: 記事説明(一覧)を追加
 admin.product.price: 価格
 admin.product.sale_price: 販売価格 # price02
 admin.product.normal_price: 通常価格 # price01
@@ -639,34 +639,34 @@ admin.product.stock__short: 在庫
 admin.product.stock__in_stock: あり
 admin.product.stock__out_of_stock: なし
 admin.product.search_word: 検索ワード
-admin.product.product_code: 商品コード
+admin.product.product_code: 記事コード
 admin.product.product_code__short: コード
-admin.product.product_name_and_code: 商品名・商品コード
+admin.product.product_name_and_code: 記事名・記事コード
 admin.product.sale_limit: 販売制限数
 admin.product.delivery_duration: 発送日目安
-admin.product.delivery_fee: 商品送料
+admin.product.delivery_fee: 記事送料
 admin.product.tax_rate: 税率
 admin.product.free_area: フリーエリア
 admin.product.free_area__card_title: フリーエリア
-admin.product.delete_flag: 商品削除フラグ
+admin.product.delete_flag: 記事削除フラグ
 admin.product.search_category: カテゴリ検索
 admin.product.save_tag: タグ登録
 admin.product.create_date__card_title: 登録日・更新日
 admin.product.move_to_category: カテゴリの追加・編集
 admin.product.move_to_tag: タグの追加・編集
-admin.product.move_to_product_class: 商品規格の編集
-admin.product.move_to_product_class__confirm_title: '「%name%」の商品規格'
-admin.product.multi_search_label: 商品名・商品ID・商品コード
-admin.product.product_class: 商品規格
+admin.product.move_to_product_class: 記事規格の編集
+admin.product.move_to_product_class__confirm_title: '「%name%」の記事規格'
+admin.product.multi_search_label: 記事名・記事ID・記事コード
+admin.product.product_class: 記事規格
 admin.product.product_class__short: 規格
-admin.product.product_class__create: 商品規格の設定
+admin.product.product_class__create: 記事規格の設定
 admin.product.product_class__confirm: 規格確認
-admin.product.product_class__confirm_of_product: この商品の規格を確認
-admin.product.product_class__card_title: 商品規格情報
-admin.product.product_class__reset: 商品規格の初期化
-admin.product.product_class__reset_confirm_title: この商品の規格を初期化します
+admin.product.product_class__confirm_of_product: この記事の規格を確認
+admin.product.product_class__card_title: 記事規格情報
+admin.product.product_class__reset: 記事規格の初期化
+admin.product.product_class__reset_confirm_title: この記事の規格を初期化します
 admin.product.product_class__reset_confirm_message: |
-  この商品に登録された規格を初期化します。
+  この記事に登録された規格を初期化します。
   これまでの販売データには影響はありませんが、この操作は取り消すことができません。
   初期化しますか？
 admin.product.product_class__reset_confirm_excecute: 規格を初期化
@@ -702,29 +702,29 @@ admin.product.select__class2: 規格2を選択してください
 admin.product.select__can_not_select_same_class: 規格1と同じ規格は選択できません
 admin.product.unselected_class: 選択されていません
 
-# 商品CSV雛形
-admin.product.product_csv.product_id_col: 商品ID
-admin.product.product_csv.product_id_description: 新規登録の場合は空にしてください。既存の商品を更新する場合は、商品IDを指定してください。
+# 記事CSV雛形
+admin.product.product_csv.product_id_col: 記事ID
+admin.product.product_csv.product_id_description: 新規登録の場合は空にしてください。既存の記事を更新する場合は、記事IDを指定してください。
 admin.product.product_csv.display_status_col: 公開ステータス(ID)
 admin.product.product_csv.display_status_description: ''
-admin.product.product_csv.product_name_col: 商品名
+admin.product.product_csv.product_name_col: 記事名
 admin.product.product_csv.product_name_description: ''
 admin.product.product_csv.shop_memo_col: ショップ用メモ欄
 admin.product.product_csv.shop_memo_description: ''
-admin.product.product_csv.description_list_col: 商品説明(一覧)
+admin.product.product_csv.description_list_col: 記事説明(一覧)
 admin.product.product_csv.description_list_description: ''
-admin.product.product_csv.description_detail_col: 商品説明(詳細)
+admin.product.product_csv.description_detail_col: 記事説明(詳細)
 admin.product.product_csv.description_detail_description: ''
 admin.product.product_csv.keyword_col: 検索ワード
 admin.product.product_csv.keyword_description: ''
 admin.product.product_csv.free_area_col: フリーエリア
 admin.product.product_csv.free_area_description: ''
-admin.product.product_csv.delete_flag_col: 商品削除フラグ
+admin.product.product_csv.delete_flag_col: 記事削除フラグ
 admin.product.product_csv.delete_flag_description: 0:登録 1:削除を指定します。未指定の場合、0として扱います。
-admin.product.product_csv.product_image_col: 商品画像
+admin.product.product_csv.product_image_col: 記事画像
 admin.product.product_csv.product_image_description: '画像のファイル名を指定します。複数画像の場合、画像ファイル名をカンマ区切りで「"」で囲んでください。'
-admin.product.product_csv.category_col: 商品カテゴリ(ID)
-admin.product.product_csv.category_description: 'カテゴリIDを指定します。複数カテゴリの場合、商品カテゴリIDをカンマ区切りで「"」で囲んでください。'
+admin.product.product_csv.category_col: 記事カテゴリ(ID)
+admin.product.product_csv.category_description: 'カテゴリIDを指定します。複数カテゴリの場合、記事カテゴリIDをカンマ区切りで「"」で囲んでください。'
 admin.product.product_csv.tag_col: タグ(ID)
 admin.product.product_csv.tag_description: 'タグIDを指定します。複数タグの場合、タグIDをカンマ区切りで「"」で囲んでください。'
 admin.product.product_csv.sale_type_col: 販売種別(ID)
@@ -735,7 +735,7 @@ admin.product.product_csv.class_category2_col: 規格分類2(ID)
 admin.product.product_csv.class_category2_description: ''
 admin.product.product_csv.delivery_duration_col: 発送日目安(ID)
 admin.product.product_csv.delivery_duration_description: ''
-admin.product.product_csv.product_code_col: 商品コード
+admin.product.product_csv.product_code_col: 記事コード
 admin.product.product_csv.product_code_description: ''
 admin.product.product_csv.stock_col: 在庫数
 admin.product.product_csv.stock_description: 在庫数無制限フラグが0の場合、0以上の数値を設定してください。
@@ -748,9 +748,9 @@ admin.product.product_csv.normal_price_description: 0以上の数値を設定
 admin.product.product_csv.sale_price_col: 販売価格
 admin.product.product_csv.sale_price_description: 0以上の数値を設定
 admin.product.product_csv.delivery_fee_col: 送料
-admin.product.product_csv.delivery_fee_description: 商品ごとの送料設定が有効の場合、0以上の数値を設定
+admin.product.product_csv.delivery_fee_description: 記事ごとの送料設定が有効の場合、0以上の数値を設定
 admin.product.product_csv.tax_rate_col: 税率
-admin.product.product_csv.tax_rate_description: 商品別税率機能設定が有効の場合、0以上の数値を設定
+admin.product.product_csv.tax_rate_description: 記事別税率機能設定が有効の場合、0以上の数値を設定
 
 # カテゴリCSV雛形
 admin.product.category_csv.category_id_col: カテゴリID
@@ -762,9 +762,9 @@ admin.product.category_csv.parent_category_id_description: ''
 admin.product.category_csv.delete_flag_col: カテゴリ削除フラグ
 admin.product.category_csv.delete_flag_description: 0:登録 1:削除を指定します。未指定の場合、0として扱います。
 
-# 商品CSV
-admin.product.product_csv_upload__title: '商品CSVをアップロードします'
-admin.product.product_csv_upload__message: '商品CSVファイルをアップロードします。よろしいですか？'
+# 記事CSV
+admin.product.product_csv_upload__title: '記事CSVをアップロードします'
+admin.product.product_csv_upload__message: '記事CSVファイルをアップロードします。よろしいですか？'
 
 #------------------------------------------------------------------------------------
 # 受注
@@ -811,9 +811,9 @@ admin.order.delete_shipping: 出荷情報を削除
 admin.order.delete_shipping_error__confirm_title: 出荷情報を削除できません
 admin.order.delete_shipping_error__confirm_message: まず出荷情報に設定されている明細を削除してから、出荷情報を削除してください
 admin.order.delete_shipping__confirm_message: '出荷情報は注文から削除されます。出荷情報(%num%)を削除しますか？'
-admin.order.order_item_info: 注文商品情報
+admin.order.order_item_info: 注文記事情報
 admin.order.order_item_type: 明細種別
-admin.order.add_product_item: 商品を追加
+admin.order.add_product_item: 記事を追加
 admin.order.add_other_item: その他の明細を追加
 admin.order.update_calculation_results: 計算結果を更新
 admin.order.amount: 金額
@@ -831,7 +831,7 @@ admin.order.order_status: 対応状況
 admin.order.last_buy_date: 最終購入日
 admin.order.last_buy_date__start: 最終購入日(開始)
 admin.order.last_buy_date__end: 最終購入日(終了)
-admin.order.purchase_product: 購入商品名
+admin.order.purchase_product: 購入記事名
 admin.order.purchase_count: 購入件数
 admin.order.purchase_count__start: 購入件数(開始)
 admin.order.purchase_count__end: 購入件数(終了)
@@ -890,10 +890,10 @@ admin.order.change_payment_method_message: お支払方法の変更に伴う手�
 admin.order.non_member: 非会員
 admin.order.search_from_customer: 会員から検索・入力
 admin.order.search_customer_title: 会員を検索
-admin.order.product_info: 商品情報
+admin.order.product_info: 記事情報
 admin.order.edit_multiple_shipping: お届け先を編集
 admin.order.edit_multiple_shipping_description: 複数配送を指定している場合は、こちらのボタンからそれぞれの配送設定の編集ができます
-admin.order.product_item_not_found: 商品が追加されていません
+admin.order.product_item_not_found: 記事が追加されていません
 admin.order.delivery_note_create_date: 発行日
 admin.order.delivery_note_title: タイトル
 admin.order.delivery_note_title__default: お買上げ明細書(納品書)
@@ -1035,7 +1035,7 @@ admin.content.page_meta_robot: robot
 admin.content.page_meta_metatag: metatag
 # Deprecated https://github.com/EC-CUBE/ec-cube/pull/4987
 admin.content.page_meta_metatag_placeholder: |
-  商品詳細ページでの記載例
+  記事詳細ページでの記載例
     <meta property="og:type" content="og:product" />
     <meta property="og:title" content="{{ Product.name }}" />
     <meta property="og:image" content="{{ url('homepage') }}{{ asset(Product.main_list_image|no_image_product, 'save_image') }}" />
@@ -1117,21 +1117,21 @@ admin.setting.shop.shop.email_from: 送信元メールアドレス(From)
 admin.setting.shop.shop.email_for_inquiries: 問い合わせ受付メールアドレス(From, ReplyTo)
 admin.setting.shop.shop.email_reply_to: 返信受付メールアドレス(ReplyTo)
 admin.setting.shop.shop.email_return_path: 送信エラー受付メールアドレス(ReturnPath)
-admin.setting.shop.shop.good_traded: 取り扱い商品説明文
+admin.setting.shop.shop.good_traded: 取り扱い記事説明文
 admin.setting.shop.shop.message: 店舗からのメッセージ
 admin.setting.shop.shop.option_delivery_fee: 送料設定
 admin.setting.shop.shop.option_delivery_fee_free_amount: 送料無料条件（金額）
 admin.setting.shop.shop.option_delivery_fee_free_quantity: 送料無料条件（数量）
-admin.setting.shop.shop.option_delivery_fee_by_product: 商品ごとの送料設定
+admin.setting.shop.shop.option_delivery_fee_by_product: 記事ごとの送料設定
 admin.setting.shop.shop.option_customer: 会員設定
 admin.setting.shop.shop.option_customer_activate: 仮会員機能
 admin.setting.shop.shop.option_mypage_order_status_display: マイページに注文状況を表示
-admin.setting.shop.shop.option_favorite_product: お気に入り商品機能
+admin.setting.shop.shop.option_favorite_product: お気に入り記事機能
 admin.setting.shop.shop.option_remember_me: 自動ログイン機能
-admin.setting.shop.shop.option_product: 商品設定
-admin.setting.shop.shop.nostock_hidden: 在庫切れ商品の非表示
+admin.setting.shop.shop.option_product: 記事設定
+admin.setting.shop.shop.nostock_hidden: 在庫切れ記事の非表示
 admin.setting.shop.shop.option_tax: 税設定
-admin.setting.shop.shop.option_product_tax: 商品別税率機能
+admin.setting.shop.shop.option_product_tax: 記事別税率機能
 admin.setting.shop.shop.option_point: ポイント設定
 admin.setting.shop.shop.option_point_enabled: ポイント機能
 admin.setting.shop.shop.option_point_rate: ポイント付与率
@@ -1510,7 +1510,7 @@ admin.store.plugin_owners_search.detail: 詳細
 admin.store.plugin_owners_search.install.free: 入手する
 admin.store.plugin_owners_search.install.fee: 購入する
 admin.store.plugin_owners_search.install: インストール済み
-admin.store.plugin_owners_search.modal.header: 商品詳細
+admin.store.plugin_owners_search.modal.header: 記事詳細
 admin.store.plugin_owners_search.modal.contact: 資料請求・お問い合わせ
 admin.store.plugin_owners_search.modal.manual: マニュアルダウンロード
 admin.store.plugin_owners_search.modal.note: 'このプラグインはEC-CUBE %version%をサポートしていないため、正常に動作しない可能性があります。'
@@ -1587,21 +1587,21 @@ admin.info.document: ドキュメント
 #------------------------------------------------------------------------------------
 
 tooltip.product.multi_search_label: 情報を入力して一覧の絞り込み検索ができます。より詳細な条件を指定するには［詳細検索］を開いてください。
-tooltip.product.product_id: 自動的に採番される商品のIDです。
-tooltip.product.sale_type: 通常商品やダウンロード商品といった販売方法が異なる場合に利用します。販売種別のリストは［マスターデータ管理］のmtb_sale_typeから編集できます。
-tooltip.product.image: 複数の商品画像をドラッグ＆ドロップで登録できます。
-tooltip.product.description_detail: 商品ページに表示される説明文です。HTMLタグが利用可能です。
-tooltip.product.description_list: 商品一覧ページに表示される商品説明文です。未設定の場合、商品一覧画面に説明は表示されません。
+tooltip.product.product_id: 自動的に採番される記事のIDです。
+tooltip.product.sale_type: 通常記事やダウンロード記事といった販売方法が異なる場合に利用します。販売種別のリストは［マスターデータ管理］のmtb_sale_typeから編集できます。
+tooltip.product.image: 複数の記事画像をドラッグ＆ドロップで登録できます。
+tooltip.product.description_detail: 記事ページに表示される説明文です。HTMLタグが利用可能です。
+tooltip.product.description_list: 記事一覧ページに表示される記事説明文です。未設定の場合、記事一覧画面に説明は表示されません。
 tooltip.product.normal_price: 販売価格が特別な価格である場合、通常価格を併せて表示することができます。
 tooltip.product.search_word: サイト内検索で利用されるキーワードです。
-tooltip.product.product_code: 自由に設定できる商品コードです。
+tooltip.product.product_code: 自由に設定できる記事コードです。
 tooltip.product.sale_limit: 購入者が一度に購入できる個数を制限することができます。
-tooltip.product.delivery_duration: 発送日の目安期間を商品ごとに登録できます。
-tooltip.product.product_class: この商品に設定された規格を確認・管理できます。
-tooltip.product.free_area: 商品詳細ページに入力内容が表示されます。表示位置はデザインテンプレートによって異なります。
+tooltip.product.delivery_duration: 発送日の目安期間を記事ごとに登録できます。
+tooltip.product.product_class: この記事に設定された規格を確認・管理できます。
+tooltip.product.free_area: 記事詳細ページに入力内容が表示されます。表示位置はデザインテンプレートによって異なります。
 tooltip.product.shop_memo: 店舗用のメモ欄です。フロント画面には表示されません。
 tooltip.product.backend_name: 管理者用に別名を登録しておくことができます（例：規格名：サイズ　管理名：サイズ（服）、サイズ（靴）等 ）。フロント画面には表示されません。
-tooltip.product.csv_upload: 所定の型のCSVデータを用いて商品を一括で登録することができます。
+tooltip.product.csv_upload: 所定の型のCSVデータを用いて記事を一括で登録することができます。
 tooltip.product.csv_format: 雛形ファイルをダウンロードして編集すれば、簡単に所定の型のCSVデータを作成できます。
 tooltip.category.csv_upload: 所定の型のCSVデータを用いてカテゴリを一括で登録することができます。
 tooltip.category.csv_format: 雛形ファイルをダウンロードして編集すれば、簡単に所定の型のCSVデータを作成できます。
@@ -1616,7 +1616,7 @@ tooltip.order.shipping_info: 出荷先情報を表示します。出荷先の追
 tooltip.order.shipping_info.tracking_number: お問い合せ番号（出荷伝票番号）がある場合、こちらから入力できます。受注一覧からまとめて入力することも可能です。
 tooltip.order.shipping_info.delivery_provider: 配達業者、配達方法を変更できます。変更後、送料が変わる可能性がありますので、ご注意ください。
 tooltip.order.shipping_info.shop_memo: 出荷担当者、及び配送業者用のメモを保存しておけます。出荷用CSV等で確認が可能です。
-tooltip.order.product_info: 購入された商品情報、及び、送料、手数料を含めた計算結果が表示されます。商品の追加や金額変更を行った場合は、計算結果の更新を行ってください。
+tooltip.order.product_info: 購入された記事情報、及び、送料、手数料を含めた計算結果が表示されます。記事の追加や金額変更を行った場合は、計算結果の更新を行ってください。
 tooltip.order.shop_memo: 店舗用メモを保存しておけます。フロント画面には表示されません。
 tooltip.order.mail_history: これまでに配信したメールの確認・新規メールの作成ができます。
 tooltip.order.mail_destination_info: 注文者にメールが送信できます。
@@ -1647,15 +1647,15 @@ tooltip.setting.shop.shop.email_from: 店舗からメールを送信した場合
 tooltip.setting.shop.shop.email_for_inquiries: 問い合わせフォームから問い合わせがあった場合に、その通知を受信するメールアドレスです。
 tooltip.setting.shop.shop.email_reply_to: 返信メールを受け付けるメールアドレスです。
 tooltip.setting.shop.shop.email_return_path: 店舗からメールを送信しエラーが生じた場合に、その通知を受信するメールアドレスです。
-tooltip.setting.shop.shop.good_traded: 店舗が取り扱う商品についての簡単な説明文です。
+tooltip.setting.shop.shop.good_traded: 店舗が取り扱う記事についての簡単な説明文です。
 tooltip.setting.shop.shop.message: フロント側に表示されます。表示位置はデザインテンプレートによって異なります。
 tooltip.setting.shop.shop.option_delivery_fee_free_amount: この金額を超える購入があった場合、送料を無料とします。
 tooltip.setting.shop.shop.option_delivery_fee_free_quantity: この個数を超える購入があった場合、送料を無料とします。
-tooltip.setting.shop.shop.option_delivery_fee_by_product: ここをオンにすると、商品ごとに送料を指定できるようになります。
+tooltip.setting.shop.shop.option_delivery_fee_by_product: ここをオンにすると、記事ごとに送料を指定できるようになります。
 tooltip.setting.shop.shop.option_customer_activate: 顧客の会員登録直後は仮会員とし、メールアドレスの確認などを経て本会員として登録できる機能です。
-tooltip.setting.shop.shop.option_favorite_product: 顧客が任意の商品をお気に入りとして登録できるようにする機能です。
+tooltip.setting.shop.shop.option_favorite_product: 顧客が任意の記事をお気に入りとして登録できるようにする機能です。
 tooltip.setting.shop.shop.option_remember_me: 顧客に一定期間の自動ログインを許可します。
-tooltip.setting.shop.shop.option_product_tax: オンにすると、商品別に税率を設定することができるようになります。
+tooltip.setting.shop.shop.option_product_tax: オンにすると、記事別に税率を設定することができるようになります。
 tooltip.setting.shop.shop.option_point_enabled: オンにすると、ポイント機能を有効化できます。
 tooltip.setting.shop.shop.option_point_rate: 購入金額に対するポイント付与率を編集できます。
 tooltip.setting.shop.shop.option_point_conversion_rate: 1ポイントあたりの換算レートです。例：「1」と設定すると1ポイント「1円」として利用可能になります。
@@ -1665,7 +1665,7 @@ tooltip.setting.shop.delivery.tracking_number_url: 配送業者のお問い合�
 tooltip.setting.shop.delivery.sale_type: この配送方法で取り扱える販売種別を指定します。
 tooltip.setting.shop.delivery.apply_to_pref: すべての都道府県に同じ送料を一括で設定できます。あとから個々の都道府県の送料を書き換えることも可能です。
 tooltip.setting.shop.delivery.shop_memo: 店舗用のメモ欄です。フロント側には表示されません。
-tooltip.setting.shop.tax_setting: 商品共通の税率を設定できます。新しい税率を追加することで基本税率設定を上書きすることが可能です。
+tooltip.setting.shop.tax_setting: 記事共通の税率を設定できます。新しい税率を追加することで基本税率設定を上書きすることが可能です。
 tooltip.setting.shop.mail.mail_template: 既存のメールテンプレートを選択してください。以下に内容が表示されます。
 tooltip.setting.shop.csv.csv_columns: 各種のデータをCSVで出力できます。出力したい項目をこちらで設定することが可能です。
 tooltip.setting.shop.csv.csv_type: 設定したいCSVの種類を指定してください。
@@ -1751,7 +1751,7 @@ install.installing_plugin: プラグインを有効化しています
 install.clearing_cache: キャッシュを削除しています
 install.completed: インストールが完了しました！
 install.access_admin_page: 管理画面にアクセスしてみましょう
-install.perform_initial_setting: 先ほど登録したログインID・パスワードで、管理画面にログインすることができます。デザインの編集や商品を登録してみましょう！
+install.perform_initial_setting: 先ほど登録したログインID・パスワードで、管理画面にログインすることができます。デザインの編集や記事を登録してみましょう！
 install.go_to_admin_page: 管理画面を表示
 
 #------------------------------------------------------------------------------------

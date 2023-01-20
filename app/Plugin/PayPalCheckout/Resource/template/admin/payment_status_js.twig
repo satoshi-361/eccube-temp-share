@@ -1,0 +1,118 @@
+<script>
+  $(function() {
+    function BulkPayment(modal, eventTarget) {
+      ConfirmationModal.call(this, modal);
+      this.eventTarget = eventTarget;
+    }
+    BulkPayment.prototype = Object.create(ConfirmationModal.prototype, {
+      constructor: {
+        value: ConfirmationModal
+      },
+      modalTitle: {
+        value: "決済を行います"
+      },
+      getTotalCount: {
+        value: function () {
+          return $('input[data-id]:checked').length;
+        }
+      },
+      getPromises: {
+        value: function (progress) {
+          return $('input[data-id]:checked').map(function () {
+            var url = $(this).data('payment-url');
+            return $.ajax({
+              'url': url,
+              'type': 'POST',
+              'data': {}
+            }).fail(function () {
+              progress.reject();
+              ConfirmationModal.prototype.fail.call(this);
+            }).always(function (data) {
+              progress.notifyWith(data);
+            });
+          });
+        }
+      }
+    });
+
+    function BulkRefound(modal, eventTarget) {
+      ConfirmationModal.call(this, modal);
+      this.eventTarget = eventTarget;
+    }
+    BulkRefound.prototype = Object.create(ConfirmationModal.prototype, {
+      constructor: {
+        value: ConfirmationModal
+      },
+      modalTitle: {
+        value: "返金を行います"
+      },
+      getTotalCount: {
+        value: function () {
+          return $('input[data-id]:checked').length;
+        }
+      },
+      getPromises: {
+        value: function (progress) {
+          return $('input[data-id]:checked').map(function () {
+            var url = $(this).data('refound-url');
+            return $.ajax({
+              'url': url,
+              'type': 'POST',
+              'data': {}
+            }).fail(function () {
+              progress.reject();
+              ConfirmationModal.prototype.fail.call(this);
+            }).always(function (data) {
+              progress.notifyWith(data);
+            });
+          });
+        }
+      }
+    });
+
+    $('#bulkRefound, .progressModal').on('click', function (e) {
+
+      var modal = $('#sentUpdateModal2');
+      modal.modal();
+
+      const client = new BulkRefound(modal, e);
+
+      $('.modal-title', modal).text(client.modalTitle);
+      $('.modal-body > p.modal-message', modal).text("{{ 'admin.order.bulk_action__in_progress_message'|trans }}");
+      $('button', modal).hide();
+      $('#bulk-options').hide();
+      $('.progress', modal).show();
+      client.totalCount = client.getTotalCount();
+      var progress = new $.Deferred();
+      progress.progress(function () {
+        client.progress(this, progress);
+      }).fail(function () {
+        client.fail(this);
+      }).always(function () {
+        client.always(this);
+      });
+      client.getPromises(progress);
+    });
+
+    toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+    $('input[id^="check_"]').on('change', function() {
+      $('#toggle_check_all').prop('checked', false);
+      toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+    });
+
+    // 登録チェックボックス
+    $('#toggle_check_all').on('change', function() {
+      var checked = $(this).prop('checked');
+      if (checked) {
+        $('input[id^="check_"]').prop('checked', true);
+      } else {
+        $('input[id^="check_"]').prop('checked', false);
+      }
+      toggleBtnBulk('input[id^="check_"]', '.btn-bulk-wrapper');
+    });
+
+    $('#bulkChangeComplete').on('click', function() {
+      location.href = '{{ url('paypal_admin_payment_status') }}';
+    });
+  });
+</script>

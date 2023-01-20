@@ -1,0 +1,247 @@
+<!-- JavaScript SDK F値 -->
+<script src="https://www.paypal.com/sdk/js?components=hosted-fields&client-id={{ PayPalCheckout.Config.ClientId }}" data-client-token="{{ PayPalCheckout.acdcClientToken }}"></script>
+{% if PayPalCheckout.acdcShowVault is defined and PayPalCheckout.acdcShowVault %}
+<script type=“application/json” fncls=“fnparams-dede7cc5-15fd-4c75-a9f4-36c430ee3a99">
+    {
+        'f': '{{ PayPalCheckout.acdcFraudNetSessionIdentifier }}',
+        's': '{{ PayPalCheckout.acdcSourceWebsiteIdentifier }}',
+        'sandbox': '{% if PayPalCheckout.Config.UseSandbox %}true{% else %}false{% endif %}'
+    }
+</script>
+<script type=“text/javascript” src=“https://c.paypal.com/da/r/fb.js”></script>
+<noscript>
+  <img src=“https://c.paypal.com/v1/r/d/b/ns?f={{ PayPalCheckout.acdcFraudNetSessionIdentifier }}&s={{ PayPalCheckout.acdcSourceWebsiteIdentifier }}&js=0&r=1” />
+</noscript>
+{% endif %}
+
+<script>
+  $(function () {
+    // フォーム
+    const paypalCardNumberContainerId = '#card-number';
+    const paypalExpirationDateContainerId = '#expiration-date';
+    const paypalCvvContainerId = '#cvv';
+    const saveVaultCheckbox = '#paypal-acdc-save-vault';
+    const useVaultRadioButtonName = 'input[name=paypal-acdc-choose-card]';
+    const submitButtonId = '#paypal-acdc-submit';
+    const confirmButtonClass = 'button.ec-blockBtn--action';
+    // メッセージ
+    const usableBrandId = '#paypal-acdc-usable_brand';
+    const usableBrandWoJcbId = '#paypal-acdc-usable_brand_wo_jcb';
+    const messageErrorId = '#paypal-acdc-message-error';
+    const messageTagClass = '.paypal-acdc-message';
+    // 取得データ
+    const vaultId = "{% if PayPalCheckout.acdcVault.id is defined %}{{ PayPalCheckout.acdcVault.id }}{% endif %}";
+    const isLogin = {% if PayPalCheckout.isLogin %}true{% else %}false{% endif %};
+    const use3dsecure = {% if PayPalCheckout.acdcUse3dsecure %}true{% else %}false{% endif %};
+    // style
+    const disabledContainerProps = {
+      'background': 'rgba(0,0,0,0.1)',
+      'pointer-events': 'none',
+      'pointer': 'not-allowed'
+    }
+    const enabledContainerProps = {
+      'background': '',
+      'pointer-events': '',
+      'pointer': ''
+    }
+
+    let orderId;
+
+    // 非表示にしておいたフォームを表示
+    $('#paypal-acdc-form').css('display', '');
+    if(use3dsecure){
+      $(usableBrandId).hide();
+      $(usableBrandWoJcbId).show();
+    } else {
+      $(usableBrandWoJcbId).hide();
+      $(usableBrandId).show();
+    }
+
+    // EC-CUBE側で登録されているイベントのオーバーレイが邪魔になり3Dセキュアのフォームが触れられなくなる。イベントをOFFにする。
+    $(document).off('click', 'input[type="submit"], button[type="submit"]');
+
+    // upgrade pro をやっていないと常にfalseになる。
+    if (paypal.HostedFields.isEligible()) {
+
+      paypal.HostedFields.render({
+        createOrder: function () {
+          return createOrderRequest();
+        },
+        styles: {
+          '.invalid': {
+            'color': '#DE5D50'
+          }
+        },
+        fields: {
+          number: {
+            selector: "#card-number",
+            placeholder: ''
+          },
+          cvv: {
+            selector: "#cvv",
+            placeholder: ""
+          },
+          expirationDate: {
+            selector: "#expiration-date",
+            placeholder: "MM/YY"
+          }
+        }
+      }).then(function (cardFields) {
+        cardFields.on('cardTypeChange', function (event) {
+          if (event.cards.length === 1) {
+            if(use3dsecure === true && event.cards[0].type === 'jcb') {
+              alert('{{ 'paypal.shopping.acdc.error.jcb_error'|trans }}');
+              cardFields.clear('number');
+            }
+          }
+        });
+
+        $(confirmButtonClass).on('click', function(event) {
+          event.preventDefault();
+          $(confirmButtonClass).prop('disabled', true);
+          $(messageTagClass).hide();
+
+          // vault を使う場合はカードフォームのバリデーションを走らせたくないのでオーダー作成のみする
+          if (getUseVaultPayment()) {
+            createOrderRequest()
+              .then(function() {
+                // クレジットカード情報が正常に入力された
+                displaySuccessValidateCard();
+                $('#shopping-form').submit();
+              }).catch(function(e) {
+                // 不明なエラー
+                console.log(e);
+                $(messageErrorId).show();
+                $(confirmButtonClass).prop('disabled', false);
+              });
+          } else {
+            let param = {};
+            param.vault = getSaveVault();
+            if (use3dsecure) {
+              param.contingencies = ['SCA_ALWAYS'];
+            }
+            cardFields.submit(param).then(function (payload)
+            {
+              // 3Dセキュアが通ったかどうかのバリデーションはサーバサイドに統一する
+              console.log(payload);
+              displaySuccessValidateCard();
+              $('#shopping-form').submit();
+            }).catch(function (e) {
+              console.log(e);
+              $(confirmButtonClass).prop('disabled', false);
+              $(messageTagClass).hide();
+              if (e?.name == 'INVALID_REQUEST' || e?.name == 'VALIDATION_ERROR') {
+                // カード情報に誤りがある
+                $(messageCardErrorId).show();
+              } else {
+                // 不明のエラー
+                $(messageErrorId).show();
+              }
+            });
+          }
+        });
+        // vault 情報が取得できていたらカード選択UIを表示
+        if (vaultId !== '') {
+          $(useVaultRadioButtonName).change(function () {
+            let val = $(useVaultRadioButtonName + ':checked').val();
+            if (val === 'use-vault') {
+              $(messageTagClass).hide();
+              $(paypalCardNumberContainerId).css(disabledContainerProps);
+              $(paypalExpirationDateContainerId).css(disabledContainerProps);
+              $(paypalCvvContainerId).css(disabledContainerProps);
+              $(saveVaultCheckbox).prop('checked', false).prop('disabled', true);
+            } else if (val === 'other-card') {
+              $(paypalCardNumberContainerId).css(enabledContainerProps);
+              $(paypalExpirationDateContainerId).css(enabledContainerProps);
+              $(paypalCvvContainerId).css(enabledContainerProps);
+              $(saveVaultCheckbox).prop('disabled', false);
+            }
+          });
+          $(useVaultRadioButtonName).val(['use-vault']).change();
+        }
+
+      });
+    } else {
+      // PayPalの設定が足りておらずこの決済手段が使えない。
+      // 参考：https://developer.paypal.com/docs/business/checkout/advanced-card-payments/#how-it-works
+      document.querySelector("#card-form").style = 'display: none';
+      alert('PayPalの設定で対象の決済手段が有効になっていません。サイト管理者にお問い合わせください。');
+    }
+
+    /**
+     * オーダー作成をリクエストしオーダーIDを得る
+     */
+    function createOrderRequest()
+    {
+      return fetch("{{ PayPalCheckout.acdc_api_url }}", {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: Object.assign(
+          // EC-CUBE側で設定しているCSRFトークンヘッダーを付与する
+          $.ajaxSettings.headers,
+          {
+            'Content-Type': 'application/json'
+          }
+        ),
+        // vault を利用する場合は ID を渡す
+        body: JSON.stringify(getVaultData())
+      }).then(function(res) {
+        return res.json();
+      }).then(function(orderData) {
+        orderId = orderData.id;
+        return orderId;
+      }).catch(function(e){
+        return Promise.reject(new Error(e));
+      });
+    }
+
+    /**
+     * クレジットカードが正常に入力された場合の表示をする
+     */
+    function displaySuccessValidateCard()
+    {
+      $(paypalCardNumberContainerId).css(disabledContainerProps);
+      $(paypalExpirationDateContainerId).css(disabledContainerProps);
+      $(paypalCvvContainerId).css(disabledContainerProps);
+      $(useVaultRadioButtonName).prop('disabled', true);
+      $(saveVaultCheckbox).prop('disabled', true);
+      $(submitButtonId).prop('disabled', true);
+      $(messageTagClass).hide();
+    }
+
+    /**
+     * vault を利用して決済するか否かを返す
+     */
+    function getUseVaultPayment()
+    {
+      if ($(useVaultRadioButtonName).length) {
+        return $(useVaultRadioButtonName + ':checked').val() === 'use-vault';
+      }
+      return false;
+    }
+
+    /**
+     * vault に保存するか否かを返す
+     */
+    function getSaveVault()
+    {
+      if ($(saveVaultCheckbox).length === 1) {
+        return $(saveVaultCheckbox).prop('checked');
+      }
+      return false;
+    }
+
+    /**
+     * vault を利用するための情報を返す
+     */
+    function getVaultData()
+    {
+      let result = {};
+      if ($(useVaultRadioButtonName + ':checked').val() === 'use-vault') {
+        result.vaultId = vaultId;
+      }
+      result.saveVault = getSaveVault();
+      return result;
+    }
+  });
+</script>
