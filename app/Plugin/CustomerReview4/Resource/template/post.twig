@@ -1,0 +1,180 @@
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'registration_page' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% block stylesheet %}
+    <style type="text/css">
+        .ec-borderedDefsReview {
+            width: 100%;
+            border-top: 1px dotted #ccc;
+            margin-bottom: 16px; }
+        .ec-borderedDefsReview dl {
+            display: -ms-flexbox;
+            display: flex;
+            border-bottom: 1px dotted #ccc;
+            margin: 0;
+            padding: 10px 0 0;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap; }
+        .ec-borderedDefsReview dt, .ec-borderedDefsReview dd {
+            padding: 0; }
+        .ec-borderedDefsReview dt {
+            font-weight: normal;
+            width: 100%;
+            padding-top: 0; }
+        .ec-borderedDefsReview dd {
+            padding: 0;
+            width: 100%;
+            line-height: 1.2; }
+        .ec-borderedDefsReview p {
+            line-height: 1.2; }
+
+    @media only screen and (min-width: 768px){
+        .ec-borderedDefsReview dl{
+            -ms-flex-wrap: nowrap;
+                flex-wrap: nowrap;
+            padding: 15px 0 4px;
+        }
+        .ec-borderedDefsReview dt{
+            line-height: 1.2;
+            width: 30%;
+        }
+        .ec-borderedDefsReview dd{
+            width: 70%;
+            line-height: 1.2;
+        }
+    }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-registerRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'レビューを投稿'|trans }}</h1>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <div class="ec-imageGrid">
+                    <div class="ec-imageGrid__img">
+                        <img src="{{ asset(Product.main_list_image|no_image_product, 'save_image') }}">
+                    </div>
+                    <div class="ec-imageGrid__content">
+                        <a href="{{ url('product_detail', {'id': Product.id}) }}">{{ Product.name }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ec-off1Grid">
+        {% if is_granted('ROLE_USER') or review_config.isLoginOnly == false %}
+            <div class="ec-off1Grid__cell">
+                <form method="post" action="{{ url('review_post', {'id': Product.id}) }}" novalidate class="h-adr">
+                {{ form_widget(form._token) }}
+                    <div class="ec-borderedDefsReview">
+                        {% if review_config.isGrantPointPurchase and is_granted('ROLE_USER') %}
+                        <dl>
+                            <dt></dt>
+                            <dd>
+                                <p>商品を受け取っていない場合ポイントが付与されません。</p>
+                                <p><a href="{{ url('mypage') }}">{{ 'ご注文履歴'|trans }}</a>から商品が「発送済み」になっていることを確認してください。</p>
+                            </dd>
+                        </dl>
+                        {% endif %}
+                        {% if review_config.isLoginOnly == false and review_config.getGrantPoint > 0 %}
+                        <dl>
+                            <dt>
+                                <label class="ec-label">ログイン状態</label>
+                            </dt>
+                            <dd>
+                            {% if is_granted('ROLE_USER') %}
+                                <div class="ec-font-bold">
+                                    <p>ログインしています。</p>
+                                </div>
+                            {% else %}
+                                <div class="ec-color-red ec-font-bold">
+                                    <p>ログインしていません。</p>
+                                    <p>ログインされない場合は投稿してもポイントが付与されません。</p>
+                                </div>
+                            {% endif %}
+                            </dd>
+                        </dl>
+                        {% endif %}
+                        <dl>
+                            <dt>
+                                {{ form_label(form.reviewer_name, 'レビュアー名', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                <div class="ec-input{{ has_errors(form.reviewer_name) ? ' error' }}">
+                                    {{ form_widget(form.reviewer_name) }}
+                                    {{ form_errors(form.reviewer_name) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.recommend_level, 'お勧め度', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                <div class="ec-select{{ has_errors(form.recommend_level) ? ' error' }}">
+                                    {{ form_widget(form.recommend_level) }}
+                                    {{ form_errors(form.recommend_level) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.title, 'タイトル', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                <div class="ec-input{{ has_errors(form.title) ? ' error' }}">
+                                    {{ form_widget(form.title) }}
+                                    {{ form_errors(form.title) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.comment, 'コメント', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                <div class="ec-input{{ has_errors(form.comment) ? ' error' }}">
+                                    {{ form_widget(form.comment, {'attr': {'rows': '6'}}) }}
+                                    {{ form_errors(form.comment) }}
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="ec-RegisterRole__actions">
+                        <div class="ec-off1Grid">
+                            <div class="ec-off1Grid__cell">
+                                <button type="submit" class="ec-blockBtn--action" name="mode" value="confirm">{{ '確認ページへ'|trans }}
+                                </button>
+                            </div>
+                            <div class="ec-off1Grid__cell">
+                                <a class="ec-blockBtn--cancel" href="{{ url('product_detail', {'id': Product.id}) }}">{{ '商品ページへ'|trans }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% else %}
+            <div class="ec-off1Grid__cell">
+                <div class="ec-borderedDefs">
+                    <div class="ec-reportHeading">
+                        <h2>投稿には<a href="{{ url('mypage_login') }}"><span class="ec-headerNav__itemLink">{{ 'ログイン'|trans }}</span></a>が必要です。</h2>
+                    </div>
+                </div>
+                </br>
+                <div class="ec-RegisterRole__actions">
+                    <div class="ec-off4Grid">
+                        <div class="ec-off4Grid__cell">
+                            <a class="ec-blockBtn--cancel" href="{{ url('product_detail', {'id': Product.id}) }}">{{ '商品ページへ'|trans }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}

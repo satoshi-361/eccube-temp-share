@@ -1,0 +1,296 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['store', 'plugin', 'plugin_list'] %}
+
+{% block title %}{{ 'paypal.admin.config.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'admin.store'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}{% endblock stylesheet %}
+
+{% block javascript %}
+<script>
+//              if (document.getElementById("config_use_sandbox").checked) {
+//                  document.getElementById("pcplink").classList.add("disabled")
+//              } else {
+//                  // チェックボックスがOFFのときの処理
+//              }
+var done = false
+$(function() {
+    if($('#config_use_sandbox').prop('checked')){
+        $('#pcplink').css('pointer-events', 'none')
+    } else {
+        $('#pcplink').css('pointer-events', '')
+    }
+    if('{{ actionUrl }}' == '') {
+        $('#pcplink').css('pointer-events', 'none')
+    }
+    if(done) {
+        $('#pcplink').css('pointer-events', 'none')
+    }
+
+    $('#config_use_sandbox').on('change', function() {
+        if($('#config_use_sandbox').prop('checked')){
+            $('#pcplink').css('pointer-events', 'none')
+        } else {
+            $('#pcplink').css('pointer-events', '')
+        }
+        if('{{ actionUrl }}' == '') {
+            $('#pcplink').css('pointer-events', 'none')
+        }
+        if(done) {
+            $('#pcplink').css('pointer-events', 'none')
+        }
+
+    });
+});
+</script>
+{% endblock javascript %}
+
+{% block main %}
+  <form name="pay_pal_checkout_admin_config_form" method="POST" action="{{ url('pay_pal_checkout_admin_config_submit') }}">
+    {{ form_widget(form._token) }}
+    <div class="card rounded border-0 mb-4">
+      <div class="card-header"><span>{{ 'paypal.admin.config.header3'|trans }}</span></div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <iframe src="https://www.ec-cube.net/paypal_info/set01.php"
+                    style="width: 564px; height: 320px; margin-bottom: 18px;"
+                    scrolling="no"
+                    marginwidth="0"
+                    marginheight="0"
+                    frameborder="0">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="c-contentsArea__cols">
+      <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header"><span>{{ 'paypal.admin.config.header'|trans }}</span></div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.client_id'|trans }}</span>
+                  <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.client_id) }}
+                  {{ form_errors(form.client_id) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.client_secret'|trans }}</span>
+                  <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.client_secret) }}
+                  {{ form_errors(form.client_secret) }}
+                </div>
+              </div>
+              <script>
+                  function onboardedCallback(authCode, sharedId) {
+                      if(done) {
+                          console.log('alrady done')
+                          return
+                      }
+                      $('#pcplink').css('pointer-events', 'none')
+                      done = true
+                      fetch('{{ url("pay_pal_checkout_admin_login") }}', {
+                          method: 'POST',
+                          headers: {
+                              'content-type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                              authCode: authCode,
+                              sharedId: sharedId
+                          })
+                      }).then(function(res) {
+                          return res.json();
+                      }).then(function(details) {
+//                          console.log(details)
+                          document.getElementById( "config_client_id" ).value = details.result.ClientId
+                          document.getElementById( "config_client_secret" ).value = details.result.ClientSecret
+                      }).catch(function(err) {
+                          alert('Client ID/Secretの取得に失敗しました。')
+                      })
+                  }
+              </script>
+              <div class="row">
+                <span>{{ 'paypal.admin.config.form.label_production'|trans }}</span>
+              </div>
+              <div class="row" style="margin-bottom:15px; padding-left: 15px;">
+                <span>
+                  <a id="pcplink" class="btn btn-ec-conversion px-5 ladda-button" target="_blank" data-paypal-onboard-complete="onboardedCallback" href="{{ actionUrl }}&displayMode=minibrowser" data-paypal-button="true">{{ 'paypal.admin.config.form.label_ISU_button'|trans }}</a>
+                  {%- if actionUrl != '' -%}
+                     {{ 'paypal.admin.config.form.description_note'|trans }}
+                  {%- else -%}
+                      {{ 'paypal.admin.config.form.description_error'|trans }}
+                  {%- endif -%}
+                </span>
+                <script id="paypal-js" src="https://www.paypal.com/webapps/merchantboarding/js/lib/lightbox/partner.js"></script>
+              </div>
+              <div class="row" style="margin-bottom:25px; padding-left: 15px; display:inline;">
+                <span>{{ 'paypal.admin.config.form.description_prod1'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_prod2'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_prod3'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_prod4'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_prod5_1'|trans }}<a target=_blank href="https://www.paypal.com/jp/webapps/mpp/merchant/setup-business-account">https://www.paypal.com/jp/webapps/mpp/merchant/setup-business-account</a>{{ 'paypal.admin.config.form.description_prod5_2'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_prod6'|trans }}</span>
+                <br/>
+              </div>
+              <div class="row" style="margin-top:25px;">
+                  <span>{{ 'paypal.admin.config.form.label_sandbox'|trans }}</span>
+              </div>
+              <div class="row" style="margin-bottom:15px; padding-left: 15px;">
+                <span>{{ 'paypal.admin.config.form.description'|trans }}</span>
+              </div>
+              <div class="row" style="margin-bottom:25px;">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.use_sandbox'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                    {{ form_widget(form.use_sandbox) }}
+                    {{ form_errors(form.use_sandbox) }}
+                </div>
+              </div>
+              <div class="row">
+                <span>{{ 'paypal.admin.config.form.label_acdc'|trans }}</span>
+              </div>
+              <div class="row" style="margin-bottom:25px; padding-left: 15px; display:inline;">
+                <span>{{ 'paypal.admin.config.form.description_acdc1'|trans }}</span><br/>
+                <span style="padding-left: 15px; display:inline;"><a target=_blank href="https://www.paypal.com/jp/webapps/mpp/ucc-sales-form">https://www.paypal.com/jp/webapps/mpp/ucc-sales-form</a></span><br/>
+                <span>{{ 'paypal.admin.config.form.description_acdc2'|trans }}</span><br/>
+                <span>{{ 'paypal.admin.config.form.description_acdc3'|trans }}</span><br/>
+                <br/>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.use_vault'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.use_vault) }}
+                  {{ form_errors(form.use_vault) }}
+                </div>
+              </div>
+              <div class="row" style="margin-bottom:25px;">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.use_3dsecure'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.use_3dsecure) }}
+                  {{ form_errors(form.use_3dsecure) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <div class="d-inline-block" data-tooltip="true" data-placement="top" title="" data-original-title="{{ 'paypal.admin.config.form.use_express_btn_tooltip'|trans }}">
+                    <span>{{ 'paypal.admin.config.form.use_express_btn'|trans }}</span>
+                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+                  </div>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.use_express_btn) }}
+                  {{ form_errors(form.use_express_btn) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <div class="d-inline-block" data-tooltip="true" data-placement="top" title="" data-original-title="{{ 'paypal.admin.config.form.paypal_logo_tooltip'|trans }}">
+                    <span class="card-title">{{ 'paypal.admin.config.form.paypal_logo'|trans }}</span>
+                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+                  </div>
+                </div>
+                <div class="col mb-2">
+                  <ul>
+                    {% for choice in form.paypal_logo %}
+                      <li>
+                        <input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" {% if choice.vars.checked %}checked{% endif %} />
+                        <label for="{{ choice.vars.id }}"><img src="{{ choice.vars.label }}" /></label>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                  {{ form_errors(form.paypal_logo) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <div class="d-inline-block" data-tooltip="true" data-placement="top" title="" data-original-title="{{ 'paypal.admin.config.form.payment_paypal_logo_tooltip'|trans }}">
+                    <span class="card-title">{{ 'paypal.admin.config.form.payment_paypal_logo'|trans }}</span>
+                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+                  </div>
+                </div>
+                <div class="col mb-2">
+                  <ul>
+                  {% for choice in form.payment_paypal_logo %}
+                    <li>
+                      <input type="radio" id="{{ choice.vars.id }}" name="{{ choice.vars.full_name }}" value="{{ choice.vars.value }}" {% if choice.vars.checked %}checked{% endif %} />
+                      <label for="{{ choice.vars.id }}"><img src="{{ choice.vars.label }}" /></label>
+                    </li>
+                  {% endfor %}
+                  </ul>
+                  {{ form_errors(form.payment_paypal_logo) }}
+                </div>
+              </div>
+            </div>
+          </div>
+          {#
+            プラグインの初期リリース(v1.0.0)には、定期決済は含めない
+            display: none を外したら有効になる
+          #}
+          <div class="card rounded border-0 mb-4" style="display: none">
+            <div class="card-header"><span>{{ 'paypal.admin.config.header2'|trans }}</span></div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.reference_day'|trans }}</span>
+                  <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.reference_day) }}
+                  {{ form_errors(form.reference_day) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <span>{{ 'paypal.admin.config.form.cut_off_day'|trans }}</span>
+                  <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.cut_off_day) }}
+                  {{ form_errors(form.cut_off_day) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="c-conversionArea">
+      <div class="c-conversionArea__container">
+        <div class="row justify-content-between align-items-center">
+          <div class="col-6">
+            <div class="c-conversionArea__leftBlockItem">
+              <a class="c-beseLink" href="{{ url('admin_store_plugin') }}">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                <span>{{ 'paypal.admin.config.back'|trans }}</span>
+              </a>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="row align-items-center justify-content-end">
+              <div class="col-auto">
+                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'paypal.admin.config.form.submit'|trans }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

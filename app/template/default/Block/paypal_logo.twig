@@ -1,0 +1,14 @@
+{# PayPalCheckout がないとき(プラグインが無効化されているとき)は表示しない #}
+{% if PayPalCheckout is defined %}
+<table border="0" cellpadding="10" cellspacing="0" align="center">
+  <tr>
+    <td align="center">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="#paypal-logo" id="paypal-logo" onclick="javascript:window.open('https://www.paypal.com/jp/webapps/mpp/logo/about','olcwhatispaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=700');"><img src="{{ PayPalCheckout.paypal_logo }}" border="0" alt="ペイパル｜VISA, Mastercard, JCB, American Express, Union Pay, 銀行"></a>
+    </td>
+  </tr>
+</table>
+{% endif %}

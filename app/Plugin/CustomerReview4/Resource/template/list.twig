@@ -1,0 +1,159 @@
+{% extends 'default_frame.twig' %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function changeOrderBy(orderby) {
+            $('#orderby').val(orderby);
+            $('#pageno').val(1);
+            $("#form1").submit();
+        }
+        function changeStar(star) {
+            $('#star').val(star);
+            $('#pageno').val(1);
+            $("#form1").submit();
+        }
+    </script>
+{% endblock %}
+
+{% block main %}
+{% include('@CustomerReview4/Block/customer_review4_recommend_css.twig') %}
+{% import('@CustomerReview4/Block/customer_review4_recommend_macro.twig') as recommend_macro %}
+{% set review_list = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal').getRecommend(Product.id) %}
+{% set reviewer_total = 0 %}
+{% set review_total_point = 0 %}
+{% set count = 5 %}
+{% for i in review_list %}
+    {% set reviewer_total = reviewer_total + i %}
+    {% set review_total_point = review_total_point + i * count %}
+    {% set count = count - 1 %}
+{% endfor %}
+{% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+
+<form name="form1" id="form1" method="get" action="?">
+    {% set orderby_id = 1 %}
+    {% set star_id = 0 %}
+    {% for item in search_form %}
+        <input type="hidden" id="{{ item.vars.id }}"
+               name="{{ item.vars.full_name }}"
+               {% if item.vars.value is not empty %}value="{{ item.vars.value }}" {% endif %}/>
+        {% if item.vars.id == 'orderby' %}
+            {% if item.vars.value is not empty %}{% set orderby_id = item.vars.value %}{% endif %}
+        {% elseif item.vars.id == 'star' %}
+            {% if item.vars.value is not empty %}{% set star_id = item.vars.value %}{% endif %}
+        {% endif %}
+    {% endfor %}
+</form>
+<div style="margin: 0px 20px;">
+    <div class="ec-off1Grid__cell">
+        <div class="ec-imageGrid review-productLayout">
+            <div class="ec-imageGrid__img" style="vertical-align: middle;">
+                <img src="{{ asset(Product.main_list_image|no_image_product, 'save_image') }}">
+            </div>
+            <div class="ec-imageGrid__content">
+                <a href="{{ url('product_detail', {'id': Product.id}) }}">{{ Product.name }}</a>
+            </div>
+            <div class="ec-imageGrid__content review-layoutRole list">
+                <div class="reviewAvarage">レビュー評価&nbsp;&nbsp;{{ recommend_macro.review( review_point, reviewer_total ) }}</div>
+                {% set count = 5 %}
+                {% for i in review_list %}
+                <div class="review-layoutGauge">
+                    <div class="reviewReccomendLevel">
+                        {% if i %}
+                            <a href="javascript: void(0);" onclick="changeStar({{count}})">★{{count}}</a>
+                        {% else %}
+                            ★{{count}}
+                        {% endif %}
+                        &nbsp;
+                    </div>
+                    <div class="review-gaugeWrap">
+                        {% if reviewer_total > 0 and (i * 100 / reviewer_total)|round > 0 %}
+                            <div class="gaugeMain" style="width: {{ (i * 100 / reviewer_total)|round }}%;"></div>
+                        {% endif %}
+                    </div>
+                    <div class="reviewReccomendReviewer">
+                        &nbsp;
+                        {% if i %}
+                            <a href="javascript: void(0);" onclick="changeStar({{count}})">{{ i }}件</a>
+                        {% else %}
+                            {{ i }}件
+                        {% endif %}
+                    </div>
+                </div>
+                    {% set count = count - 1 %}
+                {% endfor %}
+                <div class="reviewAllView list">
+                    {% if reviewer_total %}
+                        <a href="javascript: void(0);" onclick="changeStar()">全{{ reviewer_total }}件のレビューを見る</a>
+                    {% else %}
+                        レビューはまだありません。
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    {% if pagination.totalItemCount == 0 %}
+        <div class="review-sortLayout">
+            <div class="reviewSort">
+                <span><strong>レビューはまだありません。</strong></span>
+            </div>
+            <div class="reviewPost">
+                <a class="ec-inlineBtn--action" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="review-sortLayout">
+            <div class="reviewSort">
+                <span><strong>{{ pagination.totalItemCount }}</strong>件の{% if star_id != 0 %}<strong>★{{ star_id }}</strong>{% endif %}レビューがあります</span>
+            </div>
+            <div class="reviewSort">
+                <span>投稿日の</span>{% if orderby_id == 1 %}<strong>新しい順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(1)">新しい順</a>{% endif %}/{% if orderby_id == 2 %}<strong>古い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(2)">古い順</a>{% endif %}
+                {% if star_id == 0 %}
+                <span>評価の</span>{% if orderby_id == 3 %}<strong>高い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(3)">高い順</a>{% endif %}/{% if orderby_id == 4 %}<strong>低い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(4)">低い順</a>{% endif %}
+                {% endif %}
+            </div>
+            <div class="reviewPost">
+                <a class="ec-inlineBtn--action" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a>
+            </div>
+        </div>
+        <div class="ec-pagerRole">
+            {% include "@CustomerReview4/Block/customer_review4_pager.twig" with {'pages': pagination.paginationData, 'routes' : 'review_list', 'query_params' : app.request.query.all|merge({'id': Product.id})} %}
+        </div>
+
+        {% for Review in pagination %}
+            <div class="review-commentLayout">
+                <div class="reviewTitle">
+                    <span class="star">{% for i in 1..5 %}{% if i <= Review.recommend_level %}<i class="fas fa-star reviewList star"></i>{% else %}<i class="far fa-star reviewList star"></i>{% endif %}{% endfor %}</span>
+                    <strong>&nbsp;{{ Review.title }}</strong>
+                </div>
+                <div class="reviewAuthor">
+                    <span>{{ Review.reviewer_name }}さん</span>
+                    <p><span>{{ Review.create_date|date("Y/m/d") }}</span></p>
+                    {% if Review.purchase and review_config.isPurchaseMark %}<p><span style="color:#ee6400;">購入済み</span></p>{% endif %}
+                </div>
+                <div class="reviewComment">
+                    {{ Review.comment|nl2br }}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="review-sortLayout">
+            <div class="reviewSort">
+                <span><strong>{{ pagination.totalItemCount }}</strong>件の{% if star_id != 0 %}<strong>★{{ star_id }}</strong>{% endif %}レビューがあります</span>
+            </div>
+            <div class="reviewSort">
+                <span>投稿日の</span>{% if orderby_id == 1 %}<strong>新しい順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(1)">新しい順</a>{% endif %}/{% if orderby_id == 2 %}<strong>古い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(2)">古い順</a>{% endif %}
+                {% if star_id == 0 %}
+                <span>評価の</span>{% if orderby_id == 3 %}<strong>高い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(3)">高い順</a>{% endif %}/{% if orderby_id == 4 %}<strong>低い順</strong>{% else %}<a href="javascript: void(0);" onclick="changeOrderBy(4)">低い順</a>{% endif %}
+                {% endif %}
+            </div>
+            <div class="reviewPost">
+                <a class="ec-inlineBtn--action" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a>
+            </div>
+        </div>
+        <div class="ec-pagerRole">
+            {% include "@CustomerReview4/Block/customer_review4_pager.twig" with {'pages': pagination.paginationData, 'routes' : 'review_list', 'query_params' : app.request.query.all|merge({'id': Product.id})} %}
+        </div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

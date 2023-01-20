@@ -1,0 +1,146 @@
+<div style="display: none;">
+  <div id="paypal-credit-card"
+       style="margin-left: 2rem; margin-top: 1.5rem; margin-bottom: 3rem;">
+    <p style="line-height: 1.8; font-size: 1.5rem; margin-bottom: 1rem;">
+      カードでも銀行口座からでも、IDとパスワードでかんたん・安全にお支払い。新規登録は無料です。</p>
+    <p style="line-height: 1.8; font-size: 1.5rem; margin-bottom: 2rem;">
+      <a href="#about-paypal"
+         style="color: #009cde; text-decoration: underline;"
+         onclick="window.open('https://www.paypal.com/jp/webapps/mpp/lp/about-paypal','olcwhatispaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=700');">
+        ペイパルについて
+      </a>
+    <table style="margin-left: 0;" border="0" cellpadding="10" cellspacing="0" align="center">
+      <tr>
+        <td align="center">
+          <a href="#"
+             onclick="window.open('https://www.paypal.com/jp/webapps/mpp/logo/about','olcwhatispaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=700');">
+            <img src="{{ PayPalCheckout.payment_banner_image_url }}" border="0"
+                 alt="ペイパル ｜VISA, Mastercard, JCB, American Express, Union Pay, 銀行">
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="paypal-bank-transfer"
+       style="margin-left: 2rem; margin-top: 1.5rem">
+    <p style="line-height: 1.8; font-size: 1.5rem;">銀行口座からのお支払いでも、一度設定すれば素早くかんたん。新規登録・振込手数料も無料です。</p>
+    <p style="line-height: 1.8; font-size: 1.5rem; margin-bottom: 1rem;"> ※ご利用可能な銀行は、みずほ銀行、三井住友銀行、三菱UFJ銀行、ゆうちょ銀行、りそな銀行・埼玉りそな銀行です。</p>
+    <p style="line-height: 1.8; font-size: 1.5rem; margin-bottom: 1rem;">
+      <a href="#set-up-bank"
+         style="color: #009cde; text-decoration: underline;"
+         onclick="window.open('https://www.paypal.com/jp/webapps/mpp/lp/set-up-bank','olcwhatispaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=900, height=700');">
+        銀行口座のご利用について
+      </a>
+  </div>
+  <div id="paypal-inline-guest"
+       style="margin-left: 2rem; margin-top: 1.5rem">
+    <p class="paypal-inline-guest-message" id="paypal-inline-guest-message-before-input"  style="display: none; line-height: 1.8; font-size: 1.5rem; margin-top: 15px;">
+      「デビットカードまたはクレジットカード」ボタンをクリックしてクレジットカード情報を入力後、「続行」ボタンをクリックください。
+    </p>
+    <p class="paypal-inline-guest-message" id="paypal-inline-guest-message-after-input"  style="display: none; line-height: 1.8; font-size: 1.5rem; margin-top: 15px;">
+      クレジットカード情報は正常に入力されました。「確認する」ボタンをクリックして確認画面にお進みください。
+    </p>
+    <p class="paypal-inline-guest-message" id="paypal-inline-guest-message-error"  style="display: none; line-height: 1.8; font-size: 1.5rem; margin-top: 15px;">
+      エラーが発生しました。再度ページを読み込み直してください。
+    </p>
+    <div id="paypal-button-container" style="margin-top: 15px"></div>
+  </div>
+
+  {# 本物決済 #}
+  <div id="paypal-acdc" style="margin-left: 2rem; margin-top: 1.5rem">
+
+    <p class="paypal-acdc-message" id="paypal-acdc-message-error"  style="display: none; line-height: 1.8; margin: 15px 0; font-weight: bold; color: #DE5D50;">
+      {{ 'paypal.shopping.acdc.error.unknown'|trans }}
+    </p>
+    <div id="paypal-acdc-form" style="display: none">
+      {% if PayPalCheckout.acdcShowVault is defined and PayPalCheckout.acdcShowVault and PayPalCheckout.acdcVault.id is defined %}
+      <div>
+        <div>
+          <input type="radio" name="paypal-acdc-choose-card" id="paypal-acdc-use-vault" value="use-vault">
+          <label for="paypal-acdc-use-vault">{{ 'paypal.shopping.acdc.use_vault'|trans }}</label>
+        </div>
+        <p style="padding: 10px 0 20px 30px">
+          {{ PayPalCheckout.acdcVault.source.card.brand }}
+          {{ 'paypal.shopping.acdc.card_last_digits'|trans }}: {{ PayPalCheckout.acdcVault.source.card.last_digits }}
+        </p>
+      </div>
+      <div>
+        <input type="radio" name="paypal-acdc-choose-card" id="paypal-acdc-other-card" value="other-card">
+        <label for="paypal-acdc-other-card">{{ 'paypal.shopping.acdc.user_other_card'|trans }}</label>
+      </div>
+      {% endif %}
+
+      <p class="paypal-acdc-usable_brand" id="paypal-acdc-usable_brand"  style="display: none; line-height: 1.8; font-size: 1.5rem; margin-top: 15px;">
+        {{ 'paypal.shopping.acdc.usable_card_brand'|trans }}
+      </p>
+      <p class="paypal-acdc-usable_brand" id="paypal-acdc-usable_brand_wo_jcb"  style="display: none; line-height: 1.8; font-size: 1.5rem; margin-top: 15px;">
+        {{ 'paypal.shopping.acdc.usable_card_brand_wo_jcb'|trans }}
+      </p>
+      <div class="card_container">
+        <p class="paypal-acdc-message" id="paypal-acdc-message-card-error"  style="display: none; line-height: 1.8; margin-bottom: 15px; font-weight: bold; color: #DE5D50;">
+          {{ 'paypal.shopping.acdc.error.invalid_card'|trans }}
+        </p>
+        <form id="card-form">
+          <label for="card-number">{{ 'paypal.shopping.acdc.card_number'|trans }}</label><div id="card-number" class="card_field"></div>
+          <div>
+            <label for="expiration-date">{{ 'paypal.shopping.acdc.card_expiration_date'|trans }}</label>
+            <div id="expiration-date" class="card_field"></div>
+          </div>
+          <div>
+            <label for="cvv">{{ 'paypal.shopping.acdc.cvv'|trans }}</label><div id="cvv" class="card_field"></div>
+          </div>
+          {% if PayPalCheckout.acdcShowVault is defined and PayPalCheckout.acdcShowVault %}
+          <div id="paypal-acdc-save-vault-container">
+            <input type="checkbox" id="paypal-acdc-save-vault" name="paypal-acdc-save-vault">
+            <label for="paypal-acdc-save-vault">{{ 'paypal.shopping.acdc.save_vault'|trans }}</label>
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="paypal-credit-card-html">
+    <img id="paypal-credit-card-image" style="width: auto; height: 2.5rem;"
+         src="{{ PayPalCheckout.credit_card_appearance_base64 }}" alt="PayPal決済">
+  </div>
+  <div id="paypal-bank-transfer-html">
+    <span>かんたん銀行決済</span>
+    <img id="paypal-bank-transfer-image" style="width: auto; height: 2.5rem; margin-left: 1.5rem" src="{{ PayPalCheckout.credit_card_appearance_base64 }}" alt="かんたん銀行決済">
+  </div>
+  <div id="paypal-inline-guest-html">
+    <span>{{ PayPalCheckout.inline_guest_label }}</span>
+  </div>
+  <div id="paypal-acdc-html">
+    <span>{{ PayPalCheckout.acdc_label }}</span>
+  </div>
+</div>
+
+<script lang="js">
+  $(function () {
+    var creditCardId = "{{ PayPalCheckout.credit_card_id }}";
+    var bankTransferId = "{{ PayPalCheckout.bank_transfer_id }}";
+    var inlineGuestId = "{{ PayPalCheckout.inline_guest_id }}";
+    var acdcId = "{{ PayPalCheckout.acdc_id }}";
+
+    $(creditCardId).parent().find("label")
+      .empty()
+      .append($('#paypal-credit-card-html').html())
+      .after($('#paypal-credit-card'));
+
+    $(bankTransferId).parent().find("label")
+      .empty()
+      .append($('#paypal-bank-transfer-html').html())
+      .after($('#paypal-bank-transfer'));
+
+    $(inlineGuestId).parent().find("label")
+      .empty()
+      .append($('#paypal-inline-guest-html').html())
+      .after($('#paypal-inline-guest'));
+
+    $(acdcId).parent().find("label")
+      .empty()
+      .append($('#paypal-acdc-html').html())
+      .after($('#paypal-acdc'));
+  });
+</script>

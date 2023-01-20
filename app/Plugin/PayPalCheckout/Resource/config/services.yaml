@@ -1,0 +1,32 @@
+parameters:
+  paypal.sdk.url: 'https://www.paypal.com/sdk/js'
+  paypal.currency: JPY
+  paypal.locale: ja_JP
+  paypal.debug: false
+  paypal.integration-date: '2019-07-23'
+  paypal.seller_nonce: '1c0403fe739cb74efae8cdcbe0fdf6d0eaf8ae58295e68e2807817cf32ee2cdb'
+  paypal.partnerid: 'K8FJZPL7XLBU2'
+  paypal.ci: 'AbAOAbBxyJUe3sLmN9S42_6FeRC07x5_pjEZi5rJj2q4R8KBzMGh16TesRwrRtz2DfcqXoCXDUGB3N4H'
+  paypal.cs: 'ENUp0Y2AdRHMivB7sGLGlXbGSXdz9-d1ZxCYjTL5wKZ3JE5c_mjWydXcQm7YPcvZXmistifWye6dEZC7'
+  paypal.paypal_express_payment_paypal_logo_1: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/203x80_b.png'
+  paypal.paypal_express_payment_paypal_logo_2: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/319x110_b.png'
+  paypal.paypal_express_payment_paypal_logo_3: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/203x80_b-2.png'
+  paypal.paypal_express_paypal_logo_1: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/203x80_a.png'
+  paypal.paypal_express_paypal_logo_2: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/319x110_a.png'
+  paypal.paypal_express_paypal_logo_3: 'https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/jp/developer/148x139_a.png'
+
+monolog:
+  channels: ['PayPalCheckout']
+  handlers:
+    PayPalCheckout:
+      type: fingers_crossed
+      action_level: error
+      passthru_level: info
+      handler: PayPalCheckout_rotating_file
+      channels: ['PayPalCheckout']
+    PayPalCheckout_rotating_file:
+      type: rotating_file
+      max_files: 60
+      path: '%kernel.logs_dir%/%kernel.environment%/PayPalCheckout.log'
+      formatter: eccube.log.formatter.line
+      level: debug

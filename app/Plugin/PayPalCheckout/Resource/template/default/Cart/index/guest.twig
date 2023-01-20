@@ -1,0 +1,54 @@
+{#
+  ショッピングカートのPayPal(ショートカット)ボタン
+  ・非ログイン時
+#}
+<div class="d-none">
+  <div id="paypal-container">
+    <div id="paypal-button-container"></div>
+  </div>
+</div>
+<script src="{{ PayPalCheckout.widget_url }}"></script>
+<script>
+  $(function() {
+    $('#form_cart > div.ec-cartRole__actions > a.ec-blockBtn--action')
+      .first()
+      .after($("#paypal-container"));
+
+    window.paypal.Buttons({
+      commit: false,
+      style: {
+        layout: 'horizontal',
+        fundingicons: 'false',
+        tagline: false,
+        height: 55
+      },
+      createOrder: function() {
+        return new Promise(function(resolve) {
+          $.ajax({
+            type: 'POST',
+            url: "{{ PayPalCheckout.guest_paypal_shortcut_prepare_transaction_url }}"
+          }).then(function (data) {
+            resolve(data.result.id);
+          }).catch(function (err) {
+            throw new Error(err);
+          });
+        });
+      },
+      onApprove: function(data) {
+        loadingOverlay();
+        $.ajax({
+          type: 'POST',
+          url: "{{ PayPalCheckout.guest_paypal_order_url }}"
+        }).then(function (data) {
+          window.location.href = "{{ PayPalCheckout.next_page_url }}"
+        });
+      },
+      onCancel: function(data) {
+        console.log('onCancel', data);
+      },
+      onError: function(data) {
+        console.log('onError', data);
+      }
+    }).render('#paypal-button-container');
+  });
+</script>

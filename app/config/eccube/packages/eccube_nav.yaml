@@ -10,21 +10,21 @@ parameters:
                 product_edit:
                     name: admin.product.product_registration
                     url: admin_product_product_new
-                class_name:
-                    name: admin.product.class_management
-                    url: admin_product_class_name
+                # class_name:
+                #     name: admin.product.class_management
+                #     url: admin_product_class_name
                 class_category:
                     name: admin.product.category_management
                     url: admin_product_category
-                product_tag:
-                    name: admin.product.tag_management
-                    url: admin_product_tag
-                product_csv_import:
-                    name: admin.product.product_csv_upload
-                    url: admin_product_csv_import
-                category_csv_import:
-                    name: admin.product.category_csv_upload
-                    url: admin_product_category_csv_import
+                # product_tag:
+                #     name: admin.product.tag_management
+                #     url: admin_product_tag
+                # product_csv_import:
+                #     name: admin.product.product_csv_upload
+                #     url: admin_product_csv_import
+                # category_csv_import:
+                #     name: admin.product.category_csv_upload
+                #     url: admin_product_category_csv_import
         order:
             name: admin.order.order_management
             icon: fa-shopping-cart
@@ -35,9 +35,9 @@ parameters:
                 order_edit:
                     name: admin.order.order_registration
                     url: admin_order_new
-                shipping_csv_import:
-                    name: admin.order.shipping_csv_upload
-                    url: admin_shipping_csv_import
+                # shipping_csv_import:
+                #     name: admin.order.shipping_csv_upload
+                #     url: admin_shipping_csv_import
         customer:
             name: admin.customer.customer_management
             icon: fa-users
@@ -100,12 +100,12 @@ parameters:
                         shop_payment:
                             name: admin.setting.shop.payment_setting
                             url: admin_setting_shop_payment
-                        shop_delivery:
-                            name: admin.setting.shop.delivery_setting
-                            url: admin_setting_shop_delivery
-                        shop_tax:
-                            name: admin.setting.shop.tax_setting
-                            url: admin_setting_shop_tax
+                        # shop_delivery:
+                        #     name: admin.setting.shop.delivery_setting
+                        #     url: admin_setting_shop_delivery
+                        # shop_tax:
+                        #     name: admin.setting.shop.tax_setting
+                        #     url: admin_setting_shop_tax
                         shop_mail:
                             name: admin.setting.shop.mail_setting
                             url: admin_setting_shop_mail
@@ -155,15 +155,15 @@ parameters:
                         plugin_list:
                             name: admin.store.plugin.plugin_list
                             url: admin_store_plugin
-                template:
-                    name: admin.store.template
-                    children:
-                        template_list:
-                            name: admin.store.template.template_list
-                            url: admin_store_template
-                        template_install:
-                            name: admin.store.template.template_install
-                            url: admin_store_template_install
-                authentication_setting:
-                    name: admin.store.setting
-                    url: admin_store_authentication_setting
+                # template:
+                #     name: admin.store.template
+                #     children:
+                #         template_list:
+                #             name: admin.store.template.template_list
+                #             url: admin_store_template
+                #         template_install:
+                #             name: admin.store.template.template_install
+                #             url: admin_store_template_install
+                # authentication_setting:
+                #     name: admin.store.setting
+                #     url: admin_store_authentication_setting

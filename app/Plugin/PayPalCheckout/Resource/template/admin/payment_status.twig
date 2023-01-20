@@ -1,0 +1,122 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['order', 'paypal_admin_payment_status'] %}
+
+{% block title %}{{ 'paypal.admin.payment_status.title'|trans }}
+{% endblock %}
+
+{% block sub_title %}{{ 'paypal.admin.payment_status.sub_title'|trans }}
+{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+  <style type="text/css">
+    .datepicker-days th.dow:first-child,
+    .datepicker-days td:first-child {
+      color: #f00;
+    }
+
+    .datepicker-days th.dow:last-child,
+    .datepicker-days td:last-child {
+      color: #00f;
+    }
+  </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+{{ include('@admin/Order/confirmationModal_js.twig') }}
+{{ include('@PayPalCheckout/admin/payment_status_js.twig') }}
+{% endblock javascript %}
+
+{% block main %}
+  <div class="c-outsideBlock">
+    <div class="c-outsideBlock__contents">
+      <div class="row">
+        <div class="mb-4">
+          <div class="col-12">
+            {% if pagination %}
+              <span class="font-weight-bold ml-2">{{ 'paypal.admin.payment_status.search_result_count'|trans({ '%count%': pagination.totalItemCount }) }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+      <div class="c-primaryCol">
+        {% if pagination and pagination.totalItemCount %}
+          <form id="form_bulk" method="POST" action="">
+            <div class="card rounded border-0 mb-4">
+              <div class="card-body p-0">
+                <table class="table table-sm" id="search_result">
+                  <thead>
+                  <tr>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.payment_status.col_pay_status'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'paypal.admin.payment_status.col_payment_date'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.order.orderer'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center text-nowrap">{{ 'admin.common.payment_method'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.order.order_status'|trans }}</th>
+                    <th class="border-top-0 pt-2 pb-2 text-center">{{ 'admin.order.purchase_price'|trans }}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for Transaction in pagination %}
+                    {% set Order = Transaction.Order %}
+                    <tr>
+                      <td class="align-middle text-center">
+                        {{ Transaction.status_code }}
+                      </td>
+                      <td class="align-middle text-center">
+                        決済日時
+                      </td>
+                      <td class="align-middle text-left">
+                        <a class="action-edit" href="{{ url('admin_order_edit', { id : Order.id }) }}">{{ Order.order_no }}<br>{{ Order.name01 ~ Order.name02 }}<br>{{ Order.order_date|date_min }}</a>
+                      </td>
+                      <td class="align-middle text-center">
+                        {{ Order.payment_method }}
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="badge badge-ec-blue" style="background-color: #fff; color: {{ Order.OrderStatusColor }}; border-color: {{ Order.OrderStatusColor }}">{{ Order.OrderStatus }}</span>
+                      </td>
+                      <td class="align-middle text-right">
+                        {{ Order.payment_total|price }}<br>
+                        {{ Order.payment_date ? Order.payment_date|date_day : 'admin.order.not_payment'|trans }}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+                <div class="row justify-content-md-center mb-4"></div>
+              </div>
+              <div class="row justify-content-md-center mb-4">
+                <div class="navigation">
+                  <div class="row justify-content-md-center mb-4 pb-4">
+                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'paypal_admin_payment_status_page' } %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        {% elseif has_errors %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_invalid_condition'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+              <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

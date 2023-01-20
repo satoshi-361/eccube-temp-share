@@ -1,0 +1,8 @@
+<script lang="js">
+  $(function() {
+    // 2重クリック対策
+    $('#shopping-form button.ec-blockBtn--action').click(function (e) {
+      $(this).css('pointer-events', 'none');
+    });
+  });
+</script>

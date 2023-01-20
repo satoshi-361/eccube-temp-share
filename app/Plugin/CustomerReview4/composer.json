@@ -1,0 +1,1 @@
+{"name":"ec-cube\/CustomerReview4","version":"1.0.1","description":"\u304a\u5ba2\u69d8\u306e\u58f0\u30d7\u30e9\u30b0\u30a4\u30f3 ECCUBE4\u7528","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6"},"extra":{"code":"CustomerReview4"}}

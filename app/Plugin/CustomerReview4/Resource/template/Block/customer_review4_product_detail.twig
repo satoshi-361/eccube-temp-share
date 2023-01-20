@@ -1,0 +1,75 @@
+{% include('@CustomerReview4/Block/customer_review4_recommend_css.twig') %}
+{% import('@CustomerReview4/Block/customer_review4_recommend_macro.twig') as recommend_macro %}
+
+{% set review_list = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal').getRecommend(Product.id) %}
+{% set reviewer_total = 0 %}
+{% set review_total_point = 0 %}
+{% set count = 5 %}
+{% for i in review_list %}
+    {% set reviewer_total = reviewer_total + i %}
+    {% set review_total_point = review_total_point + i * count %}
+    {% set count = count - 1 %}
+{% endfor %}
+{% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+
+<div id="plg_customer_review" class="review-layoutRole">
+<div class="reviewAvarage">レビュー評価&nbsp;&nbsp;{{ recommend_macro.review( review_point, reviewer_total ) }}</div>
+{% set count = 5 %}
+{% for i in review_list %}
+<div class="review-layoutGauge">
+    <div class="reviewReccomendLevel">
+        {% if i %}
+            <a href="{{ url('review_list', {'id': Product.id}) }}?star={{count}}">★{{count}}</a>
+        {% else %}
+            ★{{count}}
+        {% endif %}
+        &nbsp;
+    </div>
+    <div class="review-gaugeWrap">
+        {% if reviewer_total > 0 and (i * 100 / reviewer_total)|round > 0 %}
+            <div class="gaugeMain" style="width: {{ (i * 100 / reviewer_total)|round }}%;"></div>
+        {% endif %}
+    </div>
+    <div class="reviewReccomendReviewer">
+        &nbsp;
+        {% if i %}
+            <a href="{{ url('review_list', {'id': Product.id}) }}?star={{count}}">{{ i }}件</a>
+        {% else %}
+            {{ i }}件
+        {% endif %}
+    </div>
+</div>
+    {% set count = count - 1 %}
+{% endfor %}
+<div class="reviewAllView">
+    {% if reviewer_total %}
+        <a href="{{ url('review_list', {'id': Product.id}) }}">全{{ reviewer_total }}件のレビューを見る</a>
+    {% else %}
+        レビューはまだありません。
+    {% endif %}
+</div>
+<div class="reviewPost"><a class="ec-inlineBtn--action review-detail_inlineBtn" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a></div>
+</div>
+
+<div id="plg_customer_review{{Product.id}}" class="review-layoutRole product_detail">
+<div>{{ recommend_macro.review( review_point, reviewer_total, Product.id ) }}</div>
+{#<div class="reviewSimplePost"><a class="ec-inlineBtn--action review-detail_inlineBtn" href="{{ url('review_post', {'id': Product.id}) }}">{{ 'レビューを投稿する'|trans }}</a></div>#}
+</div>
+
+<script>
+  $(function () {
+    if ( $('#plg_customer_review_anchor_full').length) {
+        $('#plg_customer_review').insertAfter($('#plg_customer_review_anchor_full'));
+        $('#plg_customer_review{{Product.id}}').hide();
+    } else if ( $('#plg_customer_review_anchor_simple').length) {
+        $('#plg_customer_review{{Product.id}}').insertAfter($('#plg_customer_review_anchor_simple'));
+        $('#plg_customer_review').hide();
+    } else if ( $('.ec-productRole__title').length) {
+        $('#plg_customer_review{{Product.id}}').insertAfter($('.ec-productRole__title'));
+        $('#plg_customer_review').hide();
+    } else {
+        $('#plg_customer_review{{Product.id}}').hide();
+        $('#plg_customer_review').hide();
+    }
+  });
+</script>
