@@ -1,0 +1,138 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'registration_page' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% block stylesheet %}
+    <style>
+        .c-form__fileUploadThumbnail {
+            display: inline-block;
+            width: 170px;
+            height: 170px;
+            background-color: #f5f6f8;
+            background-image: url(../../img/moc.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .ec-registerRole .media {
+            margin-top: unset;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="ec-registerRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.entry.confirm_title'|trans }}</h1>
+        </div>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <form method="post" action="{{ url('entry') }}" enctype="multipart/form-data">
+                    {{ form_widget(form._token) }}
+                    <p>{{ 'front.entry.confirm_message'|trans|nl2br }}</p>
+                    <div class="ec-borderedDefs">
+                        <dl>
+                            <dt>
+                                {{ form_label(form.name, 'プロフィール画像', { 'label_attr': { 'class': 'ec-label '}}) }}
+                            </dt>
+                            <dd>
+                                {% if form.image.vars.data != '' %}
+                                    {% set customer_image = asset(form.image.vars.data, 'temp_image') %}
+                                    <div class="c-form__fileUploadThumbnail" style="background-image:url('{{ customer_image }}');">
+                                    </div>
+                                {% endif %}
+                                {{ form_widget(form.image, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.name, 'common.name', { 'label_attr': { 'class': 'ec-label '}}) }}
+                            </dt>
+                            <dd>
+                                {{ form.name.name01.vars.data }} {# form.vars.value = form.vars.data = Customer #}
+                                {{ form.name.name02.vars.data }}
+                                {{ form_widget(form.name.name01, { type : 'hidden' }) }}
+                                {{ form_widget(form.name.name02, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <label class="ec-label">ニックネーム</label>
+                                <span class="ec-required">必須</span>
+                            </dt>
+                            <dd>
+                                {{ form.nick_name.vars.data }}
+                                {{ form_widget(form.nick_name, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.email, 'common.mail_address', {'label_attr': {'class': 'ec-label'}}) }}
+                            </dt>
+                            <dd>
+                                {{ form.email.vars.data }}
+                                {{ form_widget(form.email.first, { type : 'hidden' }) }}
+                                {{ form_widget(form.email.second, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                {{ form_label(form.password, 'common.password', { 'label_attr': { 'class': 'ec-label' }}) }}
+                            </dt>
+                            <dd>
+                                ********
+                                {{ form_widget(form.password.first, { type : 'hidden' }) }}
+                                {{ form_widget(form.password.second, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+
+                        {{ form_widget(form.user_policy_check, { type: 'hidden'}) }}
+
+                        {# エンティティ拡張の自動出力 #}
+                        {% for f in form|filter(f => f.vars.eccube_form_options.auto_render) %}
+                            {% if f.vars.eccube_form_options.form_theme %}
+                                {% form_theme f f.vars.eccube_form_options.form_theme %}
+                                {{ form_row(f) }}
+                            {% else %}
+                                <dl>
+                                    <dt>
+                                        {{ form_label(f) }}
+                                    </dt>
+                                    <dd>
+                                        <div class="{{ f.vars.eccube_form_options.style_class }}{{ has_errors(f) ? ' error' }}">
+                                            {{ f.vars.data }}
+                                            {{ form_widget(f, { type: 'hidden'}) }}
+                                        </div>
+                                    </dd>
+                                </dl>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="ec-registerRole__actions">
+                        <div class="ec-off4Grid">
+                            <div class="ec-off4Grid__cell">
+                                <button class="ec-blockBtn--action" type="submit" name="mode" value="complete">{{ 'front.entry.do_register'|trans }}</button>
+                                <button class="ec-blockBtn--cancel" type="submit" name="mode" value="back">{{ 'common.back'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

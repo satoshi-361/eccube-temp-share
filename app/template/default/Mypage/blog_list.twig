@@ -1,0 +1,42 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'blog' %}
+
+{% set body_class = 'mypage' %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ '記事投稿一覧'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+        <div class="ec-mypageRole">
+            {% if pagination.totalItemCount > 0 %}
+                <p class="ec-para-normal">{{ 'front.mypage.history_count'|trans({'%count%':pagination.totalItemCount}) }}</p>
+                {% for Blog in pagination %}
+                    <div class="ec-historyRole">
+                        <div class="ec-historyRole__contents">
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="ec-pagerRole">
+                    {% include "pager.twig" with {'pages': pagination.paginationData} %}
+                </div>
+            {% else %}
+                <p class="ec-para-normal">{{ 'front.mypage.history_not_found'|trans }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -33,6 +33,16 @@ trait ProductTrait
      *     })
      */
     private $affiliate_reward = 50;
+
+    /**
+     * @var \Eccube\Entity\Customer
+     *
+     * @ORM\ManyToOne(targetEntity="\Eccube\Entity\Customer", inversedBy="Blogs")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
+     * })
+     */
+    private $Customer;
     
     /**
      * Get affiliate_reward
@@ -54,5 +64,29 @@ trait ProductTrait
         $this->affiliate_reward = $affiliate_reward;
         
         return $this;
+    }
+    
+    /**
+     * Set customer.
+     *
+     * @param \Eccube\Entity\Customer|null $customer
+     *
+     * @return Product
+     */
+    public function setCustomer(\Eccube\Entity\Customer $customer = null)
+    {
+        $this->Customer = $customer;
+
+        return $this;
+    }
+
+    /**
+     * Get customer.
+     *
+     * @return \Eccube\Entity\Customer|null
+     */
+    public function getCustomer()
+    {
+        return $this->Customer;
     }
 }
