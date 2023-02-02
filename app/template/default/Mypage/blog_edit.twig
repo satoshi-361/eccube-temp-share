@@ -76,7 +76,7 @@ file that was distributed with this source code.
             background: #f5f5f5;
             /* background: #eff0f4; */
         }
-        .ec-editBlogRole form {
+        .ec-editBlogRole .ec-grid__left {
             width: calc(100% - 230px);
             margin-right: 10px;
             border-radius: 5px;
@@ -87,7 +87,7 @@ file that was distributed with this source code.
             width: 230px;
             margin-left: 10px;
             border-radius: 5px;
-            padding: 10px 20px;
+            padding: 10px 12px;
             background: white;
         }
 
@@ -111,16 +111,21 @@ file that was distributed with this source code.
             border: 1px solid #dee2e6 !important
         }
 
-        .cs-grid2 {
+        .cs-dflex {
             display: flex;
-            align-items: center;
         }
-        .cs-grid2_cell {
-            width: 50%;
+        .cs-dflex.datetime {
+            font-size: 14px;
+        }
+        .cs-dflex.datetime .cs-datetime-title {
+            width: 75px;
+        }
+        .cs-dflex.datetime cs-datetime {
+            width: calc(100% - 75px);
         }
 
         p.header {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             padding-left: 5px;
             padding-bottom: 5px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.125);
@@ -164,7 +169,7 @@ file that was distributed with this source code.
                 padding: 10px;
                 flex-direction: column;
             }
-            .ec-editBlogRole form {
+            .ec-editBlogRole .ec-grid__left {
                 width: 100%;
                 margin-right: 0;
             }
@@ -351,183 +356,186 @@ file that was distributed with this source code.
 {% block main %}
     <div class="ec-layoutRole__main">
         <div class="ec-mypageRole">
+            {{ include('Mypage/alert.twig') }}
             <div class="ec-pageHeader">
                 <h1>{{ 'front.mypage.title'|trans }}/{{ '記事登録'|trans }}</h1>
             </div>
             {% include 'Mypage/navi.twig' %}
         </div>
         <div class="ec-mypageRole">
-            <div class="ec-editBlogRole">
-                <form role="form" name="form1" id="form1" method="post"
-                    action="
-                        {% if app.request.attributes.has('id') %}
-                            {{ url(app.request.attributes.get('_route'), { id: app.request.attributes.get('id') }) }}
-                        {% else %}
-                            {{ url(app.request.attributes.get('_route')) }}
-                        {% endif %}
-                    "
-                    novalidate enctype="multipart/form-data">
-                    {{ form_widget(form._token) }}
-                    <div class="ec-borderedDefs">
-                        <dl>
-                            <dt>
-                                {{ form_label(form.name, 'admin.product.name', { 'label_attr': { 'class': 'ec-label' }}) }}
-                            </dt>
-                            <dd>
-                                <div class="ec-input{{ has_errors(form.name) ? ' error' }}">
-                                    {{ form_widget(form.name) }}
-                                    {{ form_errors(form.name) }}
-                                </div>
-                                <div class="d-none">
-                                    {{ form_widget(form.class.sale_type) }}
-                                </div>
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>
-                                <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
-                                    <span>{{ 'admin.product.image'|trans }}</span>
-                                    <br>{{ 'admin.product.image_size'|trans }}
-                                </div>
-                            </dt>
-                            <dd>
-                                <div class="progress" style="display: none;">
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <div id="thumb" class="c-form__fileUploadThumbnails clearfix"></div>
-                                <p id="message"></p>
-                                <div id="upload-zone" class="media py-5 border-ec-dashed mb-2 rounded">
-                                    <div class="media-body">
-                                        <i class="fa fa-cloud-upload fa-3x text-ec-lightGray mx-3 align-middle" aria-hidden="true"></i>
-                                        {{ 'admin.common.drag_and_drop_image_description'|trans }}
-                                        {{ form_widget(form.product_image, { attr : { accept : 'image/*', style : 'display:none;' } }) }}
-                                        {{ form_errors(form.product_image) }}
-                                        <a class="btn btn-ec-regular mr-2" onclick="$('#admin_product_product_image').click()">
-                                            {{ 'admin.common.file_select'|trans }}
-                                        </a>
-                                    </div><!-- /.media-body -->
-                                </div><!-- /.media -->
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>
-                                <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top"
-                                     title="{{ 'tooltip.product.description_detail'|trans }}">
-                                    <span>{{ 'admin.product.description_detail'|trans }}</span>
-                                </div>
-                            </dt>
-                            <dd>
-                                <div class="ec-input{{ has_errors(form.description_detail) ? ' error' }}">
-                                    {{ form_widget(form.description_detail, { attr : { rows : "12"} }) }}
-                                    {{ form_errors(form.description_detail) }}
-                                </div>
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>
-                                <span class="ec-label">{{ 'admin.product.free_area'|trans }}</span>
-                            </dt>
-                            <dd>
-                                <div class="ec-input{{ has_errors(form.free_area) ? ' error' }}">
-                                    {{ form_widget(form.free_area, {id: 'wysiwyg-area', attr : { rows : "12"} }) }}
-                                    {{ form_errors(form.free_area) }}
-                                </div>
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>
-                                <div class="d-inline-block ec-label">
-                                    <span>{{ 'admin.product.sale_price'|trans }}</span>
-                                    <span class="ec-required">必須</span>
-                                </div>
-                            </dt>
-                            <dd>
-                                <div class="ec-input{{ has_errors(form.class.price02) ? ' error' }}">
-                                    <input type="text" id="admin_product_class_price02" name="admin_product[class][price02]" required="required">
-                                </div>
-                                <div class="d-none">
-                                    {{ form_widget(form.class.stock) }}
-                                    {{ form_errors(form.class.stock) }}
-                                    {{ form_widget(form.class.stock_unlimited) }}
-                                    {{ form_widget(form.Status) }}
-                                    {{ form_errors(form.Status) }}
-                                </div>
-                            </dd>
-                        </dl>
-                        <dl>
-                            <dt>
-                                <div class="d-inline-block ec-label">
-                                    <span>{{ 'アフィリエイト報酬'|trans }}</span>
-                                    <span class="ec-required">必須</span>
-                                </div>
-                            </dt>
-                            <dd>
-                                <div class="ec-select{{ has_errors(form.affiliate_reward) ? ' error' }}">
-                                    {{ form_widget(form.affiliate_reward) }}
-                                    {{ form_errors(form.affiliate_reward) }}
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
-                </form>
-                <div class="ec-grid__right ec-label">
-                    <div>
-                        <p class="header">カテゴリ</p>
-                        {% macro tree(ChoicedIds, Category, form) %}
-                            {% import _self as selfMacro %}
-                            <li class="c-directoryTree--registerItem category-li">
-                                <input type="checkbox" id="admin_product_category_{{ Category.id }}" name="admin_product[Category][]" value="{{ Category.id }}" {% if Category.id in ChoicedIds %}checked{% endif %}>
-                                <label for="admin_product_category_{{ Category.id }}">{{ Category.name }}</label>
-                                <ul class="list-unstyled">
-                                    {% for child,ChildCategory in Category.children %}
-                                        {{ selfMacro.tree(ChoicedIds, ChildCategory, form) }}
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        {% endmacro %}
-                        <div class="c-directoryTree--register rounded mb-3">
-                            {% import _self as renderMacro %}
-                            {% for TopCategory in TopCategories %}
-                                <ul class="list-unstyled">
-                                    {{ renderMacro.tree(ChoicedCategoryIds, TopCategory, form.Category) }}
-                                </ul>
-                            {% endfor %}
-                            {{ form_errors(form.Category) }}
+            <form role="form" name="form1" id="form1" method="post"
+                action="
+                    {% if app.request.attributes.has('id') %}
+                        {{ url(app.request.attributes.get('_route'), { id: app.request.attributes.get('id') }) }}
+                    {% else %}
+                        {{ url(app.request.attributes.get('_route')) }}
+                    {% endif %}
+                "
+                novalidate enctype="multipart/form-data">
+                {{ form_widget(form._token) }}
+                <div class="ec-editBlogRole">
+                    <div class="ec-grid__left">
+                        <div class="ec-borderedDefs">
+                            <dl>
+                                <dt>
+                                    {{ form_label(form.name, 'admin.product.name', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.name) ? ' error' }}">
+                                        {{ form_widget(form.name) }}
+                                        {{ form_errors(form.name) }}
+                                    </div>
+                                    <div class="d-none">
+                                        {{ form_widget(form.class.sale_type) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
+                                        <span>{{ 'admin.product.image'|trans }}</span>
+                                        <br>{{ 'admin.product.image_size'|trans }}
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="progress" style="display: none;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div id="thumb" class="c-form__fileUploadThumbnails clearfix"></div>
+                                    <p id="message"></p>
+                                    <div id="upload-zone" class="media py-5 border-ec-dashed mb-2 rounded">
+                                        <div class="media-body">
+                                            <i class="fa fa-cloud-upload fa-3x text-ec-lightGray mx-3 align-middle" aria-hidden="true"></i>
+                                            {{ 'admin.common.drag_and_drop_image_description'|trans }}
+                                            {{ form_widget(form.product_image, { attr : { accept : 'image/*', style : 'display:none;' } }) }}
+                                            {{ form_errors(form.product_image) }}
+                                            <a class="btn btn-ec-regular mr-2" onclick="$('#admin_product_product_image').click()">
+                                                {{ 'admin.common.file_select'|trans }}
+                                            </a>
+                                        </div><!-- /.media-body -->
+                                    </div><!-- /.media -->
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top"
+                                        title="{{ 'tooltip.product.description_detail'|trans }}">
+                                        <span>{{ 'admin.product.description_detail'|trans }}</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.description_detail) ? ' error' }}">
+                                        {{ form_widget(form.description_detail, { attr : { rows : "12"} }) }}
+                                        {{ form_errors(form.description_detail) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <span class="ec-label">{{ 'admin.product.free_area'|trans }}</span>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.free_area) ? ' error' }}">
+                                        {{ form_widget(form.free_area, {id: 'wysiwyg-area', attr : { rows : "12"} }) }}
+                                        {{ form_errors(form.free_area) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'admin.product.sale_price'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.class.price02) ? ' error' }}">
+                                        <input type="text" id="admin_product_class_price02" name="admin_product[class][price02]" required="required" value="{{ form.class.price02.vars.value }}">
+                                    </div>
+                                    <div class="d-none">
+                                        {{ form_widget(form.class.stock) }}
+                                        {{ form_errors(form.class.stock) }}
+                                        {{ form_widget(form.class.stock_unlimited) }}
+                                        {{ form_widget(form.Status) }}
+                                        {{ form_errors(form.Status) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'アフィリエイト報酬'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-select{{ has_errors(form.affiliate_reward) ? ' error' }}">
+                                        {{ form_widget(form.affiliate_reward) }}
+                                        {{ form_errors(form.affiliate_reward) }}
+                                    </div>
+                                </dd>
+                            </dl>
                         </div>
                     </div>
-                    <div style="margin-top: 30px;">
-                        <p class="header">登録日・更新日</p>
-                        <div class="cs-grid2 mb-3">
-                            <div class="cs-grid2_cell">
-                                <i class="fa fa-flag mr-1"></i>
-                                <span>{{ 'admin.common.create_date'|trans }}</span>
-                            </div>
-                            <div class="cs-grid2_cell">
-                                <span>：{{ Product.create_date|date_min }}</span>
+                    <div class="ec-grid__right ec-label">
+                        <div>
+                            <p class="header">カテゴリ</p>
+                            {% macro tree(ChoicedIds, Category, form) %}
+                                {% import _self as selfMacro %}
+                                <li class="c-directoryTree--registerItem category-li">
+                                    <input type="checkbox" id="admin_product_category_{{ Category.id }}" name="admin_product[Category][]" value="{{ Category.id }}" {% if Category.id in ChoicedIds %}checked{% endif %}>
+                                    <label for="admin_product_category_{{ Category.id }}">{{ Category.name }}</label>
+                                    <ul class="list-unstyled">
+                                        {% for child,ChildCategory in Category.children %}
+                                            {{ selfMacro.tree(ChoicedIds, ChildCategory, form) }}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endmacro %}
+                            <div class="c-directoryTree--register rounded mb-3">
+                                {% import _self as renderMacro %}
+                                {% for TopCategory in TopCategories %}
+                                    <ul class="list-unstyled">
+                                        {{ renderMacro.tree(ChoicedCategoryIds, TopCategory, form.Category) }}
+                                    </ul>
+                                {% endfor %}
+                                {{ form_errors(form.Category) }}
                             </div>
                         </div>
-                        <div class="cs-grid2 mb-3">
-                            <div class="cs-grid2_cell">
-                                <i class="fa fa-refresh mr-1"></i>
-                                <span>{{ 'admin.common.update_date'|trans }}</span>
+                        <div style="margin-top: 30px;">
+                            <p class="header">登録日・更新日</p>
+                            <div class="cs-dflex datetime mb-3">
+                                <div class="cs-datetime-title">
+                                    <i class="fa fa-flag mr-1"></i>
+                                    <span>{{ 'admin.common.create_date'|trans }}：</span>
+                                </div>
+                                <div class="cs-datetime">
+                                    <span>{{ Product.create_date|date_min }}</span>
+                                </div>
                             </div>
-                            <div class="cs-grid2_cell">
-                                <span>：{{ Product.update_date|date_min }}</span>
+                            <div class="cs-dflex datetime mb-3">
+                                <div class="cs-datetime-title">
+                                    <i class="fa fa-refresh mr-1"></i>
+                                    <span>{{ 'admin.common.update_date'|trans }}：</span>
+                                </div>
+                                <div class="cs-datetime">
+                                    <span>{{ Product.update_date|date_min }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div style="margin-top: 30px;">
-                        <button type="submit"
-                                class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
-                                
-                        <button type="submit"
-                                class="ec-blockBtn--action mb-3" name="status" value="2">{{ 'common.registration'|trans }}</button>
-                                
-                        <button type="submit"
-                                class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '廃止'|trans }}</button>
+                        <div style="margin-top: 30px;">
+                            <button type="submit"
+                                    class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
+                                    
+                            <button type="submit"
+                                    class="ec-blockBtn--action mb-3" name="status" value="2">{{ 'common.registration'|trans }}</button>
+                                    
+                            <button type="submit"
+                                    class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '廃止'|trans }}</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 {% endblock %}

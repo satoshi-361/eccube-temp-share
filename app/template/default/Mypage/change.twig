@@ -16,8 +16,243 @@ file that was distributed with this source code.
 
 {% form_theme form 'Form/form_div_layout.twig' %}
 
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{ asset('assets/css/fileupload/jquery.fileupload.css', 'admin') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/fileupload/jquery.fileupload-ui.css', 'admin') }}">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <style>
+        .c-form__fileUploadThumbnail {
+            display: inline-block;
+            width: 170px;
+            height: 170px;
+            background-color: #f5f6f8;
+            background-image: url(../../img/moc.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .c-form__fileUploadThumbnail:hover::before {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .c-form__fileUploadThumbnail::before {
+            display: block;
+            content: "";
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .c-form__fileUploadThumbnail .delete-image {
+            display: none;
+            font-family: FontAwesome;
+            font-size: 18px;
+            line-height: 1;
+            color: #54687A;
+            padding: 5px;
+            background: #fff;
+            border-radius: 3px;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+
+        .c-form__fileUploadThumbnail:hover .delete-image {
+            display: inline-block;
+            font-family: FontAwesome;
+            font-size: 18px;
+            line-height: 1;
+            color: #54687A;
+            padding: 5px;
+            background: #fff;
+            border-radius: 3px;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+
+        .btn-ec-regular {
+            color: #212529;
+            background-color: #FFFFFF;
+            border-color: #595959;
+            color: #595959;
+            cursor: pointer;
+        }
+        .btn-ec-regular:hover {
+            color: #262626;
+            background-color: #F2F2F2;
+            border-color: #262626;
+            text-decoration: none;
+        }
+
+        .custom-file {
+            display: none;
+        }
+
+        .ec-mypageRole .media {
+            margin-top: unset;
+            margin-bottom: 14px;
+        }
+        .ec-mypageRole .ec-input textarea {
+            margin-bottom: 16px;
+        }
+    </style>
+{% endblock %}
+
 {% block javascript %}
-    <script src="//yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/vendor/jquery.ui.widget.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.iframe-transport.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-process.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-validate.js', 'admin') }}"></script>
+    <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $.fn.tooltip = bootstrapTooltip;
+        $(document).on('drop dragover', function(e) {
+            e.preventDefault();
+        });
+        $(function() {
+            // Todo: fix drag&drop style
+            $("#thumb").sortable({
+                cursor: 'move',
+                opacity: 0.7,
+                placeholder: 'ui-state-highlight',
+                update: function(event, ui) {
+                    updateSortNo();
+                }
+            });
+
+            var proto_img = '<div class="c-form__fileUploadThumbnail" style="background-image:url(\'__path__\');">' +
+                '<a class="delete-image"><i class="fa fa-times" aria-hidden="true"></i></a>' +
+                '</div>';
+            var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
+            var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
+
+            {% set image = form.image %}
+            var $img = $(proto_img.replace(/__path__/g, '{{ asset(image.vars.value, 'save_image') }}'));
+            var $widget = $('{{ form_widget(image) }}');
+            $widget.val('{{ image.vars.value }}');
+            $("#thumb").append($img.append($widget));
+
+            {% for add_image in form.add_images %}
+                var $img = $(proto_img.replace(/__path__/g, '{{ asset(add_image.vars.value, 'temp_image') }}'));
+                var $widget = $('{{ form_widget(add_image) }}');
+                $widget.val('{{ add_image.vars.value }}');
+                $("#thumb").append($img.append($widget));
+            {% endfor %}
+            {% for delete_image in form.delete_images %}
+                $("#thumb").append('{{ form_widget(delete_image) }}');
+            {% endfor %}
+            var hideThumbnail = function() {
+                if ($("#thumb div").length > 0) {
+                    $("#icon_no_image").css("display", "none");
+                } else {
+                    $("#icon_no_image").css("display", "");
+                }
+            };
+            // Todo: fix update sort by drag&drop
+            var updateSortNo = function() {
+                $("#thumb div").each(function(index) {
+                    $(this).find(".sort_no_images").remove();
+                    filename = $(this).find("input[type='hidden']").val();
+                    $sortNo = $('<input type="hidden" class="sort_no_images" name="sort_no_images[]" />');
+                    $sortNo.val(filename + '//' + parseInt(index + 1));
+                    $(this).append($sortNo);
+                });
+            };
+            hideThumbnail();
+            updateSortNo();
+
+            var max = 1;
+            var file_count = 0;
+
+            // Delete of images
+            var count_del = 0;
+            $("#thumb").on("click", '.delete-image', function() {
+                var $new_delete_image = $(proto_del.replace(/__name__/g, count_del));
+                var thumbnail = $(this).parents('div.c-form__fileUploadThumbnail');
+                var src = $(thumbnail).find('input').val();
+                $new_delete_image.val(src);
+                $("#thumb").append($new_delete_image);
+                $(thumbnail).remove();
+                hideThumbnail();
+                updateSortNo();
+                count_del++;
+                file_count--;
+            });
+            var count_add = {{ form.add_images|length|default(0) }};
+
+            $('#{{ form.customer_image.vars.id }}').fileupload({
+                url: "{{ url('mypage_change_image_add') }}?count="+count_add,
+                type: "post",
+                sequentialUploads: true,
+                dataType: 'json',
+                dropZone: $('#upload-zone'),
+                change: function(e, data) {
+                    if ( (data.files.length +file_count) > max){
+                        data.files = [];
+                        alert("１つの画像しか登録できません。");
+                    }
+                },
+                drop: function(e, data) {
+                    if ( (data.files.length +file_count) > max){
+                        data.files = [];
+                        alert("１つの画像しか登録できません。");
+                    }
+                },
+                done: function(e, data) {
+                    $('.progress.nauth').hide();
+                    $.each(data.result.files, function(index, file) {
+                        var path = '{{ asset('', 'temp_image') }}' + file;
+                        var $img = $(proto_img.replace(/__path__/g, path));
+                        var $new_img = $(proto_add.replace(/__name__/g, count_add));
+                        $new_img.val(file);
+                        $child = $img.append($new_img);
+                        $('#thumb').append($child);
+                        count_add++;
+                        file_count++;
+
+                        $('#{{ form.image.vars.id }}').val( file );
+                    });
+                    hideThumbnail();
+                    updateSortNo();
+                },
+                fail: function(e, data) {
+                    alert("{{ 'admin.common.upload_error'|trans }}");
+                },
+                always: function(e, data) {
+                    $('.progress.nauth').hide();
+                    $('.progress.nauth .progress-bar').width('0%');
+                },
+                start: function(e, data) {
+                    $('.progress.nauth').show();
+                },
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 10000000,
+                maxNumberOfFiles: 1,
+                progressall: function(e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('.progress.nauth .progress-bar').css(
+                        'width',
+                        progress + '%'
+                    );
+                },
+                processalways: function(e, data) {
+                    if (data.files.error) {
+                        alert("{{ 'admin.common.upload_error'|trans }}");
+                    }
+                }
+            });
+            // 画像アップロード
+            $('#file_upload').on('click', function() {
+                $('#{{ form.customer_image.vars.id }}').click();
+            });
+        });
+    </script>
 {% endblock javascript %}
 
 {% block main %}
@@ -38,6 +273,32 @@ file that was distributed with this source code.
                             <div class="ec-borderedDefs">
                                 <dl>
                                     <dt>
+                                        {{ form_label(form.name, 'プロフィール画像', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                    </dt>
+                                    <dd>
+                                        <div>
+                                            <div class="progress nauth" style="display: none;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <div id="thumb" class="c-form__fileUploadThumbnails clearfix"></div>
+                                            <div id="upload-zone" class="media py-5 border-ec-dashed mb-2 rounded">
+                                                <div class="media-body">
+                                                    {{ form_widget(form.customer_image, { attr : { accept : 'image/*', style : 'display:none;' } }) }}
+                                                    {{ form_errors(form.customer_image) }}
+                                                    <a class="btn btn-ec-regular ml-4 mr-2" onclick="$('#{{ form.customer_image.vars.id }}').click()">
+                                                        {{ 'admin.common.file_select'|trans }}
+                                                    </a> <span style="font-size: 14px">　　推奨サイズ360px×360px</span>
+                                                    <div class="ec-input{{ has_errors(form.image) ? ' error' }}">
+                                                        {{ form_widget(form.image, { attr : { style : 'display:none;' } }) }}
+                                                        {{ form_errors(form.image) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>
                                         {{ form_label(form.name, 'common.name', { 'label_attr': { 'class': 'ec-label' }}) }}
                                     </dt>
                                     <dd>
@@ -51,56 +312,53 @@ file that was distributed with this source code.
                                 </dl>
                                 <dl>
                                     <dt>
-                                        {{ form_label(form.kana, 'common.kana', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                        {{ form_label(form.nick_name, 'ニックネーム', { 'label_attr': { 'class': 'ec-label' }}) }}
                                     </dt>
                                     <dd>
-                                        <div class="ec-halfInput{{ has_errors(form.kana.kana01, form.kana.kana02) ? ' error'}}">
-                                            {{ form_widget(form.kana.kana01, { 'attr': { 'placeholder': 'common.last_name_kana' }}) }}
-                                            {{ form_widget(form.kana.kana02, { 'attr': { 'placeholder': 'common.first_name_kana' }}) }}
-                                            {{ form_errors(form.kana.kana01) }}
-                                            {{ form_errors(form.kana.kana02) }}
+                                        <div class="ec-input{{ has_errors(form.nick_name) ? ' error' }}">
+                                            {{ form_widget(form.nick_name) }}
+                                            {{ form_errors(form.nick_name) }}
                                         </div>
                                     </dd>
                                 </dl>
                                 <dl>
                                     <dt>
-                                        {{ form_label(form.company_name, 'common.company_name', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                        {{ form_label(form.description, 'プロフィール', { 'label_attr': { 'class': 'ec-label' }}) }}
                                     </dt>
                                     <dd>
-                                        <div class="ec-halfInput{{ has_errors(form.company_name) ? ' error' }}">
-                                            {{ form_widget(form.company_name) }}
-                                            {{ form_errors(form.company_name) }}
+                                        <div class="ec-input{{ has_errors(form.description) ? ' error' }}">
+                                            {{ form_widget(form.description) }}
+                                            {{ form_errors(form.description) }}
                                         </div>
                                     </dd>
                                 </dl>
                                 <dl>
                                     <dt>
-                                        {{ form_label(form.address, 'common.address', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                        {{ form_label(form.paypal_email, 'ペイパル mail', { 'label_attr': { 'class': 'ec-label' }}) }}
                                     </dt>
                                     <dd>
-                                        <div class="ec-zipInput{{ has_errors(form.postal_code) ? ' error' }}"><span>{{ 'common.postal_symbol'|trans }}</span>
-                                            {{ form_widget(form.postal_code) }}
-                                            <div class="ec-zipInputHelp">
-                                                <div class="ec-zipInputHelp__icon">
-                                                    <div class="ec-icon"><img
-                                                                src="{{ asset('assets/icon/question-white.svg') }}" alt="">
-                                                    </div>
-                                                </div><a href="https://www.post.japanpost.jp/zipcode/" target="_blank"><span>{{ 'common.search_postal_code'|trans }}</span></a>
-                                            </div>
-                                            {{ form_errors(form.postal_code) }}
+                                        <div class="ec-input{{ has_errors(form.paypal_email) ? ' error' }}">
+                                            {{ form_widget(form.paypal_email, { 'attr': { 'placeholder': 'common.mail_address_sample' }}) }}
+                                            {{ form_errors(form.paypal_email) }}
                                         </div>
-
-                                        <div class="ec-select{{ has_errors(form.address.pref) ? ' error' }}">
-                                            {{ form_widget(form.address.pref) }}
-                                            {{ form_errors(form.address.pref) }}
-                                        </div>
-                                        <div class="ec-input{{ has_errors(form.address.addr01) ? ' error' }}">
-                                            {{ form_widget(form.address.addr01, { 'attr': { 'placeholder': 'common.address_sample_01' }}) }}
-                                            {{ form_errors(form.address.addr01) }}
-                                        </div>
-                                        <div class="ec-input{{ has_errors(form.address.addr02) ? ' error' }}">
-                                            {{ form_widget(form.address.addr02,  { 'attr': { 'placeholder': 'common.address_sample_02' }}) }}
-                                            {{ form_errors(form.address.addr02) }}
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>
+                                        残高
+                                    </dt>
+                                    <dd>
+                                        {{ app.user.balance }}
+                                    </dd>
+                                </dl>
+                                <dl>
+                                    <dt>
+                                        {{ form_label(form.email, 'common.mail_address', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                    </dt>
+                                    <dd>
+                                        <div class="ec-input{{ has_errors(form.email) ? ' error' }}">
+                                            {{ form_widget(form.email, { 'attr': { 'placeholder': 'common.mail_address_sample' }}) }}
+                                            {{ form_errors(form.email) }}
                                         </div>
                                     </dd>
                                 </dl>
@@ -112,21 +370,6 @@ file that was distributed with this source code.
                                         <div class="ec-telInput{{ has_errors(form.phone_number) ? ' error' }}">
                                             {{ form_widget(form.phone_number) }}
                                             {{ form_errors(form.phone_number) }}
-                                        </div>
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        {{ form_label(form.email, 'common.mail_address', { 'label_attr': { 'class': 'ec-label' }}) }}
-                                    </dt>
-                                    <dd>
-                                        <div class="ec-input{{ has_errors(form.email.first) ? ' error' }}">
-                                            {{ form_widget(form.email.first, { 'attr': { 'placeholder': 'common.mail_address_sample' }}) }}
-                                            {{ form_errors(form.email.first) }}
-                                        </div>
-                                        <div class="ec-input{{ has_errors(form.email.second) ? ' error' }}">
-                                            {{ form_widget(form.email.second, { 'attr': { 'placeholder': 'common.repeated_confirm' }}) }}
-                                            {{ form_errors(form.email.second) }}
                                         </div>
                                     </dd>
                                 </dl>
@@ -148,41 +391,6 @@ file that was distributed with this source code.
                                                 'type': 'password'
                                             }) }}
                                             {{ form_errors(form.password.second) }}
-                                        </div>
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        {{ form_label(form.birth, 'common.birth_day', { 'label_attr': {'class': 'ec-label' }}) }}
-                                    </dt>
-                                    <dd>
-                                        <div class="ec-birth{{ has_errors(form.birth) ? ' error'}}">
-                                            {{ form_widget(form.birth.year) }}<span>/</span>
-                                            {{ form_widget(form.birth.month) }}<span>/</span>
-                                            {{ form_widget(form.birth.day) }}
-                                            {{ form_errors(form.birth) }}
-                                        </div>
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        {{ form_label(form.sex, 'common.gender', { 'label_attr': { 'class': 'ec-label' }}) }}
-                                    </dt>
-                                    <dd>
-                                        <div class="ec-radio{{ has_errors(form.sex) ? ' error' }}">
-                                            {{ form_widget(form.sex) }}
-                                            {{ form_errors(form.sex) }}
-                                        </div>
-                                    </dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        {{ form_label(form.job, 'common.job', { 'label_attr': {'class': 'ec-label' }}) }}
-                                    </dt>
-                                    <dd>
-                                        <div class="ec-select{{ has_errors(form.job) ? ' error' }}">
-                                            {{ form_widget(form.job) }}
-                                            {{ form_errors(form.job) }}
                                         </div>
                                     </dd>
                                 </dl>

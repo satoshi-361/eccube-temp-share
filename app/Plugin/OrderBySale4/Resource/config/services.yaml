@@ -1,0 +1,8 @@
+services:
+    Plugin\OrderBySale4\Service\RankService:
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@Eccube\Repository\ProductRepository'
+            - '@Plugin\OrderBySale4\Repository\ConfigRepository'
+            - '@Eccube\Repository\BaseInfoRepository'
+

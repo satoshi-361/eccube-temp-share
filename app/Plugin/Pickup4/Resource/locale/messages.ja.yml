@@ -1,0 +1,29 @@
+plugin_pickup.admin.navi: ピックアップ管理
+plugin_pickup.admin.not_found: ピックアップ商品が存在しません。
+plugin_pickup.admin.register.success: ピックアップ商品を登録しました。
+plugin_pickup.admin.update.success: ピックアップ商品を修正しました。
+plugin_pickup.admin.delete.success: ピックアップ商品を削除しました。
+plugin_pickup.admin.delete.confirm: ピックアップ情報を削除してもよろしいですか？
+plugin_pickup.admin.type.product.not_found: 商品を追加してください。
+plugin_pickup.admin.type.comment.placeholder: 説明文を入力してください(HTMLタグ使用可)。
+
+plugin_pickup.admin.index.title: ピックアップ商品管理
+plugin_pickup.admin.index.subtitle: ピックアップ商品内容設定
+plugin_pickup.admin.index.total_num: <strong>%number% 件</strong> が該当しました
+plugin_pickup.admin.index.col2: 商品画像
+plugin_pickup.admin.index.col3: 商品名
+plugin_pickup.admin.index.col4: 説明文
+plugin_pickup.admin.index.delete.confirm: このピックアップ商品を削除しても宜しいですか？
+plugin_pickup.admin.notice: 項目の順番はドラッグ＆ドロップでも変更可能です。
+plugin_pickup.admin.new: ピックアップ商品を新規登録
+
+plugin_pickup.admin.edit.title: ピックアップ商品管理
+plugin_pickup.admin.edit.subtitle: ピックアップ商品内容設定
+plugin_pickup.admin.edit.header: ピックアップ商品情報
+plugin_pickup.admin.edit.product: 商品
+plugin_pickup.admin.edit.comment: 説明文
+plugin_pickup.admin.edit.comment.help: （最大%number%文字）
+plugin_pickup.admin.edit.existed: この商品はすでにピックアップ商品として登録されています。
+plugin_pickup.admin.edit.search: 商品の追加
+plugin_pickup.admin.edit.product_search.header: 商品検索
+plugin_pickup.admin.edit.product_search.button: 検索

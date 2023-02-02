@@ -1,1 +1,135 @@
 /* カスタマイズ用CSS */
+
+a:hover img {
+    opacity: .85;
+}
+
+.ec-shelfRole.cs-side {
+    margin: 50px auto;
+}
+
+.cs-side .title {
+    margin-bottom: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    text-decoration: underline;
+}
+
+.cs-side-blog {
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow: 0 0 15px #ddd;
+}
+
+.cs-side-blog img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.image img {
+    width: 100%;
+}
+
+.cs-contentRole {
+    padding: 0 15px;
+}
+
+.benchmark {
+    margin: 35px auto 15px;
+    border-radius: 3px;
+    padding: 10px 0;
+    font-size: 28px;
+    background-color: aliceblue;
+    color: black;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* start blog style */
+
+.blog {
+    width: 350px;
+    margin: 35px auto;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 0 15px #ddd;
+    color: black;
+}
+
+.blog:hover {
+    text-decoration: none;
+    color: brown;
+}
+
+.blog .image.photo img {
+    width: 100%;
+    height: 185px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.blog .title {
+    padding: 8px;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 30px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+}
+
+.blog .badges {
+    padding: 0 8px 12px 8px;
+    font-size: 13px;
+}
+
+.blog .badges .affiliate .label {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.blog .badges .label {
+    margin: 4px 3px 4px 6px;
+    background-color: aliceblue;
+    display: inline-block;
+    font-size: 85%;
+    color: black;
+}
+
+.blog .badges .image.profile {
+    width: 44px;
+    border-radius: 22px;
+}
+
+.blog .badges .image.profile img {
+    width: 100%;
+    height: 44px;
+    object-fit: contain;
+}
+
+/* end blog style */
+
+@media only screen and (min-width: 768px) {
+    .cs-contentRole {
+        padding: 0 30px;
+    }
+    .cs-contentRole .cs-rank {
+        margin-right: 40px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .ec-layoutRole .ec-layoutRole__contents {
+        flex-wrap: wrap;
+    }
+}

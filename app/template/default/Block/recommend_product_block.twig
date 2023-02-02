@@ -9,30 +9,12 @@
 {% set recommend_products = repository('Plugin\\Recommend4\\Entity\\RecommendProduct').getRecommendProduct %}
 
 <!-- ▼item_list▼ -->
-<div class="ec-shelfRole">
-    <ul class="ec-shelfGrid">
-        {% for RecommendProduct in recommend_products %}
-            <li class="ec-shelfGrid__item">
-                <a href="{{ url('product_detail', {'id': RecommendProduct.Product.id}) }}">
-                    <img src="{{ asset(RecommendProduct.Product.mainFileName|no_image_product, "save_image") }}">
-                    <p>{{ RecommendProduct.comment|raw|nl2br }}</p>
-                    <dl>
-                        <dt class="item_name">{{ RecommendProduct.Product.name }}</dt>
-                        <dd class="item_price">
-                            {% if RecommendProduct.Product.hasProductClass %}
-                                {% if RecommendProduct.Product.getPrice02Min == RecommendProduct.Product.getPrice02Max %}
-                                    {{ RecommendProduct.Product.getPrice02IncTaxMin|price }}
-                                {% else %}
-                                    {{ RecommendProduct.Product.getPrice02IncTaxMin|price }} ～ {{ RecommendProduct.Product.getPrice02IncTaxMax|price }}
-                                {% endif %}
-                            {% else %}
-                                {{ RecommendProduct.Product.getPrice02IncTaxMin|price }}
-                            {% endif %}
-                        </dd>
-                    </dl>
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+<div class="ec-shelfRole cs-side">
+    <p class="title">おすすめ記事</p>
+    {% for RecommendProduct in recommend_products %}
+        <a href="{{ url('product_detail', {'id': RecommendProduct.Product.id}) }}" class="cs-side-blog">
+            <img src="{{ asset(RecommendProduct.Product.mainFileName|no_image_product, "save_image") }}">
+        </a>
+    {% endfor %}
 </div>
 <!-- ▲item_list▲ -->

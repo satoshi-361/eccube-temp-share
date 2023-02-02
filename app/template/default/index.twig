@@ -1,0 +1,101 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'front_page' %}
+
+{% block stylesheet %}
+    <style>
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <div class="cs-contentRole d-flex">
+        <div class="cs-rank">
+            <p class="benchmark">ランキング</p>
+            <div class="cs-rank__blogs">
+                {% for Blog in Ranks %}
+                    <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="blog">
+                        <div class="image photo">
+                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                        </div>
+                        <p class="title">{{ Blog.name }}</p>
+                        <div class="badges">
+                            <div class="d-flex">
+                                <div class="price">{{ Blog.getPrice02IncTaxMax|price }}</div>
+                                <div class="d-flex affiliate align-center">
+                                    <span class="label">アフィリエイト：</span>
+                                    <span class="value">{{ Blog.affiliate_reward }}%</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-center" style="padding: 8px 0">
+                                <div class="image profile">
+                                    <img src="{{ asset(Blog.Customer.image|no_image_product, "save_image") }}">
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <span class="">{{ Blog.Customer.nick_name }}</span><br />
+                                    <span class="">{{ Blog.create_date|date("Y年m月d日") }}発売</span>
+                                </div>
+                            </div>
+                            <div class="blog-category">
+                                {% for blogCategory in Blog.ProductCategories|reverse %}
+                                    <span class="label">{{ blogCategory.Category.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="cs-pickup">
+            <p class="benchmark">ピックアップ</p>
+            <div class="cs-pickup__blogs">
+                {% for Pickup in Pickups %}
+                    {% set Blog = Pickup.Product %}
+                    <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="blog">
+                        <div class="image photo">
+                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                        </div>
+                        <p class="title">{{ Blog.name }}</p>
+                        <div class="badges">
+                            <div class="d-flex">
+                                <div class="price">{{ Blog.getPrice02IncTaxMax|price }}</div>
+                                <div class="d-flex affiliate align-center">
+                                    <span class="label">アフィリエイト：</span>
+                                    <span class="value">{{ Blog.affiliate_reward }}%</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-center" style="padding: 8px 0">
+                                <div class="image profile">
+                                    <img src="{{ asset(Blog.Customer.image|no_image_product, "save_image") }}">
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <span class="">{{ Blog.Customer.nick_name }}</span><br />
+                                    <span class="">{{ Blog.create_date|date("Y年m月d日") }}発売</span>
+                                </div>
+                            </div>
+                            <div class="blog-category">
+                                {% for blogCategory in Blog.ProductCategories|reverse %}
+                                    <span class="label">{{ blogCategory.Category.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

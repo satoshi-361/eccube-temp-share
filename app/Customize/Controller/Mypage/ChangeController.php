@@ -16,7 +16,8 @@ namespace Customize\Controller\Mypage;
 use Eccube\Controller\AbstractController;
 use Eccube\Event\EccubeEvents;
 use Eccube\Event\EventArgs;
-use Eccube\Form\Type\Front\EntryType;
+// use Eccube\Form\Type\Front\EntryType;
+use Eccube\Form\Type\Admin\CustomerType;
 use Eccube\Repository\CustomerRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,7 +69,7 @@ class ChangeController extends AbstractController
         $Customer->setPassword($this->eccubeConfig['eccube_default_password']);
 
         /* @var $builder \Symfony\Component\Form\FormBuilderInterface */
-        $builder = $this->formFactory->createBuilder(EntryType::class, $Customer);
+        $builder = $this->formFactory->createBuilder(CustomerType::class, $Customer);
 
         $event = new EventArgs(
             [
@@ -81,6 +82,8 @@ class ChangeController extends AbstractController
 
         /* @var $form \Symfony\Component\Form\FormInterface */
         $form = $builder->getForm();
+        $form['image']->setData($Customer->getImage());
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -129,5 +132,44 @@ class ChangeController extends AbstractController
     public function complete(Request $request)
     {
         return [];
+    }
+
+    /**
+     * @Route("/mypage/change/image/add", name="mypage_change_image_add", methods={"POST"})
+     */
+    public function addImage(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException();
+        }
+        
+        $images = $request->files->get('admin_customer'); 
+
+        $allowExtensions = ['gif', 'jpg', 'jpeg', 'png'];
+        $files = [];
+        if (count($images) > 0) {
+            foreach ($images as $img) {
+                foreach ($img as $image) {
+                    //ファイルフォーマット検証
+                    $mimeType = $image->getMimeType();
+                    if (0 !== strpos($mimeType, 'image')) {
+                        throw new UnsupportedMediaTypeHttpException();
+                    }
+
+                    // 拡張子
+                    $extension = $image->getClientOriginalExtension();
+                    if (!in_array(strtolower($extension), $allowExtensions)) {
+                        throw new UnsupportedMediaTypeHttpException();
+                    }
+
+                    $filename = date('mdHis').uniqid('_').'.'.$extension;
+
+                    $image->move($this->eccubeConfig['eccube_temp_image_dir'], $filename);
+                    $files[] = $filename;
+                }
+            }
+        }
+
+        return $this->json(['files' => $files], 200);
     }
 }

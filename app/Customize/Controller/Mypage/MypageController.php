@@ -42,6 +42,7 @@ use Eccube\Entity\ProductClass;
 use Eccube\Entity\ProductImage;
 use Eccube\Entity\ProductStock;
 use Eccube\Entity\ProductTag;
+use Eccube\Entity\ProductCategory;
 use Eccube\Form\Type\Admin\ProductType;
 use Eccube\Repository\CategoryRepository;
 use Eccube\Repository\Master\PageMaxRepository;
@@ -52,6 +53,7 @@ use Eccube\Repository\TagRepository;
 use Eccube\Repository\TaxRuleRepository;
 use Eccube\Service\CsvExportService;
 use Eccube\Util\CacheUtil;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\RouterInterface;
@@ -276,7 +278,12 @@ class MypageController extends AbstractController
             ->enable('incomplete_order_status_hidden');
 
         // paginator
-        $Blogs = $Customer->getBlogs();
+        // $Blogs = $Customer->getBlogs();
+        $Blogs = $this->productRepository->createQueryBuilder('p')
+            ->select('p')
+            ->leftJoin('p.Customer', 'c')
+            ->where('c.id = :customer_id')
+            ->setParameter('customer_id', $Customer->getId());
 
         $pagination = $paginator->paginate(
             $Blogs,
@@ -318,6 +325,11 @@ class MypageController extends AbstractController
             $ProductStock->setProductClass($ProductClass);
         } else {
             $Product = $this->productRepository->findWithSortedClassCategories($id);
+
+            if ($Product->getCustomer()->getId() !== $Customer->getId()) {
+                return $this->redirectToRoute('mypage_blog_list');
+            }
+
             $ProductClass = null;
             $ProductStock = null;
             if (!$Product) {
@@ -831,5 +843,25 @@ class MypageController extends AbstractController
         }
 
         return $this->json(['files' => $files], 200);
+    }
+
+    /**
+     * ProductCategory作成
+     *
+     * @param \Eccube\Entity\Product $Product
+     * @param \Eccube\Entity\Category $Category
+     * @param integer $count
+     *
+     * @return \Eccube\Entity\ProductCategory
+     */
+    private function createProductCategory($Product, $Category, $count)
+    {
+        $ProductCategory = new ProductCategory();
+        $ProductCategory->setProduct($Product);
+        $ProductCategory->setProductId($Product->getId());
+        $ProductCategory->setCategory($Category);
+        $ProductCategory->setCategoryId($Category->getId());
+
+        return $ProductCategory;
     }
 }

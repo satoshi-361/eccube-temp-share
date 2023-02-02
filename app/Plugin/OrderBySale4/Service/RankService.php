@@ -11,7 +11,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\OrderBySale4\Controller;
+namespace Plugin\OrderBySale4\Service;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Eccube\Controller\AbstractController;
@@ -21,12 +21,13 @@ use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\ProductRepository;
 use Plugin\OrderBySale4\Entity\Config;
 use Plugin\OrderBySale4\Repository\ConfigRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
-class BlockController extends AbstractController
+use Doctrine\ORM\EntityManagerInterface;
+
+class RankService
 {
+    private $entityManager;
+
     /**
      * @var ProductRepository
      */
@@ -46,21 +47,18 @@ class BlockController extends AbstractController
      * ProductController constructor.
      */
     public function __construct(
+        EntityManagerInterface $em,
         ProductRepository $productRepository,
         ConfigRepository $configRepository,
         BaseInfoRepository $baseInfoRepository
     ) {
+        $this->entityManager = $em;
         $this->productRepository = $productRepository;
         $this->configRepository = $configRepository;
         $this->baseInfoRepository = $baseInfoRepository;
     }
 
-    /**
-     * @Route("/block/order_by_sale", name="block_order_by_sale")
-     *
-     * @Template("Block/order_by_sale.twig")
-     */
-    public function index(Request $request)
+    public function getRanks()
     {
         $originOptionNostockHidden = $this->entityManager->getFilters()->isEnabled('option_nostock_hidden');
 
@@ -137,8 +135,6 @@ class BlockController extends AbstractController
             }
         }
 
-        return [
-            'Products' => $Products,
-        ];
+        return $Products;
     }
 }

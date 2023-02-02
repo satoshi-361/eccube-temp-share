@@ -23,6 +23,9 @@ use Eccube\Form\Validator\Email;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -44,6 +47,9 @@ class CustomerType extends BaseType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('image', TextType::class, [
+                'required' => false,
+            ])
             ->add('name', NameType::class, [
                 'required' => true,
             ])
@@ -100,6 +106,25 @@ class CustomerType extends BaseType
                         'max' => $this->eccubeConfig['eccube_ltext_len'],
                     ]),
                 ],
+            ])
+            ->add('customer_image', FileType::class, [
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            ])
+            ->add('add_images', CollectionType::class, [
+                'entry_type' => HiddenType::class,
+                'prototype' => true,
+                'mapped' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
+            ->add('delete_images', CollectionType::class, [
+                'entry_type' => HiddenType::class,
+                'prototype' => true,
+                'mapped' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
             ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
