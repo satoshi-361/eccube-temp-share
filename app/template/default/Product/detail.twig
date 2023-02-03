@@ -1,0 +1,416 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'product_page' %}
+
+{% block stylesheet %}
+    <style>
+
+        .slick-slider {
+            margin-bottom: 30px;
+        }
+
+        .slick-dots {
+            position: absolute;
+            bottom: -45px;
+            display: block;
+            width: 100%;
+            padding: 0;
+            list-style: none;
+            text-align: center;
+        }
+
+        .slick-dots li {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            padding: 0;
+
+            cursor: pointer;
+        }
+
+        .slick-dots li button {
+            font-size: 0;
+            line-height: 0;
+            display: block;
+            width: 20px;
+            height: 20px;
+            padding: 5px;
+            cursor: pointer;
+            color: transparent;
+            border: 0;
+            outline: none;
+            background: transparent;
+        }
+
+        .slick-dots li button:hover,
+        .slick-dots li button:focus {
+            outline: none;
+        }
+
+        .slick-dots li button:hover:before,
+        .slick-dots li button:focus:before {
+            opacity: 1;
+        }
+
+        .slick-dots li button:before {
+            content: " ";
+            line-height: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            text-align: center;
+            opacity: .25;
+            background-color: black;
+            border-radius: 50%;
+
+        }
+
+        .slick-dots li.slick-active button:before {
+            opacity: .75;
+            background-color: black;
+        }
+
+        .slick-dots li button.thumbnail img {
+            width: 0;
+            height: 0;
+        }
+
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        eccube.classCategories = {{ class_categories_as_json(Product)|raw }};
+
+        // 規格2に選択肢を割り当てる。
+        function fnSetClassCategories(form, classcat_id2_selected) {
+            var $form = $(form);
+            var product_id = $form.find('input[name=product_id]').val();
+            var $sele1 = $form.find('select[name=classcategory_id1]');
+            var $sele2 = $form.find('select[name=classcategory_id2]');
+            eccube.setClassCategories($form, product_id, $sele1, $sele2, classcat_id2_selected);
+        }
+
+        {% if form.classcategory_id2 is defined %}
+        fnSetClassCategories(
+            $('#form1'), {{ form.classcategory_id2.vars.value|json_encode|raw }}
+        );
+        {% elseif form.classcategory_id1 is defined %}
+        eccube.checkStock($('#form1'), {{ Product.id }}, {{ form.classcategory_id1.vars.value|json_encode|raw }}, null);
+        {% endif %}
+    </script>
+    <script>
+        $(function() {
+            // bfcache無効化
+            $(window).bind('pageshow', function(event) {
+                if (event.originalEvent.persisted) {
+                    location.reload(true);
+                }
+            });
+
+            $('.item_visual').slick({
+                dots: false,
+                arrows: false,
+                responsive: [{
+                    breakpoint: 768,
+                    settings: {
+                        dots: true
+                    }
+                }]
+            });
+
+            $('.slideThumb').on('click', function() {
+                var index = $(this).attr('data-index');
+                $('.item_visual').slick('slickGoTo', index, false);
+            })
+        });
+        
+        function copy() {
+            var copyText = document.getElementById("copyClipboard");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            
+            $('#copied-success').fadeIn(800);
+            $('#copied-success').fadeOut(1200);
+        }
+    </script>
+    <script>
+        $(function() {
+            $('.add-cart').on('click', function(event) {
+                {% if form.classcategory_id1 is defined %}
+                // 規格1フォームの必須チェック
+                if ($('#classcategory_id1').val() == '__unselected' || $('#classcategory_id1').val() == '') {
+                    $('#classcategory_id1')[0].setCustomValidity('{{ 'front.product.product_class_unselected'|trans }}');
+                    return true;
+                } else {
+                    $('#classcategory_id1')[0].setCustomValidity('');
+                }
+                {% endif %}
+
+                {% if form.classcategory_id2 is defined %}
+                // 規格2フォームの必須チェック
+                if ($('#classcategory_id2').val() == '__unselected' || $('#classcategory_id2').val() == '') {
+                    $('#classcategory_id2')[0].setCustomValidity('{{ 'front.product.product_class_unselected'|trans }}');
+                    return true;
+                } else {
+                    $('#classcategory_id2')[0].setCustomValidity('');
+                }
+                {% endif %}
+
+                // 個数フォームのチェック
+                if ($('#quantity').val() < 1) {
+                    $('#quantity')[0].setCustomValidity('{{ 'front.product.invalid_quantity'|trans }}');
+                    return true;
+                } else {
+                    $('#quantity')[0].setCustomValidity('');
+                }
+
+                event.preventDefault();
+                $form = $('#form1');
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: $form.attr('method'),
+                    data: $form.serialize(),
+                    dataType: 'json',
+                    beforeSend: function(xhr, settings) {
+                        // Buttonを無効にする
+                        $('.add-cart').prop('disabled', true);
+                    }
+                }).done(function(data) {
+                    // レスポンス内のメッセージをalertで表示
+                    $.each(data.messages, function() {
+                        $('#ec-modal-header').html(this);
+                    });
+
+                    $('.ec-modal').show()
+
+                    // カートブロックを更新する
+                    $.ajax({
+                        url: "{{ url('block_cart') }}",
+                        type: 'GET',
+                        dataType: 'html'
+                    }).done(function(html) {
+                        $('.ec-headerRole__cart').html(html);
+                    });
+                }).fail(function(data) {
+                    alert('{{ 'front.product.add_cart_error'|trans }}');
+                }).always(function(data) {
+                    // Buttonを有効にする
+                    $('.add-cart').prop('disabled', false);
+                });
+            });
+        });
+
+        $('.ec-modal-wrap').on('click', function(e) {
+            // モーダル内の処理は外側にバブリングさせない
+            e.stopPropagation();
+        });
+        $('.ec-modal-overlay, .ec-modal, .ec-modal-close, .ec-inlineBtn--cancel').on('click', function() {
+            $('.ec-modal').hide()
+        });
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "{{ Product.name }}",
+        "image": [
+            {% for img in Product.ProductImage %}
+                "{{ app.request.schemeAndHttpHost }}{{ asset(img, 'save_image') }}"{% if not loop.last %},{% endif %}
+
+            {% else %}
+                "{{ app.request.schemeAndHttpHost }}{{ asset(''|no_image_product, 'save_image') }}"
+            {% endfor %}
+        ],
+        "description": "{{ Product.description_list | default(Product.description_detail) | replace({'\n': '', '\r': ''}) | slice(0,300) }}",
+        {% if Product.code_min %}
+        "sku": "{{ Product.code_min }}",
+        {% endif %}
+        "offers": {
+            "@type": "Offer",
+            "url": "{{ url('product_detail', {'id': Product.id}) }}",
+            "priceCurrency": "{{ eccube_config.currency }}",
+            "price": {{ Product.getPrice02IncTaxMin }},
+            "availability": "{{ Product.stock_find ? "InStock" : "OutOfStock" }}"
+        }
+    }
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="ec-productRole">
+        <div class="image top">
+            <img src="{{ asset(Product.mainFileName|no_image_product, "save_image") }}">
+        </div>
+        <div class="ec-productRole__contents">
+            <div class="ec-productRole__title">
+                <h2>{{ Product.name }}</h2>
+            </div>
+            <div class="ec-productRole__utils">
+                <div class="d-flex align-center space-between">
+                    <div class="d-flex align-center">
+                        <div class="image profile">
+                            <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                        </div>
+                        <div style="padding-left: 15px">
+                            <span class="">{{ Product.Customer.nick_name }}</span><br />
+                            <span class="">{{ Product.create_date|date("Y年m月d日") }}発売</span>
+                        </div>
+                    </div>
+
+                    <form action="{{ url('product_add_cart', {id:Product.id}) }}" method="post" id="form1" name="form1">
+                        {% if Product.stock_find %}
+                            <div class="ec-productRole__actions">
+                                {% if form.classcategory_id1 is defined %}
+                                    <div class="ec-select">
+                                        {{ form_widget(form.classcategory_id1) }}
+                                        {{ form_errors(form.classcategory_id1) }}
+                                    </div>
+                                    {% if form.classcategory_id2 is defined %}
+                                        <div class="ec-select">
+                                            {{ form_widget(form.classcategory_id2) }}
+                                            {{ form_errors(form.classcategory_id2) }}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="ec-numberInput"><span>{{ 'common.quantity'|trans }}</span>
+                                    {{ form_widget(form.quantity) }}
+                                    {{ form_errors(form.quantity) }}
+                                </div>
+                            </div>
+                            <div class="ec-productRole__btn">
+                                <button type="submit" class="ec-blockBtn--action add-cart"
+                                    {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
+                                >
+                                    {{ Product.getPrice01IncTaxMax|price }}
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="ec-productRole__btn">
+                                <button type="button" class="ec-blockBtn--action" disabled="disabled">
+                                    {{ 'front.product.out_of_stock'|trans }}
+                                </button>
+                            </div>
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+                    </form>
+                    {# <a class="ec-inlineBtn--action">{{ Product.getPrice01IncTaxMax|price }}</a> #}
+                </div>
+                <div class="d-flex align-center" style="margin-top: 25px">
+                    <div class="affiliate">
+                        <span class="label">アフィリエイト: 　{{ Product.affiliate_reward }}%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cs-productRole__detail">
+                {% if blog_premium_enabled or is_owner %}
+                    {{ Product.free_area|raw|nl2br }}
+                {% else %}
+                    {{ Product.description_detail|raw|nl2br }}
+                {% endif %}
+            </div>
+            <div class="ec-productRole__utils">
+                <div class="d-flex align-center space-between">
+                    <div class="d-flex align-center">
+                        <div class="image profile">
+                            <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                        </div>
+                        <div style="padding-left: 15px">
+                            <span class="">{{ Product.Customer.nick_name }}</span><br />
+                            <span class="">{{ Product.create_date|date("Y年m月d日") }}発売</span>
+                        </div>
+                    </div>
+                    
+                    <form action="{{ url('product_add_cart', {id:Product.id}) }}" method="post" id="form1" name="form1">
+                        {% if Product.stock_find %}
+                            <div class="ec-productRole__actions">
+                                {% if form.classcategory_id1 is defined %}
+                                    <div class="ec-select">
+                                        {{ form_widget(form.classcategory_id1) }}
+                                        {{ form_errors(form.classcategory_id1) }}
+                                    </div>
+                                    {% if form.classcategory_id2 is defined %}
+                                        <div class="ec-select">
+                                            {{ form_widget(form.classcategory_id2) }}
+                                            {{ form_errors(form.classcategory_id2) }}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="ec-numberInput"><span>{{ 'common.quantity'|trans }}</span>
+                                    {{ form_widget(form.quantity) }}
+                                    {{ form_errors(form.quantity) }}
+                                </div>
+                            </div>
+                            <div class="ec-productRole__btn">
+                                <button type="submit" class="ec-blockBtn--action add-cart"
+                                    {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
+                                >
+                                    {{ Product.getPrice01IncTaxMax|price }}
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="ec-productRole__btn">
+                                <button type="button" class="ec-blockBtn--action" disabled="disabled">
+                                    {{ 'front.product.out_of_stock'|trans }}
+                                </button>
+                            </div>
+                        {% endif %}
+
+                        {{ form_rest(form) }}
+                    </form>
+                    {# <a class="ec-inlineBtn--action">{{ Product.getPrice01IncTaxMax|price }}</a> #}
+                </div>
+                <div class="d-flex align-center" style="margin-top: 25px">
+                    <div class="affiliate">
+                        <span class="label">アフィリエイト:　{{ Product.affiliate_reward }}%</span>
+                    </div>
+                </div>
+                <div class="affiliate-panel">
+                    <div class="d-flex">
+                        <h3 class="title">知識をみんなでシェアしよう!</h3>
+                        <div class="social-icons d-flex">
+                            <div class="image icon">
+                                <a href="https://access.line.me/oauth2/v2.1/login?loginState=rHFntJj9nXBUpOOThl91IH&loginChannelId=1446101138&returnUri=%2Foauth2%2Fv2.1%2Fauthorize%2Fconsent%3Fscope%3Dopenid%2Bprofile%2Bfriends%2Bgroups%2Btimeline.post%2Bmessage.write%26response_type%3Dcode%26state%3Dc45c0cfccb86d1ae95855529c3de9d%26redirect_uri%3Dhttps%253A%252F%252Fsocialplugins.line.me%252Flineit%252FloginCallback%253FreturnUrl%253Dhttps%25253A%25252F%25252Fsocialplugins.line.me%25252Flineit%25252Fshare%25253Furl%25253Dhttps%25253A%25252F%25252Fbrmk.io%25252FRQ3w%26client_id%3D1446101138#/">
+                                    <img src="{{ asset('assets/img/common/line.png') }}" />
+                                </a>
+                            </div>
+                            <div class="image icon">
+                                <a href="https://www.instagram.com/">
+                                    <img src="{{ asset('assets/img/common/instagram.jpg') }}" />
+                                </a>
+                            </div>
+                            <div class="image icon">
+                                <a href="https://twitter.com/share?url={{ url('product_detail', { id: Product.id }) }}">
+                                    <img src="{{ asset('assets/img/common/twitter.png') }}" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="affiliate-url">
+                        <input type="url" id="copyClipboard" {% if affiliate_param is not empty %} value="{{ url('blog_affiliate', { url: affiliate_param }) }}" {% endif %} onclick="copy()" readonly/>
+                        <button class="copy-btn" id="copyButton" onclick="copy()"><i class="far fa-copy" aria-hidden="true"></i></button>
+                        <div id="copied-success" class="copied">
+                            <span>アフィリエイトリンクをコピーしました！</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

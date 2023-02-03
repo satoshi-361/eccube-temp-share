@@ -89,7 +89,7 @@ class TabaHtmlEditorEvent implements EventSubscriberInterface
         //
         // 管理画面イベント
         //
-        if ($this->requestContext->isAdmin()) {
+        // if ($this->requestContext->isAdmin()) {
             //
             // テンプレートイベント
             //
@@ -117,6 +117,6 @@ class TabaHtmlEditorEvent implements EventSubscriberInterface
                     }
                 }
             }
-        }
+        //}
     }
 }

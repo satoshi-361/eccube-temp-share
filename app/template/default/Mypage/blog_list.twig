@@ -1,0 +1,113 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'blog' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    <style>
+        .blog-image {
+            width: 80px;
+            display: block;
+        }
+        .align-middle {
+            vertical-align: middle !important;
+        }
+        .ec-historyRole .ec-historyRole__contents {
+            border-top: unset;
+        }
+        @media only screen and (max-width: 767px) {
+            .ec-historyRole .ec-historyRole__contents {
+                overflow-x: scroll;
+            }
+            .ec-historyRole__contents table {
+                overflow-x: scroll;
+            }
+            .ec-historyRole__contents table td {
+                min-width: 75px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ '記事投稿一覧'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+        <div class="ec-mypageRole">
+            {% if pagination.totalItemCount > 0 %}
+                <p class="ec-para-normal">{{ 'front.mypage.history_count'|trans({'%count%':pagination.totalItemCount}) }}</p>
+                    <div class="ec-historyRole">
+                        <div class="ec-historyRole__contents">
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.product_id__short'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.image__short'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.name'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.price'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'アフィリエイト報酬'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'admin.product.display_status__short'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.create_date'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.update_date'|trans }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for Blog in pagination %}
+                                    <tr id="ex-product-{{ Blog.id }}">
+                                        <td class="align-middle">{{ Blog.id }}</td>
+                                        {# TODO: 画像のサイズをベタ指定しているので、styleguide側を直す #}
+                                        <td class="align-middle">
+                                            <a href="{{ url('mypage_blog_edit', { id : Blog.id }) }}" class="blog-image">
+                                                <img src="{{ asset(Blog.mainFileName|no_image_product, 'save_image') }}">
+                                            </a>
+                                        </td>
+                                        <td class="align-middle"><a
+                                                    href="{{ url('mypage_blog_edit', { id : Blog.id }) }}">{{ Blog.name }}</a>
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ Blog.price02_min|price }}
+                                            {% if Blog.price02_min != Blog.price02_max %}{{ 'admin.common.separator__range'|trans }}{{ Blog.price02_max|price }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ Blog.affiliate_reward }}%
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ Blog.status.name }}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ Blog.create_date|date_min }}
+                                        </td>
+                                        <td class="align-middle">
+                                            {{ Blog.update_date|date_min }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <div class="ec-pagerRole">
+                    {% include "pager.twig" with {'pages': pagination.paginationData} %}
+                </div>
+            {% else %}
+                <p class="ec-para-normal">{{ 'front.mypage.history_not_found'|trans }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

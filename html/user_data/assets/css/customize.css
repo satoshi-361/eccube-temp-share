@@ -1,1 +1,423 @@
 /* カスタマイズ用CSS */
+
+a:hover img {
+    opacity: .85;
+}
+
+.ec-categoryNaviRole {
+    margin-bottom: 30px;
+}
+.ec-categoryNaviRole .ec-itemNav__nav li .cs-global__category {
+    margin: 5px 10px;
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: 0 0 10px aliceblue;
+    background: aliceblue;
+}
+.ec-categoryNaviRole .ec-itemNav__nav li .cs-global__category:hover {
+    box-shadow: 0 0 10px #ddd;
+    background: white;
+}
+
+.ec-headerNav__item .image.profile {
+    width: 44px;
+}
+.ec-headerNav__item .image.profile img {
+    width: 100%;
+    height: 44px;
+    border-radius: 22px;
+    box-shadow: 0 0 15px aliceblue;
+}
+
+.ec-headerNav__item .image.edit img {
+    height: 36px;
+    width: auto;
+    box-shadow: 0 0 15px aliceblue;
+}
+
+.ec-headerTitle .ec-headerTitle__title {
+    display: flex;
+    justify-content: center;
+}
+.ec-headerTitle .ec-headerTitle__title a {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+}
+
+.ec-headerTitle__title .image {
+    width: 200px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ec-shelfRole.cs-side {
+    margin: 50px auto;
+}
+
+.cs-side .title {
+    margin-bottom: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    text-decoration: underline;
+}
+
+.cs-side-blog {
+    display: block;
+    margin-bottom: 15px;
+    box-shadow: 0 0 15px #ddd;
+}
+
+.cs-side-blog img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.image img {
+    width: 100%;
+}
+
+.cs-contentRole {
+    padding: 0 15px;
+}
+
+.benchmark {
+    margin: 35px auto 15px;
+    border-radius: 3px;
+    padding: 10px 0;
+    font-size: 28px;
+    background-color: aliceblue;
+    color: black;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* start blog style */
+
+.blog {
+    width: 350px;
+    margin: 35px auto;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 0 15px #ddd;
+    color: black;
+}
+
+.blog:hover {
+    text-decoration: none;
+    color: brown;
+}
+
+.blog .image.photo img {
+    width: 100%;
+    height: 185px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.blog .title {
+    padding: 8px;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 30px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+}
+
+.blog .badges {
+    padding: 0 8px 12px 8px;
+    font-size: 13px;
+}
+
+.blog .badges .affiliate .label {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.blog .badges .label {
+    margin: 4px 3px 4px 6px;
+    padding: 3px;
+    background-color: aliceblue;
+    display: inline-block;
+    font-size: 85%;
+    color: black;
+}
+
+.blog .badges .image.profile {
+    width: 44px;
+}
+
+.blog .badges .image.profile img {
+    width: 100%;
+    height: 44px;
+    object-fit: contain;
+    border-radius: 22px;
+    box-shadow: 0 0 15px #ddd;
+    border: 1px solid #ddd;
+}
+
+/* end blog style */
+
+/* start blog detail */
+
+.ec-productRole {
+    color: black;
+}
+.ec-productRole .image.top {
+    margin: 50px auto;
+}
+
+.ec-productRole .image.top img {
+    width: 100%;
+    height: 465px;
+    object-fit: cover;
+}
+
+.ec-productRole .ec-productRole__title {
+    margin-bottom: 30px;
+}
+
+.ec-productRole .ec-productRole__utils {
+    margin: 30px auto;
+    border-top: 1px dashed lightgrey;
+    border-bottom: 1px dashed lightgrey;
+    padding: 25px 0;
+    font-size: 13px;
+}
+
+.ec-productRole .ec-productRole__utils .image.profile {
+    width: 60px;
+}
+
+.ec-productRole .ec-productRole__utils .image.profile img {
+    height: 60px;
+    border-radius: 30px;
+    object-fit: contain;
+    box-shadow: 0 0 15px #ddd;
+    border: 1px solid #ddd;
+}
+
+.ec-productRole .ec-productRole__utils .label {
+    margin-right: 4px;
+    padding: 10px;
+    background-color: aliceblue;
+    font-weight: 600;
+    font-size: 14px;
+    color: black;
+}
+
+.ec-productRole .ec-productRole__utils .ec-inlineBtn--action {
+    width: 150px;
+    border-radius: 4px;
+}
+
+.ec-productRole .ec-productRole__utils .review-layoutRole.product_detail {
+    width: unset;
+    margin-left: 15px;
+}
+
+.ec-productRole .ec-productRole__utils .ec-productRole__actions {
+    display: none;
+}
+
+.ec-productRole .ec-productRole__utils .ec-productRole__btn {
+    width: unset;
+    min-width: unset;
+    margin-bottom: 0;
+}
+
+.ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
+    width: 150px;
+    border-radius: 4px;
+    height: 45px;
+    line-height: 45px;
+}
+
+.ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
+    margin-bottom: 10px;
+}
+
+.ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout .ec-inlineBtn--action {
+    border-radius: 4px;
+}
+
+.ec-cartNaviIsset .ec-cartNaviIsset__cartContentNumber {
+    display: none;
+}
+
+.affiliate-panel {
+    margin: 100px auto 30px  ;
+    border-radius: 6px;
+    padding: 30px;
+    background-color: floralwhite;
+    box-shadow: 0 0 15px antiquewhite;
+}
+
+.affiliate-panel>.d-flex {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.affiliate-panel .title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+}
+
+.affiliate-panel .social-icons .icon {
+    width: 34px;
+    margin-right: 10px;
+    align-items: center;
+}
+
+.affiliate-panel .affiliate-url {
+    margin-top: 40px;
+    position: relative;
+}
+
+.affiliate-panel .affiliate-url input {
+    width: 100%;
+    padding: 14px;
+    outline: none;
+    display: block;
+    box-shadow: 0 3px 15px #d3dbe7;
+    cursor: pointer;
+    background-color: #fbfbff;
+    border: none;
+    font-size: 14px;
+    border-radius: 5px;
+    color: gray;
+}
+
+.affiliate-panel .affiliate-url .copy-btn {
+    width: 40px;
+    position: absolute;
+    top: 5px;
+    right: 6px;
+    background-color: #eaeaeb;
+    font-size: 18px;
+    padding: 6px 9px;
+    border-radius: 5px;
+    border: none;
+    color: #6c6c6c;
+    margin-left: -50px;
+    transition: all .4s;
+}
+
+.affiliate-panel .affiliate-url .copy-btn:hover {
+    transform: scale(1.2);
+    color: #1a1a1a;
+    cursor: pointer;
+}
+.affiliate-panel .affiliate-url .fa-copy {
+    font-size: 20px;
+}
+
+.affiliate-panel .affiliate-url .copied {
+    width: 286px;
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    box-shadow: 0 3px 15px #b8c6db;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    background: aliceblue;
+}
+
+/* end blog detail */
+
+@media only screen and (min-width: 768px) {
+    .cs-contentRole {
+        padding: 0 30px;
+    }
+    .cs-contentRole .cs-rank {
+        margin-right: 40px;
+    }
+
+    /* start blog detail */
+    .ec-productRole__contents {
+        padding: 0 40px;
+    }
+
+    .ec-layoutRole__main #plg_customer_review_detail.review_detail_default {
+        padding: 0 70px;
+    }
+
+    .affiliate-panel {
+        width: 500px;
+    }
+
+    /* end blog detail */
+    .ec-shelfGrid .cs-blogList__item {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .ec-layoutRole .ec-layoutRole__contents {
+        flex-wrap: wrap;
+    }
+    .ec-headerTitle .ec-headerTitle__title a {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .ec-headerTitle__title .image {
+        margin: 15px 0 10px;
+    }
+    .ec-productRole .image.top img {
+        height: 300px;
+    }
+    .ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
+        padding: 8px;
+    }
+    .cs-contentRole {
+        flex-wrap: wrap;
+    }
+    .cs-contentRole .cs-rank {
+        margin: auto;
+    }
+    .cs-contentRole .cs-pickup {
+        margin: auto;
+    }
+    .ec-shelfGrid .cs-blogList__item {
+        margin: auto;
+    }
+
+    .affiliate-panel {
+        width: 100%;
+        margin-top: 60px;
+        padding: 25px 15px;
+    }
+    .affiliate-panel .title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .affiliate-panel .social-icons .icon {
+        width: 25px;
+    }
+    .affiliate-panel .affiliate-url {
+        margin-top: 30px;
+    }
+}

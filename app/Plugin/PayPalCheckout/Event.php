@@ -183,9 +183,9 @@ class Event implements EventSubscriberInterface
             'parameters' => $parameters,
         ]);
 
-        $event->addSnippet($snippet);
-        $event->addAsset('@PayPalCheckout/default/head.twig');
-        $event->setParameters(array_merge($event->getParameters(), $parameters));
+        // $event->addSnippet($snippet);
+        // $event->addAsset('@PayPalCheckout/default/head.twig');
+        // $event->setParameters(array_merge($event->getParameters(), $parameters));
     }
 
     /**

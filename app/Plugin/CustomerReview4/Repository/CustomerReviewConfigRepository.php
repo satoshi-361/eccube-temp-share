@@ -22,9 +22,8 @@ class CustomerReviewConfigRepository extends AbstractRepository
      * @param int $id
      * @return null|CustomerReviewConfig
      */
-    public function get($id = 1)
+    public function get($id = 6)
     {
         return $this->find($id);
     }
-
 }

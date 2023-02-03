@@ -88,9 +88,11 @@ class BlockController extends AbstractController
 
         if ($Config) {
             if ($Config->getType() == Config::ORDER_BY_AMOUNT) {
-                $select = '(SELECT CASE WHEN SUM(oi.price * oi.quantity) IS NULL THEN -1 ELSE SUM(oi.price * oi.quantity) END';
+                $select = '(SELECT CASE WHEN SUM(oi.price * oi.quantity) IS NULL THEN 1 ELSE SUM(oi.price * oi.quantity + 1) END';
+                // $select = '(SELECT CASE WHEN SUM(oi.price * oi.quantity) IS NULL THEN -1 ELSE SUM(oi.price * oi.quantity) END';
             } elseif ($Config->getType() == Config::ORDER_BY_QUANTITY) {
-                $select = '(SELECT CASE WHEN SUM(oi.quantity) IS NULL THEN -1 ELSE SUM(oi.quantity) END';
+                $select = '(SELECT CASE WHEN SUM(oi.quantity) IS NULL THEN 1 ELSE SUM(oi.quantity + 1) END';
+                // $select = '(SELECT CASE WHEN SUM(oi.quantity) IS NULL THEN -1 ELSE SUM(oi.quantity) END';
             }
 
             $select .= ' FROM \Eccube\Entity\OrderItem AS oi
