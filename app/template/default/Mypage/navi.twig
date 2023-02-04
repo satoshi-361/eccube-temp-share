@@ -16,6 +16,9 @@ file that was distributed with this source code.
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'index' %}active{% endif %}">
             <a href="{{ url('mypage') }}">{{ 'front.mypage.nav__history'|trans }}</a>
         </li>
+        <li class="ec-navlistRole__item {% if mypageno|default('') == 'transfer' %}active{% endif %}">
+            <a href="{{ url('mypage_transfer_history') }}">{{ '売上履歴'|trans }}</a>
+        </li>
         {% if BaseInfo.option_favorite_product %}
             <li class="ec-navlistRole__item {% if mypageno|default('') == 'favorite' %}active{% endif %}">
                 <a href="{{ url('mypage_favorite') }}">{{ 'front.mypage.nav__favorite'|trans }}</a>

@@ -347,6 +347,70 @@ a:hover img {
 
 /* end blog detail */
 
+/* start transfer history */
+.cs-transfer__date {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: end;
+}
+.cs-transfer__date form {
+    display: flex;
+    align-items: center;
+}
+
+.cs-transfer__date form .cs-balance {
+    margin-right: 15px;
+    border-radius: 3px;
+    padding: 10px;
+    background: aliceblue;
+}
+
+.cs-transfer__date form input[type="month"] {
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.cs-transfer__date .ec-blockBtn--action {
+    width: 100px;
+    height: 45px;
+    margin-left: 15px;
+    line-height: 45px;
+    border-radius: 6px;
+}
+
+.cs-transfer__history table td {
+    vertical-align: middle !important;
+}
+
+.cs-transfer__history span.label {
+    color: black;
+}
+
+.cs-transfer__history span.price {
+    width: 70px;
+    margin-right: 10px;
+    padding: 0;
+    display: inline-block;
+    text-align: right;
+}
+
+.cs-transfer__history span.plus {
+    margin-right: 5px;
+    color: #0268cc;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cs-transfer__history span.minus {
+    margin-right: 5px;
+    color: #f13018;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* end transfer history */
+
 @media only screen and (min-width: 768px) {
     .cs-contentRole {
         padding: 0 30px;

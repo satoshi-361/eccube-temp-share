@@ -1,0 +1,93 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'transfer' %}
+
+{% set body_class = 'mypage' %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ '売上履歴'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+        <div class="ec-mypageRole">
+            <div class="d-flex cs-transfer__date">
+                <form method="get" action="{{ url('mypage_transfer_history') }}" novalidate>
+                    <div class="cs-balance"> 残高： <b>{{ balance|price }}</b> </div>
+                    <input type="month" name="transfer_date" value="{{ selectedMonth }}">
+                    <button type="submit" class="ec-blockBtn--action">{{ '確認'|trans }}</button>
+                </form>
+            </div>
+            <div class="cs-transfer__history">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>売上日時</th>
+                            <th>記事</th>
+                            <th>提携</th>
+                            <th>販売</th>
+                            <th>備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orderItem in orderItems %}
+                        <tr>
+                            <td>{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
+                            <td><a class="" href="{{ url('product_detail', { id: orderItem.Product.id }) }}"> {{ orderItem.Product.name }} </a></td>
+                            <td>
+                                {% if orderItem.affiliater is defined and orderItem.affiliater == app.user.id %}
+                                    {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
+                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - 18.6 ) / 100 )|price }}
+                                {% else %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
+                                    <p>
+                                        <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
+                                        <span class="plus"> + </span> 
+                                    </p>
+                                    <p> 
+                                        <span class="label price"> {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} </span>
+                                        <span class="minus"> - </span>
+                                        <span class="label">（提携）</span>
+                                    </p>
+                                {% else %}
+                                    <p>
+                                        <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
+                                        <span class="plus"> + </span>
+                                    </p>
+                                {% endif %}
+                                    <p>
+                                        <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * 0.186)|price }} </span>
+                                        <span class="minus"> - </span>
+                                        <span class="label">（手数料）</span>
+                                    </p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if orderItems|length == 0 %}
+                    <p>ご売上履歴はありません。</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
