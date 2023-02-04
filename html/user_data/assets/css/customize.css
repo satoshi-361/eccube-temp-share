@@ -411,6 +411,30 @@ a:hover img {
 
 /* end transfer history */
 
+.ec-layoutRole .ec-layoutRole__contents {
+    padding-bottom: 40px;
+}
+
+.ec-footerRole {
+    padding-top: 5px;
+    border-top: 1px solid #AAA;
+    margin-top: 0;
+    background: #DDD;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.ec-footerNavi {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.ec-footerNavi .ec-footerNavi__link {
+    color: black;
+    font-weight: bold;
+}
+
 @media only screen and (min-width: 768px) {
     .cs-contentRole {
         padding: 0 30px;
@@ -483,5 +507,8 @@ a:hover img {
     }
     .affiliate-panel .affiliate-url {
         margin-top: 30px;
+    }
+    .ec-layoutRole .ec-layoutRole__contents {
+        padding-bottom: 250px;
     }
 }

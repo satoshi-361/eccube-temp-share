@@ -1,0 +1,159 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% block stylesheet %}
+    <style>
+    .v-input__slot_3b7Na {
+        min-height: 36px!important
+    }
+
+    .v-text-field_3U7zv.v-input_3aLcy .v-label_2miWy {
+        top: 8px
+    }
+
+    .v-text-field_3U7zv.v-input_3aLcy .v-label_2miWy.v-label--active_2WirE {
+        top: 18px
+    }
+
+    .v-text-field_3U7zv.v-input_3aLcy .v-text-field__slot_272uB input,
+    .v-text-field_3U7zv.v-input_3aLcy .v-text-field__slot_272uB textarea {
+        font-size: 16px
+    }
+
+    .v-text-field_3U7zv.v-file-input__Ewm2 .v-input__slot_3b7Na {
+        height: 36px
+    }
+
+    .v-text-field_3U7zv.v-file-input__Ewm2 .v-input__prepend-outer_20XHd {
+        margin-top: 8px
+    }
+
+    .v-select__slot_1jAcA {
+        height: 36px
+    }
+
+    .v-select__slot_1jAcA .v-label_2miWy.v-label--active_2WirE {
+        top: 6px!important
+    }
+
+    .v-input__append-inner_Et5rU {
+        margin-top: 4px!important
+    }
+
+    .v-rating_1LPw4 .v-icon_1fORZ.notranslate_11AKD {
+        padding: 0
+    }
+
+    .v-snack__content_1yV4V .v-btn_2SieL {
+        color: #fff;
+        flex: 0 0 auto;
+        height: auto;
+        min-width: auto;
+        padding: 8px;
+        width: auto
+    }
+
+    .ql-syntax_1a9bW {
+        color: #fff;
+        padding: 1.2rem!important;
+        line-height: 1.7;
+        background: #364549;
+        overflow: auto
+    }
+
+    .container_1jK_B {
+        width: 100%;
+    }
+
+    .container_1jK_B .title_19mmt {
+        margin: 20px auto
+    }
+
+    .container_1jK_B .lists_2HXsH {
+        list-style-type: none;
+        padding-left: 4px
+    }
+
+    .container_1jK_B .lists_2HXsH .list_Bslh3 {
+        display: flex;
+        line-height: 36px;
+        margin: 10px auto;
+        align-items: center;
+    }
+
+    .container_1jK_B .lists_2HXsH .caret_x2ctv {
+        margin-right: 8px;
+        font-size: 24px;
+    }
+
+    .container_1jK_B .lists_2HXsH .link_2cL-D {
+        color: #212121;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    @media (min-width: 992px) {
+        .container {
+            max-width: 900px;
+        }
+    }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="v-content__wrap">
+    <div class="layout container_2bYo0">
+        <div class="layout column container_1jK_B">
+        <div class="container">
+            <h2 class="title_19mmt">利用規約</h2>
+            {# <ul class="lists_2HXsH">
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ asset('assets/pdf/購入者用利用規約.pdf', 'user_data') }}" target="_blank" class="link_2cL-D">購入者用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ asset('assets/pdf/紹介者用利用規約.pdf', 'user_data') }}" target="_blank" class="link_2cL-D">アフィリエイター用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ asset('assets/pdf/販売者用利用規約.pdf', 'user_data') }}" target="_blank" class="link_2cL-D">販売者用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ asset('assets/pdf/プライバシーポリシー.pdf', 'user_data') }}" target="_blank" class="link_2cL-D">プライバシーポリシー</a>
+                </li>
+            </ul> #}
+            <ul class="lists_2HXsH">
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ url('homepage') }}user_data/term_buyer" target="_blank" class="link_2cL-D">購入者用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ url('homepage') }}user_data/term_affiliator" target="_blank" class="link_2cL-D">アフィリエイター用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ url('homepage') }}user_data/term_seller" target="_blank" class="link_2cL-D">販売者用利用規約</a>
+                </li>
+                <li class="list_Bslh3">
+                    <i aria-hidden="true" class="v-icon notranslate fas fa-angle-right theme--light caret_x2ctv"></i> 
+                    <a href="{{ url('homepage') }}user_data/privacy_policy" target="_blank" class="link_2cL-D">プライバシーポリシー</a>
+                </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
