@@ -51,12 +51,15 @@ use Eccube\Repository\ProductClassRepository;
 use Eccube\Repository\ProductImageRepository;
 use Eccube\Repository\TagRepository;
 use Eccube\Repository\TaxRuleRepository;
+use Eccube\Repository\OrderItemRepository;
 use Eccube\Service\CsvExportService;
 use Eccube\Util\CacheUtil;
 use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\RouterInterface;
+use Customize\Entity\TransferHistory;
+use Eccube\Entity\Master\OrderItemType;
 
 class MypageController extends AbstractController
 {
@@ -131,6 +134,11 @@ class MypageController extends AbstractController
     protected $tagRepository;
 
     /**
+     * @var OrderItemRepository
+     */
+    protected $orderItemRepository;
+
+    /**
      * MypageController constructor.
      *
      * @param OrderRepository $orderRepository
@@ -147,6 +155,7 @@ class MypageController extends AbstractController
      * @param PageMaxRepository $pageMaxRepository
      * @param ProductStatusRepository $productStatusRepository
      * @param TagRepository $tagRepository
+     * @param OrderItemRepository $orderItemRepository
      */
     public function __construct(
         OrderRepository $orderRepository,
@@ -162,6 +171,7 @@ class MypageController extends AbstractController
         ProductRepository $productRepository,
         PageMaxRepository $pageMaxRepository,
         ProductStatusRepository $productStatusRepository,
+        OrderItemRepository $orderItemRepository,
         TagRepository $tagRepository
     ) {
         $this->orderRepository = $orderRepository;
@@ -178,6 +188,7 @@ class MypageController extends AbstractController
         $this->pageMaxRepository = $pageMaxRepository;
         $this->productStatusRepository = $productStatusRepository;
         $this->tagRepository = $tagRepository;
+        $this->orderItemRepository = $orderItemRepository;
     }
 
     /**
@@ -597,6 +608,56 @@ class MypageController extends AbstractController
             'id' => $id,
             'TopCategories' => $TopCategories,
             'ChoicedCategoryIds' => $ChoicedCategoryIds,
+        ];
+    }
+    
+    /**
+     * 売上履歴一覧.
+     *
+     * @Route("/mypage/transfer_history", name="mypage_transfer_history", methods={"GET"})
+     * @Template("Mypage/transfer_history.twig")
+     */
+    public function transferHistory(Request $request)
+    {
+        $Customer = $this->getUser();
+        $OrderItemType = OrderItemType::PRODUCT;
+
+        if ( $request->query->has('transfer_date') ) {
+            $date = $request->query->get('transfer_date') . '-01' ;
+            $startDate = new \DateTime(date('Y-m-01', strtotime($date)));
+            $endDate = new \DateTime(date('Y-m-t', strtotime($date)));
+        } else {
+            $date = date('Y-m-01');
+            $startDate = new \DateTime($date);
+            $date = date('Y-m-t');
+            $endDate = new \DateTime($date);
+        }
+
+        $qb = $this->orderItemRepository->createQueryBuilder('oi')
+            ->leftJoin('oi.Product', 'p')
+            ->leftJoin('oi.Order', 'o')
+            ->where('oi.OrderItemType = :OrderItemType')
+            ->andWhere('p.Customer = :Customer')
+            ->andWhere('o.order_date >= :start_date')
+            ->andWhere('o.order_date <= :end_date')
+            ->setParameter('OrderItemType', $OrderItemType)
+            ->setParameter('Customer', $Customer)
+            ->setParameter('start_date', $startDate)
+            ->setParameter('end_date', $endDate);
+
+        $orderItems = $qb->getQuery()->getResult();
+
+        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
+        $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);
+
+        $balance = 0;
+        if ( $transferHistory )
+            $balance = $transferHistory->getBalance();
+
+        return [
+            'orderItems' => $orderItems,
+            'balance' => $balance,
+            'selectedMonth' => substr($date, 0, 7),
         ];
     }
 

@@ -211,6 +211,9 @@ services:
         tags:
             - { name: form.type_extension, priority: -99, extended_type: Symfony\Component\Form\Extension\Core\Type\TextType }
 
+    Customize\Form\Type\Admin\OrderType:
+        decorates: Eccube\Form\Type\Admin\OrderType
+
     Customize\Form\Type\Front\EntryType:
         decorates: Eccube\Form\Type\Front\EntryType
 

@@ -27,6 +27,37 @@ file that was distributed with this source code.
         .image img {
             width: 100%;
         }
+        .get-trasfer__date {
+            margin-right: 30px;
+            display: flex;
+            align-items: center;
+        }
+        .get-trasfer__date input {
+            width: 150px;
+            margin-right: 10px
+        }
+        span.label {
+            width: 70px;
+            margin-right: 10px;
+            padding: 0;
+            display: inline-block;
+            text-align: right;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        span.plus {
+            margin-right: 5px;
+            color: #0268cc;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        span.minus {
+            margin-right: 5px;
+            color: #f13018;
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 {% endblock stylesheet %}
 
@@ -261,6 +292,93 @@ file that was distributed with this source code.
                                         <div id="history_box" class="data-empty">
                                         <span>
                                             {{ 'admin.customer.no_purchase_history'|trans }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card rounded border-0 mb-4">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="d-inline-block" data-tooltip="true" data-placement="top"
+                                             title="{{ 'この会員の売上履歴が表示されます。'|trans }}">
+                                            <span class="card-title">
+                                                {{ '売上履歴'|trans }}
+                                                <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-8 text-right">
+                                        <div style="width: 320px; margin-left: auto; display: flex; align-items: center;">
+                                            <div class="get-trasfer__date">
+                                                <input type="month" class="form-control" name="transfer-date" value="{{ selectedMonth }}">
+                                                <button type="submit" class="btn btn-ec-conversion px-5 ladda-button" name="mode" value="transfer" {% if Customer is empty %} disabled {% endif %} >{{ '確認'|trans }}</button>
+                                            </div>
+                                            <a data-toggle="collapse" href="#transferHistory" aria-expanded="false"
+                                            aria-controls="transferHistory">
+                                                <i class="fa fa-angle-up fa-lg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="collapse show ec-cardCollapse" id="transferHistory">
+                                {% if Customer.Blogs|length > 0 %}
+                                    <div class="card-body">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-top-0 pt-2 pb-2">{{ '売上日時'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2">{{ '記事'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2">{{ '提携'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2">{{ '販売'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2 text-center">{{ '備考'|trans }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for orderItem in orderItems %}
+                                                <tr>
+                                                    <td class="align-middle">{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
+                                                    <td class="align-middle"><a class="" href="{{ url('admin_product_product_edit', { id: orderItem.Product.id }) }}"> {{ orderItem.Product.name }} </a></td>
+                                                    <td class="align-middle">
+                                                        {% if orderItem.affiliater is defined and orderItem.affiliater == app.user.id %}
+                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
+                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - 18.6 ) / 100 )|price }}
+                                                        {% else %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="align-middle" style="width: 25%">
+                                                        {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
+                                                                <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
+                                                                <span class="plus"> + </span> <br />
+                                                                <span class="label price"> {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} </span>
+                                                                <span class="minus"> - </span>
+                                                                <span class="label">（提携）</span><br />
+                                                        {% else %}
+                                                                <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
+                                                                <span class="plus"> + </span>
+                                                        {% endif %}
+                                                                <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * 0.186)|price }} </span>
+                                                                <span class="minus"> - </span>
+                                                                <span class="label">（手数料）</span><br />
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="card-body">
+                                        <div id="history_box" class="data-empty">
+                                        <span>
+                                            {{ 'この会員の投稿履歴がありません'|trans }}
                                         </span>
                                         </div>
                                     </div>

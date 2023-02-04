@@ -26,6 +26,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
+use Eccube\Entity\Master\OrderItemType;
+use Eccube\Entity\OrderItem;
+use Customize\Entity\TransferHistory;
+
 class CustomerEditController extends AbstractController
 {
     /**
@@ -75,6 +79,42 @@ class CustomerEditController extends AbstractController
             $previous_password = null;
         }
 
+        // 売上履歴一覧.
+        $OrderItemType = OrderItemType::PRODUCT;
+
+        if ( $request->request->has('transfer-date') ) {
+            $date = $request->request->get('transfer-date') . '-01' ;
+            $startDate = new \DateTime(date('Y-m-01', strtotime($date)));
+            $endDate = new \DateTime(date('Y-m-t', strtotime($date)));
+        } else {
+            $date = date('Y-m-01');
+            $startDate = new \DateTime($date);
+            $date = date('Y-m-t');
+            $endDate = new \DateTime($date);
+        }
+
+        $orderItemRepository = $this->getDoctrine()->getRepository(OrderItem::class);
+        $qb = $orderItemRepository->createQueryBuilder('oi')
+            ->leftJoin('oi.Product', 'p')
+            ->leftJoin('oi.Order', 'o')
+            ->where('oi.OrderItemType = :OrderItemType')
+            ->andWhere('p.Customer = :Customer')
+            ->andWhere('o.order_date >= :start_date')
+            ->andWhere('o.order_date <= :end_date')
+            ->setParameter('OrderItemType', $OrderItemType)
+            ->setParameter('Customer', $Customer)
+            ->setParameter('start_date', $startDate)
+            ->setParameter('end_date', $endDate);
+
+        $orderItems = $qb->getQuery()->getResult();
+
+        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
+        $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);
+
+        $balance = 0;
+        if ( $transferHistory )
+            $balance = $transferHistory->getBalance();
+
         // 会員登録フォーム
         $builder = $this->formFactory
             ->createBuilder(CustomerType::class, $Customer);
@@ -92,7 +132,7 @@ class CustomerEditController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && !$request->request->has('mode')) {
             log_info('会員登録開始', [$Customer->getId()]);
 
             $encoder = $this->encoderFactory->getEncoder($Customer);
@@ -137,6 +177,9 @@ class CustomerEditController extends AbstractController
         return [
             'form' => $form->createView(),
             'Customer' => $Customer,
+            'orderItems' => $orderItems,
+            'balance' => $balance,
+            'selectedMonth' => substr($date, 0, 7),
         ];
     }
 }

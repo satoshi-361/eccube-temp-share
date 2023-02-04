@@ -43,86 +43,6 @@ use Eccube\Service\OrderHelper as BaseService;
 
 class OrderHelper extends BaseService
 {
-    // FIXME 必要なメソッドのみ移植する
-    use ControllerTrait;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var string 非会員情報を保持するセッションのキー
-     */
-    const SESSION_NON_MEMBER = 'eccube.front.shopping.nonmember';
-
-    /**
-     * @var string 非会員の住所情報を保持するセッションのキー
-     */
-    const SESSION_NON_MEMBER_ADDRESSES = 'eccube.front.shopping.nonmember.customeraddress';
-
-    /**
-     * @var string 受注IDを保持するセッションのキー
-     */
-    const SESSION_ORDER_ID = 'eccube.front.shopping.order.id';
-
-    /**
-     * @var string カートが分割されているかどうかのフラグ. 購入フローからのログイン時にカートが分割された場合にtrueがセットされる.
-     *
-     * @see SecurityListener
-     */
-    const SESSION_CART_DIVIDE_FLAG = 'eccube.front.cart.divide';
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
-
-    /**
-     * @var PrefRepository
-     */
-    protected $prefRepository;
-
-    /**
-     * @var OrderRepository
-     */
-    protected $orderRepository;
-
-    /**
-     * @var OrderItemTypeRepository
-     */
-    protected $orderItemTypeRepository;
-
-    /**
-     * @var OrderStatusRepository
-     */
-    protected $orderStatusRepository;
-
-    /**
-     * @var DeliveryRepository
-     */
-    protected $deliveryRepository;
-
-    /**
-     * @var PaymentRepository
-     */
-    protected $paymentRepository;
-
-    /**
-     * @var DeviceTypeRepository
-     */
-    protected $deviceTypeRepository;
-
-    /**
-     * @var MobileDetector
-     */
-    protected $mobileDetector;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
     public function __construct(
         ContainerInterface $container,
         EntityManagerInterface $entityManager,
@@ -136,8 +56,8 @@ class OrderHelper extends BaseService
         MobileDetector $mobileDetector,
         SessionInterface $session
     ) {
-        parent::__construct( $container, $orderRepository, $orderStatusRepository, $orderItemTypeRepository,  $deliveryRepository,  $paymentRepository,
-            $deviceTypeRepository,  $entityManager,  $prefRepository,  $mobileDetector, $session );
+        parent::__construct( $container, $entityManager, $orderRepository, $orderItemTypeRepository, $orderStatusRepository, $deliveryRepository,  $paymentRepository,
+            $deviceTypeRepository, $prefRepository,  $mobileDetector, $session );
     }
 
     /**
