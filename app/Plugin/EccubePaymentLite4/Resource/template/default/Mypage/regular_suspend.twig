@@ -1,0 +1,48 @@
+{% extends 'default_frame.twig' %}
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'regular_suspend' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_skip'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-withdrawRole">
+        {{ include('@EccubePaymentLite4/default/Mypage/Alert/alert.twig') }}
+        <form method="post" action="{{ url('eccube_payment_lite4_mypage_regular_suspend', { id: RegularOrder.id }) }}">
+            {{ form_widget(form._token) }}
+            <div class="ec-off3Grid">
+                <div class="ec-off3Grid__cell">
+                    <div style="font-size:100px;text-align:center;">
+                        <div class="ec-icon"><img src="{{ asset('assets/icon/exclamation.svg') }}" alt=""></div>
+                    </div>
+                    <p class="ec-withdrawRole__title">休止手続きの前にご確認ください
+                    </p>
+                    <p class="ec-withdrawRole__description">休止した場合にはお客様が「定期を再開する」リンクをクリックするまで商品がお届けされません。
+                    </p>
+                </div>
+            </div>
+            <div class="ec-off4Grid">
+                <div class="ec-off4Grid__cell">
+                    <button type="submit" class="ec-blockBtn--cancel">定期を休止する</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

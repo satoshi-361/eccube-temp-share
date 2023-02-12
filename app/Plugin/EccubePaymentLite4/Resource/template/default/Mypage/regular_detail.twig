@@ -1,0 +1,190 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'regular_detail' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_detail'|trans }}</h1>
+        </div>
+        {% include 'Mypage/navi.twig' %}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    {% set remessage = false %}
+
+    <div class="ec-orderRole">
+        <div class="ec-orderRole__detail">
+            <div class="ec-orderOrder">
+                <div class="ec-definitions">
+                    <dt>ご注文日時</dt>
+                    <dd>{{ RegularOrder.create_date|date_sec }}</dd>
+                </div>
+                {% if BaseInfo.option_mypage_order_status_display %}
+                    <div class="ec-definitions">
+                        <dt>ご注文状況</dt>
+                        <dd>{{ RegularOrder.RegularStatus }}</dd>
+                    </div>
+                {% endif %}
+                <div class="ec-definitions">
+                    <dt>定期回数</dt>
+                    <dd>{{ RegularOrder.RegularOrderCount }}</dd>
+                </div>
+                <div class="ec-definitions">
+                    <dt>お届けサイクル</dt>
+                    <dd>{{ RegularOrder.RegularCycle }}</dd>
+                </div>
+                <div class="ec-definitions">
+                    <dt>お届け予定日・お届け時間</dt>
+                    <dd>{{ RegularOrder.RegularShippings[0].shippingDeliveryDate|date_day_with_weekday }} {{ RegularOrder.RegularShippings[0].ShippingDeliveryTime }}</dd>
+                </div>
+                {% if RegularOrder.RegularShippings[0].nextDeliveryDate %}
+                    <div id="next_delivery_date_time" class="ec-definitions">
+                        <dt>次回お届け予定日・お届け時間</dt>
+                        <dd>{{ RegularOrder.RegularShippings[0].nextDeliveryDate|date_day_with_weekday }} {{ RegularOrder.RegularShippings[0].ShippingDeliveryTime }}</dd>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="ec-orderDelivery">
+                <div class="ec-rectHeading">
+                    <h2>{{ 'front.mypage.delivery_info'|trans }}</h2>
+                </div>
+                {% for RegularShipping in RegularOrder.RegularShippings %}
+                    <div class="ec-orderDelivery__title">
+                        {{ 'front.mypage.delivery'|trans }}</div>
+                    {% for regularProductOrderItem in RegularShipping.RegularProductOrderItems %}
+                        <div class="ec-orderDelivery__item">
+                            <div class="ec-imageGrid">
+                                <div class="ec-imageGrid__img">
+                                    {% if regularProductOrderItem.product is null %}
+                                        <img src="{{ asset(''|no_image_product, 'save_image') }}"/>
+                                    {% else %}
+                                        <img src="{{ asset(regularProductOrderItem.Product.MainListImage|no_image_product, 'save_image') }}"
+                                             alt="{{ regularProductOrderItem.productName }}"/>
+                                    {% endif %}
+                                </div>
+                                <div class="ec-imageGrid__content">
+                                    <p>
+                                        {% if regularProductOrderItem.Product is not null and regularProductOrderItem.Product.Status.id == constant('Eccube\\Entity\\Master\\ProductStatus::DISPLAY_SHOW') %}
+                                            <a href="{{ url('product_detail', {'id': regularProductOrderItem.Product.id}) }}">{{ regularProductOrderItem.productName }}</a>
+                                        {% else %}
+                                            {{ regularProductOrderItem.productName }}
+                                        {% endif %} ×{{ regularProductOrderItem.quantity }}
+                                    </p>
+                                    {% if regularProductOrderItem.ProductClass is not null %}
+                                        {% if regularProductOrderItem.ProductClass.ClassCategory1 is not null %}
+                                            {{ regularProductOrderItem.productClass.classCategory1.className.name }}：{{ regularProductOrderItem.productClass.classCategory1 }}
+                                        {% endif %}
+                                        {% if regularProductOrderItem.ProductClass.ClassCategory2 %}
+                                            <br>{{ regularProductOrderItem.productClass.classCategory2.className.name }}：{{ regularProductOrderItem.productClass.classCategory2 }}
+                                        {% endif %}
+                                    {% endif %}
+                                    <p>{{ regularProductOrderItem.price_inc_tax|price }}
+                                        × {{ regularProductOrderItem.quantity|number_format }}</p>
+                                    {% if regularProductOrderItem.product and regularProductOrderItem.price_inc_tax != regularProductOrderItem.productClass.price02IncTax %}
+                                        <p class="ec-color-accent">
+                                            {{ 'front.mypage.current_price'|trans }}{{ regularProductOrderItem.productClass.price02IncTax|price }}</p>
+                                        {% set remessage = true %}
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="ec-orderDelivery__address">
+                        <p>{{ RegularShipping.name01 }}&nbsp;{{ RegularShipping.name02 }}&nbsp;
+                            ({{ RegularShipping.kana01 }}&nbsp;{{ RegularShipping.kana02 }})</p>
+                        <p>{{ 'common.postal_symbol'|trans }}{{ RegularShipping.postal_code }} {{ RegularShipping.Pref }}{{ RegularShipping.addr01 }}{{ RegularShipping.addr02 }}</p>
+                        <p>{{ RegularShipping.phone_number }}</p>
+                    </div>
+                    <div class="ec-definitions--soft">
+                        <dt>{{ 'front.mypage.delivery_provider'|trans }} :</dt>
+                        <dd>{{ RegularShipping.shipping_delivery_name }}</dd>
+                    </div>
+                    <div class="ec-definitions--soft">
+                        <dt>{{ 'front.mypage.delivery_date'|trans }} :</dt>
+                        <dd>{{ RegularShipping.shipping_delivery_date|date_day_with_weekday|default('common.select__unspecified'|trans) }}</dd>
+                    </div>
+                    <div class="ec-definitions--soft">
+                        <dt>{{ 'front.mypage.delivery_time'|trans }} :</dt>
+                        <dd>{{ RegularShipping.shipping_delivery_time|default('common.select__unspecified'|trans) }}</dd>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="ec-orderPayment">
+                <div class="ec-rectHeading">
+                    <h2>{{ 'front.mypage.payment_info'|trans }}</h2>
+                </div>
+                <p>{{ 'front.mypage.payment'|trans }} : {{ RegularOrder.PaymentMethod }}</p>
+            </div>
+            <div class="ec-orderConfirm">
+                <div class="ec-rectHeading">
+                    <h2>{{ 'front.mypage.message'|trans }}</h2>
+                </div>
+                <div class="ec-orderMail">
+                    <p>{{ RegularOrder.message|default('front.mypage.message_not_found'|trans)|nl2br }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="ec-orderRole__summary">
+            <div class="ec-totalBox">
+                <dl class="ec-totalBox__spec">
+                    <dt>{{ 'common.subtotal'|trans }}</dt>
+                    <dd>{{ RegularOrder.subtotal|price }}</dd>
+                </dl>
+                <dl id="regular_order_charge" class="ec-totalBox__spec">
+                    <dt>{{ 'common.charge'|trans }}</dt>
+                    <dd>{{ RegularOrder.charge|price }}</dd>
+                </dl>
+                <dl class="ec-totalBox__spec">
+                    <dt>{{ 'common.delivery_fee'|trans }}</dt>
+                    <dd>{{ RegularOrder.delivery_fee_total|price }}</dd>
+                </dl>
+                {% if RegularOrder.taxable_discount < 0 %}
+                <dl class="ec-totalBox__spec">
+                    <dt>{{ 'common.discount'|trans }}</dt>
+                    <dd>{{ RegularOrder.taxable_discount|price }}</dd>
+                </dl>
+                {% endif %}
+                <div class="ec-totalBox__total">{{ 'common.total'|trans }}<span
+                            class="ec-totalBox__price">{{ RegularOrder.taxable_total|price }}</span><span
+                            class="ec-totalBox__taxLabel">{{ 'common.tax_include'|trans }}</span></div>
+                {% for rate, total in RegularOrder.taxable_total_by_tax_rate %}
+                <dl class="ec-totalBox__taxRate">
+                    <dt>{{ 'common.tax_rate_target'|trans({ '%rate%': rate }) }}</dt>
+                    <dd>{{ total|price }}</dd>
+                </dl>
+                {% endfor %}
+                {% for item in RegularOrder.tax_free_discount_items %}
+                    {% if loop.first %}<div class="ec-totalBox__total"></div>{% endif %}
+                    <dl class="ec-totalBox__spec">
+                        <dt>{{ item.product_name }}</dt>
+                        <dd>{{ item.total_price|price }}</dd>
+                    </dl>
+                {% endfor %}
+                <div class="ec-totalBox__paymentTotal">{{ 'common.total'|trans }}<span
+                            class="ec-totalBox__price">{{ RegularOrder.payment_total|price }}</span><span
+                            class="ec-totalBox__taxLabel">{{ 'common.tax_include'|trans }}</span></div>
+            </div>
+            {% if remessage %}
+                <p class="ec-color-accent">
+                    <strong>{{ 'front.mypage.reorder_message'|trans }}</strong>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="ec-role">
+        <a href="{{ url('eccube_payment_lite4_mypage_regular_list') }}" class="ec-inlineBtn">{{ 'common.back'|trans }}</a>
+    </div>
+{% endblock %}

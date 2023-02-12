@@ -1,0 +1,9 @@
+<script>
+    $(function() {
+        $('#gmoEpsilonRegularNavList').append(
+            '<li class="ec-navlistRole__item {% if regular_mypage_no|default('') == 'regular_resume' %}active{% endif %}">' +
+                '<a href="{{ url('eccube_payment_lite4_mypage_regular_resume', { 'id': RegularOrder.id }) }}">{{ 'gmo_epsilon.front.mypage.regular_nav__resume'|trans }}</a>' +
+            '</li>'
+        );
+    });
+</script>

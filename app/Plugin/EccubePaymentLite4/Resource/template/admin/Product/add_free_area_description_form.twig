@@ -1,0 +1,99 @@
+<script>
+    function changeRegularCycleFormHandle(selectedSaleTypeId, regularSaleTypeId) {
+        if (selectedSaleTypeId === regularSaleTypeId) {
+            $('#admin_product_free_description_about_quantity').prop('disabled', false);
+            $('#admin_product_free_description_about_selling_price').prop('disabled', false);
+            $('#admin_product_free_description_of_payment_delivery').prop('disabled', false);
+        } else {
+            $('#admin_product_free_description_about_quantity').prop('disabled', true);
+            $('#admin_product_free_description_about_selling_price').prop('disabled', true);
+            $('#admin_product_free_description_of_payment_delivery').prop('disabled', true);
+        }
+    }
+    $(function() {
+        {# 定期サイクルフォームの追加 #}
+        $('#freeArea').parent().after($('#free_description_box'));
+
+
+        var regularSaleTypeId = '{{ regularSaleTypeId }}';
+        {# 定期サイクルフォーム初期読み込み時、使用可、不可を設定 #}
+        changeRegularCycleFormHandle($('#admin_product_class_sale_type option:selected').val(), regularSaleTypeId);
+        {# 販売種別変更時に、定期サイクルフォームの使用可、不可を設定 #}
+        $('#admin_product_class_sale_type').on('change', function() {
+            var selectedSaleTypeId = $(this).val();
+            changeRegularCycleFormHandle(selectedSaleTypeId, regularSaleTypeId);
+        });
+
+        var sale_type_flg = '{{ sale_type_flg }}';
+        if(sale_type_flg){
+            $('#admin_product_free_description_about_quantity').prop('disabled', false);
+            $('#admin_product_free_description_about_selling_price').prop('disabled', false);
+            $('#admin_product_free_description_of_payment_delivery').prop('disabled', false);
+        }
+    });
+</script>
+
+<div id="free_description_box" class="card rounded border-0 mb-4">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-8">
+                <div class="d-inline-block" data-tooltip="true" data-placement="top" title="特定商法取引に関する項目">
+                    <span class="card-title">特定商法取引に関する項目</span>
+                    <i class="fa fa-question-circle fa-lg ml-1"></i>
+                </div>
+            </div>
+            <div class="col-4 text-right">
+                <a data-toggle="collapse" href="#free_description" aria-expanded="false" aria-controls="free_description">
+                    <i class="fa fa-angle-up fa-lg"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="free_description">
+        <div class="collapse show ec-cardCollapse" id="free_description_about_quantity">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <span>分量に関するフリー記述</span>
+                    </div>
+                    <div class="col-9">
+                        <div>
+                            {{ form_widget(form.free_description_about_quantity, {attr : { rows : "8", placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続'} }) }}
+                            {{ form_errors(form.free_description_about_quantity) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="collapse show ec-cardCollapse" id="free_description_about_selling_price">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <span>販売価格に関するフリー記述</span>
+                    </div>
+                    <div class="col-9">
+                        <div>
+                            {{ form_widget(form.free_description_about_selling_price, {attr : { rows : "8" ,placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続' } }) }}
+                            {{ form_errors(form.free_description_about_selling_price) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="collapse show ec-cardCollapse" id="free_description_of_payment_delivery">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <span>お支払い・引き渡しに関するフリー記述</span>
+                    </div>
+                    <div class="col-9">
+                        <div>
+                            {{ form_widget(form.free_description_of_payment_delivery, {attr : { rows : "8", placeholder : '入力例）購入者が定期購入を解除した場合、または商品販売が終了するまで自動継続'} }) }}
+                            {{ form_errors(form.free_description_of_payment_delivery) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

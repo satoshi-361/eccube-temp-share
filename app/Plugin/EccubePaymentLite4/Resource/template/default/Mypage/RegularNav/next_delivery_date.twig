@@ -1,0 +1,9 @@
+<script>
+    $(function() {
+        $('#gmoEpsilonRegularNavList').append(
+            '<li class="ec-navlistRole__item {% if regular_mypage_no|default('') == 'next_delivery_date' %}active{% endif %}">' +
+                '<a href="{{ url('eccube_payment_lite4_mypage_regular_next_delivery_date', { 'id': RegularOrder.id }) }}">{{ 'gmo_epsilon.front.mypage.regular_nav__next_delivery_date'|trans }}</a>' +
+            '</li>'
+        );
+    });
+</script>

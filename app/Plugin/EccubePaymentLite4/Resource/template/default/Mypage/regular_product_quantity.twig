@@ -1,0 +1,100 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'product_quantity' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+    <style>
+        .hidden-row{
+            display:none;
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_product_quantity'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-mypageRole">
+        <form method="post" action="{{ url('eccube_payment_lite4_mypage_regular_product_quantity', { id: RegularOrder.id }) }}">
+            {{ form_widget(form._token) }}
+            <div class="ec-editRole">
+                <div class="ec-cartRole__cart">
+                    <div class="ec-cartTable">
+                        <ol class="ec-cartHeader">
+                            <li class="ec-cartHeader__label">商品内容</li>
+                            <li class="ec-cartHeader__label">数量</li>
+                            <li class="ec-cartHeader__label">小計</li>
+                        </ol>
+                        {% if form.RegularOrderItems %}
+                            {% for OrderItemForm in form.RegularOrderItems %}
+                                {% set OrderItem = OrderItemForm.vars.data %}
+                                    {% if OrderItem.isProduct %}
+                                        <ul class="ec-cartRow">
+                                            <li class="ec-cartRow__contentColumn">
+                                                <div class="ec-cartRow__img">
+                                                    <a target="_blank" href="{{ url('product_detail', {id : OrderItem.ProductClass.Product.id} ) }}">
+                                                        <img src="{{ asset(OrderItem.ProductClass.Product.MainListImage|no_image_product, 'save_image') }}" alt="{{ OrderItem.product_name }}">
+                                                    </a>
+                                                </div>
+                                                <div class="ec-cartRow__summary">
+                                                    <div class="ec-cartRow__name">
+                                                        <a target="_blank" href="{{ url('product_detail', {id :  OrderItem.ProductClass.Product.id} ) }}">
+                                                            {{ OrderItem.product_name }}
+                                                        </a>
+                                                    </div>
+                                                    <div class="ec-cartRow__unitPrice">
+                                                        {{ OrderItem.priceIncTax|price }}
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="ec-cartRow__amountColumn">
+                                                <div class="ec-birth">
+                                                    {{ form_widget(OrderItemForm.quantity) }}
+                                                </div>
+                                                <div class="ec-cartRow__amountSP">
+                                                    数量：{{ OrderItem.quantity }}
+                                                </div>
+                                            </li>
+                                            <li class="ec-cartRow__subtotalColumn" style="text-align: center;">
+                                                <div class="ec-cartRow__subtotal">
+                                                    {{ OrderItem.getTotalPrice|price }}
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    {% endif %}
+                                    {% if OrderItem.isProduct == false%}
+                                        {{ form_widget(OrderItemForm.quantity,{ 'attr': {'class': 'hidden-row'} }) }}
+                                    {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="ec-cartRole">
+                    <div class="ec-cartRole__total">
+                        合計：<span class="ec-cartRole__totalAmount">{{ form.vars.data.subtotal|price }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ec-off4Grid">
+                <div class="ec-off4Grid__cell">
+                    <button type="submit" class="ec-blockBtn--cancel">商品数を変更する</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

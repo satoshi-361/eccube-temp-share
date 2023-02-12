@@ -26,6 +26,17 @@ file that was distributed with this source code.
         .ec-historyRole .ec-historyRole__contents {
             border-top: unset;
         }
+        .cs-blog__status {
+            padding: 0.5rem 0.75rem;
+            font-size: 14px;
+            display: inline-block;
+            border: 1px solid #437EC4;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+        }
         @media only screen and (max-width: 767px) {
             .ec-historyRole .ec-historyRole__contents {
                 overflow-x: scroll;
@@ -88,7 +99,7 @@ file that was distributed with this source code.
                                             {{ Blog.affiliate_reward }}%
                                         </td>
                                         <td class="align-middle">
-                                            {{ Blog.status.name }}
+                                            <span class="cs-blog__status" style="background-color: #fff; color: {{ Blog.StatusColor }}; border-color: {{ Blog.StatusColor }}">{{ Blog.status.name }}</span>
                                         </td>
                                         <td class="align-middle">
                                             {{ Blog.create_date|date_min }}

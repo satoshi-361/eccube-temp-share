@@ -290,14 +290,17 @@ class MypageController extends AbstractController
 
         // paginator
         // $Blogs = $Customer->getBlogs();
-        $Blogs = $this->productRepository->createQueryBuilder('p')
+        $qb = $this->productRepository->createQueryBuilder('p');
+        $qb
             ->select('p')
             ->leftJoin('p.Customer', 'c')
             ->where('c.id = :customer_id')
-            ->setParameter('customer_id', $Customer->getId());
+            ->andWhere($qb->expr()->notIn('p.Status', ':status'))
+            ->setParameter('customer_id', $Customer->getId())
+            ->setParameter('status', [ProductStatus::DISPLAY_ABOLISHED]);
 
         $pagination = $paginator->paginate(
-            $Blogs,
+            $qb,
             $request->get('pageno', 1),
             $this->eccubeConfig['eccube_search_pmax']
         );
@@ -563,7 +566,19 @@ class MypageController extends AbstractController
 
                 log_info('商品登録完了', [$id]);
 
-                $this->addSuccess('admin.common.save_complete');
+                switch ( $Product->getStatus()->getId() ) {
+                    case ProductStatus::DISPLAY_HIDE:
+                        $this->addSuccess('記事の申請ありがとうございます。審査を行いますので、しばらくお待ちください。');
+                        break;
+                        
+                    case ProductStatus::DISPLAY_DRAFT:
+                        $this->addSuccess('下書き保存しました。');
+                        break;
+                        
+                    default:
+                        $this->addSuccess('削除しました。');
+                        return $this->redirectToRoute('mypage_blog_list');
+                }
 
                 if ($returnLink = $form->get('return_link')->getData()) {
                     try {

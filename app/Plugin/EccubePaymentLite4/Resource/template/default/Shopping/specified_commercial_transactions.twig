@@ -1,0 +1,228 @@
+<script>
+    $(function (){
+        $('.ec-orderPayment:first').append(
+            /**---▼①の改修案---*/
+            '<div class="ec-rectHeading">' +
+                '<h2>各回 購入個数について</h2>' +
+             '</div>' +
+                {% for key, Items in ProductOrderItems %}
+                    {% set product = Items.product %}
+                    {% if product.free_description_about_quantity is not empty %}
+                    {% set free_description_about_quantity = product.free_description_about_quantity|replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                {% if  Items.productClass is not null and Items.productClass.classCategory1 or Items.productClass.classCategory2 %}
+                        '<p>{{ product.name }} ( '+
+                            {% if Items.productClass is not null and Items.productClass.classCategory1 %}
+                                '<span>{{ Items.productClass.classCategory1.className.name }} : {{ Items.productClass.classCategory1 }} </span>' +
+                            {% endif %}
+                            {% if Items.productClass is not null and Items.productClass.classCategory2 %}
+                                '<span> / {{ Items.productClass.classCategory2.className.name }} ：{{ Items.productClass.classCategory2 }} )</span>' +
+                            {% endif %}
+                        '<span> : {{ free_description_about_quantity }}</span>'+
+                    '</p>' +
+
+                {% else %}
+                    '<p> {{ product.name }} : {{ free_description_about_quantity }} '+
+                {% endif %}
+                    {% endif %}
+                {% endfor %}
+            '<table class="table table-sm">' +
+            ' <thead>' +
+                '<tr>' +
+                '<th class="border-top-0 pl-3 pt-2 pb-2">分量/回数</th>' +
+                '<th class="border-top-0 pt-2 pb-2">商品名</th>' +
+                '<th class="border-top-0 pt-2 pb-2">数量 </th>' +
+                '<th class="border-top-0 pt-2 pb-2">合計</th>' +
+                '' +
+                '</tr>' +
+            '</thead>' +
+                {% set total_quantity = 0 %}
+                {% for i in 1..limitCycle %}
+                    '<tbody>' +
+                    {% for shipping in Order.shippings %}
+                    {% set isShowReducedTaxMess = false %}
+                    {% set countItem = shipping.productOrderItems|length %}
+                    {% if countItem > 1 %}
+                        {% for orderItem in shipping.productOrderItems %}
+                        {% set total_quantity =  orderItem.quantity + total_quantity %}
+                        {% set idx = loop.index0%}
+                        '<tr>' +
+                        {% if countItem > 1 and idx == 0 %}
+                            '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ i }}</td>' +
+                        {% else %}
+                            '' +
+                        {% endif %}
+                            '<td class="align-middle" >' +
+                            '<p>{{ orderItem.productName }} </p>' +
+                            {% if orderItem.productClass is not null and orderItem.productClass.classCategory1 %}
+                                    '<p>{{ orderItem.productClass.classCategory1.className.name }}：{{ orderItem.productClass.classCategory1 }}</p>' +
+                            {% endif %}
+                            {% if orderItem.productClass is not null and orderItem.productClass.classCategory2 %}
+                                    '<p>{{ orderItem.productClass.classCategory2.className.name }}：{{ orderItem.productClass.classCategory2 }}</p>' +
+                            {% endif %}
+                            '</td>' +
+                            '<td class="align-middle" >{{ orderItem.quantity|number_format }}</td>' +
+                            {% if countItem > 1 and idx == 0 %}
+                                '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ total_quantity_item|number_format }}</td>' +
+                            {% else %}
+                                '' +
+                            {% endif %}
+                        '</tr>' +
+                        {% endfor %}
+                    {% else %}
+                        {% for orderItem in shipping.productOrderItems %}
+                        {% set total_quantity = orderItem.quantity + total_quantity %}
+                            '<tr>' +
+                            '<td style="text-align:center; vertical-align:middle;">{{ i }}</td>' +
+                            '<td class="align-middle" >' +
+                                '<p>{{ orderItem.productName }} </p>' +
+                                    {% if orderItem.productClass is not null and orderItem.productClass.classCategory1 %}
+                                        '<p>{{ orderItem.productClass.classCategory1.className.name }}：{{ orderItem.productClass.classCategory1 }}</p>' +
+                                    {% endif %}
+                                    {% if orderItem.productClass is not null and orderItem.productClass.classCategory2 %}
+                                        '<p>{{ orderItem.productClass.classCategory2.className.name }}：{{ orderItem.productClass.classCategory2 }}</p>' +
+                                    {% endif %}
+                            '</td>' +
+                            '<td class="align-middle" >{{ orderItem.quantity|number_format }}</td>' +
+                            '<td class="align-middle" >{{ orderItem.quantity|number_format }}</td>' +
+                            '</tr>' +
+                        {% endfor %}
+                    {% endif %}
+                        {% endfor %}
+
+
+                {% endfor %}
+            '</tbody>' +
+            '<tbody>' +
+            '<tr>' +
+                '<td colspan="2" class="align-middle" > {{ limitCycle }}回分の総分量</td>' +
+                '<td class="align-middle" > {{ total_quantity|number_format }}</td>' +
+                '<td class="align-middle" > {{ total_quantity|number_format }}</td>' +
+            '</tr>'+
+            '</tbody>' +
+            '</table>' +
+
+            /*---▼②の改修案---*/
+
+            '<div class="ec-rectHeading">' +
+                '<h2>各回 お支払い金額について</h2>' +
+            '</div>' +
+                {% for key, Items in ProductOrderItems %}
+                {% set product = Items.product %}
+                {% if product.free_description_about_selling_price is not empty %}
+                {% set free_description_about_selling_price = product.free_description_about_selling_price|replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                    '<p>{{ product.name }} : {{ free_description_about_selling_price }}</p>'+
+                {% endif %}
+                {% endfor %}
+
+            '<table class="table table-sm">' +
+            ' <thead>' +
+            '<tr>' +
+                '<th class="border-top-0 pl-3 pt-2 pb-2">分量/回数</th>' +
+                '<th class="border-top-0 pt-2 pb-2">商品名</th>' +
+                '<th class="border-top-0 pt-2 pb-2">価格</th>' +
+                '<th class="border-top-0 pt-2 pb-2">送料 </th>' +
+                '<th class="border-top-0 pt-2 pb-2">合計</th>' +
+                '' +
+            '</tr>' +
+            '</thead>' +
+                {% set total_price = 0 %}
+                {% set total_shipping_price = 0 %}
+                {% set total_sub = 0 %}
+
+                {% for i in 1..limitCycle %}
+                {% if i == 1 %}
+                {% set total_price = Order.payment_total + total_price %}
+                {% elseif i == 2 %}
+                {% set total_price = Order.payment_total + total_price + Order.use_point + first_discount - second_discount %}
+                {% elseif i == 3 %}
+                {% set total_price = Order.payment_total + total_price + Order.use_point + first_discount - third_discount %}
+                {% elseif i == 4 %}
+                {% set total_price = Order.payment_total + total_price + Order.use_point + first_discount - forth_discount %}
+                {% else %}
+                {% set total_price = Order.payment_total + total_price + Order.use_point + first_discount - fifth_discount%}
+                {% endif %}
+                {% set total_shipping_price = Order.deliveryFeeTotal + total_shipping_price %}
+
+            '<tbody>' +
+                {% for shipping in Order.shippings %}
+                {% set isShowReducedTaxMess = false %}
+                {% set countItem = shipping.productOrderItems|length %}
+                {% if countItem > 1 %}
+
+                {% for orderItem in shipping.productOrderItems %}
+                {% set total_sub = (orderItem.priceIncTax * orderItem.quantity) + total_sub %}
+                {% set idx = loop.index %}
+
+            '<tr>' +
+                {% if countItem > 1 and idx == 1 %}
+                '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ i }} </td>' +
+                    {% else %}
+                '' +
+                    {% endif %}
+                '<td class="align-middle" >{{ orderItem.productName }}</td>' +
+                '<td class="align-middle" >{{ (orderItem.priceIncTax * orderItem.quantity)|price }}</td>' +
+                    {% if countItem > 1 and idx == 1 %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ Order.deliveryFeeTotal|price }}</td>' +
+                    {% else %}
+                        '' +
+                    {% endif %}
+
+                    {% if countItem > 1 and idx == 1 %}
+                        {% if i == 1 %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ Order.payment_total|price }}</td>' +
+                        {% elseif i == 2 %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ (Order.payment_total + Order.use_point + first_discount - second_discount)|price }}</td>' +
+                        {% elseif i == 3 %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ (Order.payment_total + Order.use_point + first_discount - third_discount)|price }}</td>' +
+                        {% elseif i == 4 %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ (Order.payment_total + Order.use_point + first_discount - forth_discount)|price }}</td>' +
+                        {% else %}
+                        '<td style="text-align:center; vertical-align:middle;" {% if countItem > 1 %} rowspan="{{ countItem }}"{% endif %}>{{ (Order.payment_total + Order.use_point + first_discount - fifth_discount)|price }}</td>' +
+                        {% endif %}
+                    {% else %}
+                        '' +
+                    {% endif %}
+
+            '</tr>' +
+                {% endfor %}
+
+                {% else %}
+
+                    {% for orderItem in shipping.productOrderItems %}
+                    {% set total_sub = (orderItem.priceIncTax * orderItem.quantity) + total_sub %}
+                '<tr>' +
+                    '<td style="text-align:center; vertical-align:middle;" >{{ i }}</td>' +
+                    '<td class="align-middle" >{{ orderItem.productName }}</td>' +
+                    '<td class="align-middle" >{{ (orderItem.priceIncTax * orderItem.quantity)|price }}</td>' +
+                    '<td class="align-middle" >{{ Order.deliveryFeeTotal|price }}</td>' +
+                    {% if i == 1 %}
+                    '<td class="align-middle" >{{ Order.payment_total|price }}</td>' +
+                    {% elseif i == 2 %}
+                    '<td class="align-middle" >{{ (Order.payment_total + Order.use_point + first_discount - second_discount)|price }}</td>' +
+                    {% elseif i == 3 %}
+                    '<td class="align-middle" >{{ (Order.payment_total + Order.use_point + first_discount - third_discount)|price }}</td>' +
+                    {% elseif i == 4 %}
+                    '<td class="align-middle" >{{ (Order.payment_total + Order.use_point + first_discount - forth_discount)|price }}</td>' +
+                    {% else %}
+                    '<td class="align-middle" >{{ (Order.payment_total + Order.use_point + first_discount - fifth_discount)|price }}</td>' +
+                    {% endif %}
+                '</tr>' +
+                    {% endfor %}
+                {% endif %}
+                {% endfor %}
+
+                {% endfor %}
+            '</tbody>' +
+            '<tbody>' +
+            '<tr>' +
+                '<td colspan="2" class="align-middle" > {{ limitCycle }}回分の総額</td>' +
+                '<td class="align-middle" > {{ total_sub|price }}</td>' +
+                '<td class="align-middle" > {{ total_shipping_price|price }}</td>' +
+                '<td class="align-middle" > {{ total_price|price }}</td>' +
+            '</tr>'+
+            '</tbody>' +
+            '</table>'
+        );
+    })
+</script>
+

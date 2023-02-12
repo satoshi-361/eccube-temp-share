@@ -112,6 +112,7 @@ file that was distributed with this source code.
                                         {% if Customer.image is not empty %}
                                             <div class="image">
                                                 <img src="{{ asset(Customer.image, 'save_image') }}" alt="profile-image" />
+                                                {{ form_widget(form.image, { 'attr': { 'style': 'display: none', 'value': Customer.image } }) }}
                                             </div>
                                         {% endif %}
                                     </div>

@@ -116,6 +116,13 @@ parameters:
     eccube_forgot_mail_template_id: 6 #パスワードリセット
     eccube_reset_complete_mail_template_id: 7 #パスワードリマインダー
     eccube_shipping_notify_mail_template_id: 8 #出荷通知メール
+    eccube_affiliate_mail_template_id: 9 #提携メール
+    eccube_transfer_mail_template_id: 10 #振込メール
+    eccube_sale_mail_template_id: 11 #販売メール
+    eccube_article_approve_mail_template_id: 12 #記事承認メール
+    eccube_article_no_approve_mail_template_id: 13 #記事否認メール
+    eccube_transfer_success_mail_template_id: 14 #振込完了メール
+    eccube_transfer_failed_mail_template_id: 15 #振込失敗メール
     # メールアドレスをRFC準拠でチェックするか true: チェックする、false: チェックしない
     eccube_rfc_email_check: false
     eccube_package_api_url: '%env(ECCUBE_PACKAGE_API_URL)%'

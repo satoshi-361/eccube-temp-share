@@ -1,0 +1,30 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% autoescape 'safe_textmail' %}
+{% set Contributor = Blog.Customer %}
+{{ Contributor.name01 }} {{ Contributor.name02 }} 様
+
+お世話になっております。goodhabits Share!運営事業部でございます。
+
+投稿いただいた下記の記事につきまして、慎重に審査した結果「否認」となりましたのでお知ら
+せいたします。
+販売者利用規約をご確認、修正していただき再審査をお願いいたします。 
+
+記事タイトル：{{ Blog.name }}
+
+今後ともShare!をよろしくお願いいたします。 
+
+============================================
+・goodhabits Share!運営事業部
+・https://share-departmentshop.com
+・info@share-departmentshop.com
+============================================
+{% endautoescape %}

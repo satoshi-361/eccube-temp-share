@@ -1,0 +1,255 @@
+parameters:
+  gmo_epsilon:
+    pay_id:
+      credit: 1
+      reg_credit: 2
+      conveni: 3
+      netbank_jnb: 4
+      netbank_rakuten: 5
+      # unused 6
+      payeasy: 7
+      webmoney: 8
+      ywallet: 9
+      # unused 10
+      paypal: 11
+      bitcash: 12
+      chocom: 13
+      # unused 14
+      sphone: 15
+      jcb: 16
+      sumishin: 17
+      deferred: 18
+      virtual_account: 22
+      paypay: 25
+      maillink: 99
+    pay_name:
+      credit: 'クレジットカード決済'
+      reg_credit: '登録済みのクレジットカードで決済'
+      conveni: 'コンビニ決済'
+      netbank_jnb: 'ネット銀行決済(PayPay銀行)'
+      netbank_rakuten: 'ネット銀行決済(楽天銀行)'
+      # unused 6
+      payeasy: 'ペイジー決済'
+      webmoney: 'WebMoney決済'
+      ywallet: 'Yahoo!ウォレット決済サービス'
+      # unused 10
+      paypal: 'Paypal決済'
+      bitcash: 'Bitcash決済'
+      chocom: '電子マネーちょコム決済'
+      # unused 14
+      sphone: 'スマートフォンキャリア決済'
+      jcb: 'JCB PREMO'
+      sumishin: '住信SBIネット銀行決済'
+      deferred: 'GMO後払い'
+      virtual_account: 'バーチャル口座'
+      paypay: 'Paypay'
+      maillink: 'メールリンク決済'
+    st_code:
+      credit: '10000-0000-00000-00000-00000-00000-00000'
+      reg_credit: '01000-0000-00000-00000-00000-00000-00000'
+      conveni: '00100-0000-00000-00000-00000-00000-00000'
+      netbank_jnb: '00010-0000-00000-00000-00000-00000-00000'
+      netbank_rakuten: '00001-0000-00000-00000-00000-00000-00000'
+      sumishin: '00000-0000-00000-00100-00000-00000-00000'
+      payeasy: '00000-0100-00000-00000-00000-00000-00000'
+      webmoney: '00000-0010-00000-00000-00000-00000-00000'
+      ywallet: '00000-0001-00000-00000-00000-00000-00000'
+      paypal: '00000-0000-01000-00000-00000-00000-00000'
+      bitcash: '00000-0000-00100-00000-00000-00000-00000'
+      chocom: '00000-0000-00010-00000-00000-00000-00000'
+      sphone: '00000-0000-00000-10000-00000-00000-00000'
+      jcb: '00000-0000-00000-01000-00000-00000-00000'
+      deferred: '00000-0000-00000-00010-00000-00000-00000'
+      virtual_account: '00000-0000-00000-00000-00100-00000-00000'
+      paypay: '00000-0000-00000-00000-00000-10000-00000'
+      maillink: 'maillink'
+    mission_code:
+      every_month: 21
+      every_other: 25
+      every_three_month: 27
+      every_six_month: 29
+      every_year: 31
+    regular_pay_id:
+      every_month: 101
+      every_other_month: 102
+      every_three_month: 103
+      every_six_month: 104
+      every_year: 105
+    regular_pay_name:
+      every_month: '定期的なクレジットカード決済（毎月）'
+      every_other_month: '定期的なクレジットカード決済（2ヵ月ごと）'
+      every_three_month: '定期的なクレジットカード決済（3ヵ月ごと）'
+      every_six_month: '定期的なクレジットカード決済（半年ごと）'
+      every_year: '定期的なクレジットカード決済（1年ごと）'
+    regular:
+      rule_max: 9999999
+      st_code: '10000-0000-00000'
+      sale_type: '定期購入商品'
+    rule_max:
+      credit: 9999999
+      reg_credit: 9999999
+      conveni: 299999
+      netbank_jnb: 9999999
+      netbank_rakuten: 9999999
+      payeasy: 9999999
+      webmoney: 199999
+      ywallet: 499999
+      paypal: 499999
+      bitcash: 199999
+      chocom: 99999
+      sphone: 50000
+      jcb: 500000
+      sumishin: 9999999
+      deferred: 49999
+      virtual_account: 9999999
+      paypay: 9999999
+      maillink: 9999999
+    url:
+      dev:
+        receive_order3: 'https://beta.epsilon.jp/cgi-bin/order/receive_order3.cgi'
+        getsales2: 'https://beta.epsilon.jp/cgi-bin/order/getsales2.cgi'
+        get_user_info: 'https://beta.epsilon.jp/cgi-bin/order/get_user_info.cgi'
+        sales_payment: 'https://beta.epsilon.jp/cgi-bin/order/sales_payment.cgi'
+        ship_request: 'https://beta.epsilon.jp/cgi-bin/order/ship_request.cgi'
+        cancel_payment: 'https://beta.epsilon.jp/cgi-bin/order/cancel_payment.cgi'
+        change_amount_payment: 'https://beta.epsilon.jp/cgi-bin/order/change_amount_payment.cgi'
+        card3: 'https://beta.epsilon.jp/cgi-bin/order/card3.cgi?trans_code='
+        token: 'https://beta.epsilon.jp/js/token.js'
+        direct_card_payment: 'https://beta.epsilon.jp/cgi-bin/order/direct_card_payment.cgi'
+      prod:
+        receive_order3: 'https://secure.epsilon.jp/cgi-bin/order/receive_order3.cgi'
+        getsales2: 'https://secure.epsilon.jp/cgi-bin/order/getsales2.cgi'
+        get_user_info: 'https://secure.epsilon.jp/cgi-bin/order/get_user_info.cgi'
+        sales_payment: 'https://secure.epsilon.jp/cgi-bin/order/sales_payment.cgi'
+        ship_request: 'https://secure.epsilon.jp/cgi-bin/order/ship_request.cgi'
+        cancel_payment: 'https://secure.epsilon.jp/cgi-bin/order/cancel_payment.cgi'
+        change_amount_payment: 'https://secure.epsilon.jp/cgi-bin/order/change_amount_payment.cgi'
+        card3: 'https://secure.epsilon.jp/cgi-bin/order/card3.cgi?trans_code='
+        token: 'https://secure.epsilon.jp/js/token.js'
+        direct_card_payment: 'https://secure.epsilon.jp/cgi-bin/order/direct_card_payment.cgi'
+    conveni_id:
+      seveneleven: 11
+      familymart: 21
+      lawson: 31
+      seicomart: 32
+      ministop: 33
+    conveni_name:
+      seveneleven: 'セブンイレブン'
+      familymart: 'ファミリーマート'
+      lawson: 'ローソン'
+      seicomart: 'セイコーマート'
+      ministop: 'ミニストップ'
+    conveni_pre_message:
+      seveneleven: |-
+        以下「払込票URL」ページをプリントアウトされるか「払込票番号（13桁）」をメモして「お支払期限」までにお近くのセブンイレブンのレジにて代金をお支払いください。
+      familymart: |-
+        「お支払期限」までにお近くのファミリーマートにて代金をお支払いください。
+      lawson: |-
+        「お支払期限」までにお近くのローソンにて代金をお支払いください。
+      seicomart: |-
+        「お支払期限」までにお近くのセイコーマートにて代金をお支払いください。
+      ministop: |-
+        「お支払期限」までにお近くのミニストップにて代金をお支払いください。
+    conveni_message:
+      seveneleven: |-
+        <お支払方法>
+        以下URLを携帯電話に転送いただくと、店頭でのお手続き方法をご確認いただけます。
+
+        ▼セブンイレブン決済のお支払方法
+        http://www.epsilon.jp/mb/conv/seven/index.html
+        ▼PDF版はこちら
+        http://www.epsilon.jp/document_dl/index_pdf.html
+
+        ※お支払後に商品（サービス）のご提供となりますので、お急ぎの方はお早めにお手続きをお願いします。
+      familymart: |-
+        <お支払方法>
+        以下URLを携帯電話にご転送いただくと、店頭で操作方法をご確認いただけます。
+
+        ▼ファミリーマート決済のお支払方法
+        http://www.epsilon.jp/mb/conv/famima/index.html
+        ▼PDF版はこちら
+        http://www.epsilon.jp/document_dl/index_pdf.html
+
+        1.Famiポートトップ画面左下の「代金支払い」を選択して下さい。
+        2.「代金支払い」一覧の「各種番号をお持ちの方はこちら」を選択して下さい。
+        3.ご案内画面の「番号入力画面に進む」を選択して下さい。
+        4.「お支払い受付番号」または「企業コード」を入力し、「OK」ボタンを押して下さい。
+        5.「申込時にご登録いただいた電話番号」または「注文番号」を入力し、「OK」ボタンを押して下さい。
+        6.お支払い方法の案内画面が表示されます。
+        7.お客様のご注文内容の確認画面が表示されます。内容をご確認頂いた後、「OK」を押下して下さい。
+        8.出力されたFamiポート申込券をもって30分以内にレジにて代金をお支払いください。
+        　代金と引き換えに「領収書」をお渡ししますので、必ずお受取り下さい。
+
+        ※お支払後に商品（サービス）のご提供となりますので、お急ぎの方はお早めにお手続きをお願いします。
+      lawson: |-
+        <お支払方法>
+        以下URLを携帯電話に転送いただくと、店頭で操作方法をご確認いただけます。
+
+        ▼ローソン決済のお支払方法
+        http://www.epsilon.jp/mb/conv/lawson/index.html
+        ▼PDF版はこちら
+        http://www.epsilon.jp/document_dl/index_pdf.html
+
+        1.Loppiトップ画面左上の「各種番号をお持ちの方」ボタンを押してください。
+        2.「受付番号（6桁）」を入力し、「次へ」ボタンを押してください。
+        3.「申込時にご登録いただいた電話番号」を入力してください。
+        4.お客様のご注文内容の確認画面が表示されます。内容をご確認いただき「了解」ボタンを押してください。
+        5.Loppi端末から「申込券」が出力されます。その申込券を持って30分以内にレジで代金をお支払いください。
+        　※代金と引き換えに領収書をお渡ししますので、必ずお受け取りください。実際に代金をお支払いされたという証明になります。
+
+        ※お支払後に商品（サービス）のご提供となりますので、お急ぎの方はお早めにお手続きをお願いします。
+      seicomart: |-
+        <お支払方法>
+        以下URLを携帯電話に転送いただくと、店頭で操作方法をご確認いただけます。
+
+        ▼セイコーマート決済のお支払方法
+        http://www.epsilon.jp/mb/conv/seico/index.html
+        ▼PDF版はこちら
+        http://www.epsilon.jp/document_dl/index_pdf.html
+
+        1.セイコーマートの店内に設置してあるセイコーマートクラブステーション（情報端末）のトップ画面の中から、「インターネット受付」をお選び下さい。
+        2.画面に従って「受付番号（6桁）」と、「申込時にご登録いただいた電話番号」をご入力いただくとセイコーマートクラブステーションより「決済サービス払込取扱票・払込票兼受領証・領収書（計3枚）」が発券されます。
+        3.発券された「決済サービス払込取扱票・払込票兼受領証・領収書（計3枚）」をお持ちの上、レジにて代金をお支払い下さい。
+
+        ※お支払後に商品（サービス）のご提供となりますので、お急ぎの方はお早めにお手続きをお願いします。
+      ministop: |-
+        <お支払方法>
+        以下URLを携帯電話に転送いただくと、店頭で操作方法をご確認いただけます。
+
+        ▼ミニストップ決済のお支払方法
+        http://www.epsilon.jp/mb/conv/ministop/index.html
+        ▼PDF版はこちら
+        http://www.epsilon.jp/document_dl/index_pdf.html
+
+        1.Loppi端末のトップ画面左の「各種番号をお持ちの方」ボタンを押してください。
+        2.「お支払い受付番号(6桁)」を入力し、「次へ」ボタンを押してください。
+        3.「申込時にご登録いただいた電話番号」を入力してください。
+        4.お客様のご注文内容の確認画面が表示されます。内容をご確認いただいた後、「了解」のボタンを押してください。
+        5.Loppi端末より「申込券」が出力されますので、その「申込券」を持って30分以内にレジにて代金をお支払いください。
+        　※代金と引き換えに「領収書」をお渡ししますので、必ずお受取りください。
+
+        ※お支払後に商品（サービス）のご提供となりますので、お急ぎの方はお早めにお手続きをお願いします。
+    receive_parameters:
+      result:
+        ok: 1
+        ng: 9
+        3ds: 5
+        3ds2: 6
+    payment:
+      gmo_epsilon4: 'GmoEpsilon4'
+      ec_payment_lite4: 'EccubePaymentLite4'
+monolog:
+    channels: ['gmo_epsilon']
+    handlers:
+      gmo_epsilon:
+          type: fingers_crossed
+          action_level: error
+          passthru_level: info
+          handler: gmo_epsilon_rotating_file
+          channels: ['gmo_epsilon']
+      gmo_epsilon_rotating_file:
+          type: rotating_file
+          max_files: 60
+          path: '%kernel.logs_dir%/%kernel.environment%/gmo_epsilon.log'
+          formatter: eccube.log.formatter.line
+          level: debug

@@ -1,0 +1,38 @@
+{% if (app.request.get('_route')) == 'eccube_payment_lite4_admin_regular_index' or (app.request.get('_route')) == 'eccube_payment_lite4_admin_regular_index_page' %}
+    {% set menus = ['regular', 'order'] %}
+{% endif %}
+{% if (app.request.get('_route')) == 'eccube_payment_lite4_admin_regular_cycle' %}
+    {% set menus = ['regular', 'cycle'] %}
+{% endif %}
+{% if (app.request.get('_route')) == 'eccube_payment_lite4_admin_regular_discount_setting' %}
+    {% set menus = ['regular', 'discount'] %}
+{% endif %}
+<script>
+    $(function () {
+        $('ul.c-mainNavArea__nav > li').eq(6).after(
+            '<li class="c-mainNavArea__navItem">' +
+                '<a class="c-mainNavArea__navItemTitle" data-toggle="collapse" href="#nav-regular" aria-expanded="true" aria-controls="nav-regular">' +
+                    '<i class="fa fa-cube fa-fw" aria-hidden="true"></i>' +
+                    '<span>定期管理</span>' +
+                '</a>' +
+                '<ul class="collapse show" id="nav-regular" style="">' +
+                    '<li>' +
+                        '<a href="{{ url('eccube_payment_lite4_admin_regular_index') }}"{{ active_menus(menus)[1] == 'order' ? ' class="is-active"' }}>' +
+                            '<span>定期受注管理</span>' +
+                        '</a>' +
+                    '</li>' +
+                    '<li>' +
+                        '<a href="{{ url('eccube_payment_lite4_admin_regular_cycle') }}"{{ active_menus(menus)[1] == 'cycle' ? ' class="is-active"' }}>' +
+                            '<span>定期サイクル管理</span>' +
+                        '</a>' +
+                    '</li>' +
+                    '<li>' +
+                        '<a href="{{ url('eccube_payment_lite4_admin_regular_discount_setting') }}"{{ active_menus(menus)[1] == 'discount' ? ' class="is-active"' }}>' +
+                            '<span>定期回数別管理</span>' +
+                        '</a>' +
+                    '</li>' +
+                '</ul>' +
+            '</li>'
+        );
+    });
+</script>

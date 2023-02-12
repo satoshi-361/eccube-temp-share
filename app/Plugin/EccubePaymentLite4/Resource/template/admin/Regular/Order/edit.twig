@@ -1,0 +1,885 @@
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['regular', 'order'] %}
+
+{% block title %}定期受注編集{% endblock %}
+{% block sub_title %}定期管理{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+{% form_theme searchProductModalForm '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block javascript %}
+<script src="https://yubinbango.github.io/yubinbango/yubinbango.js" charset="UTF-8"></script>
+<script>
+    $(function() {
+        // 項目数が多く、入力している項目によってEnter押下時に期待する動作が変わるので、いったん禁止
+        $('input').on('keydown', function(e) {
+            if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        // 商品検索
+        $('#searchProductModalButton').on('click', function() {
+            var list = $('#searchProductModalList');
+            list.children().remove();
+
+            $.ajax({
+                url: '{{ url('eccube_payment_lite4_admin_regular_order_search_product') }}',
+                type: 'POST',
+                dataType: 'html',
+                data: {
+                    'id': $('#admin_search_product_id').val(),
+                    'category_id': $('#admin_search_product_category_id').val()
+                }
+            }).done(function(data) {
+                $('#searchProductModalList').html(data);
+            }).fail(function(data) {
+                alert('search product failed.');
+            });
+        });
+
+        // その他明細
+        $('#addOrderItemType').on('show.bs.modal', function(e) {
+            var list = $('#searchOrderItemTypeList');
+            list.children().remove();
+
+            $.ajax({
+                url: '{{ url('admin_order_search_order_item_type') }}',
+                type: 'POST',
+                dataType: 'html'
+            }).done(function(data) {
+                $('#searchOrderItemTypeList').html(data);
+            }).fail(function(data) {
+                alert('search order item type failed.');
+            });
+        });
+
+        // ページング処理
+        $(document).on('click', '#searchProductModalList ul.pagination li.page-item a.page-link', function(e) {
+            e.preventDefault();
+            var list = $('#searchProductModalList');
+            list.children().remove();
+            var url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'html'
+            }).done(function(data) {
+                $('#searchProductModalList').html(data);
+            }).fail(function(data) {
+                alert('search product failed.');
+            });
+        });
+
+        // 商品追加
+        $collectionHolder = $('#table-form-field');
+        index = $collectionHolder.find('tbody > tr').length;
+        formIdPrefix = '#regular_order_RegularOrderItems_';
+
+        $(document).on('click', '.delete', function(e) {
+            // 商品削除
+            $(this).parents('tr').remove();
+            index--;
+            $("#calculate").trigger('click');
+        });
+
+        // 計算結果の更新が押されたらページ内リンクさせる
+        $('.btn').click(function() {
+            var data = $(this).data();
+            if (data.link) {
+                $('#form1').attr('action', '#' + data.link).submit();
+                return false;
+            }
+        });
+
+        // 注文者情報をコピー
+        $('.copy-customer').on('click', function() {
+            $('#regular_order_RegularShipping_name_name01').val($('#regular_order_name_name01').val());
+            $('#regular_order_RegularShipping_name_name02').val($('#regular_order_name_name02').val());
+            $('#regular_order_RegularShipping_kana_kana01').val($('#regular_order_kana_kana01').val());
+            $('#regular_order_RegularShipping_kana_kana02').val($('#regular_order_kana_kana02').val());
+            $('#regular_order_RegularShipping_postal_code').val($('#regular_order_postal_code').val());
+            $('#regular_order_RegularShipping_address_pref').val($('#regular_order_address_pref').val());
+            $('#regular_order_RegularShipping_address_addr01').val($('#regular_order_address_addr01').val());
+            $('#regular_order_RegularShipping_address_addr02').val($('#regular_order_address_addr02').val());
+            $('#regular_order_RegularShipping_email').val($('#regular_order_email').val());
+            $('#regular_order_RegularShipping_phone_number').val($('#regular_order_phone_number').val());
+            $('#regular_order_RegularShipping_company_name').val($('#regular_order_company_name').val());
+        });
+
+        // お届け時間の初期表示
+        $('#regular_order_RegularShipping_Delivery').change();
+
+        var confirmFormChange = function(form, target, modal) {
+            var returnLink = form.find('input[type="hidden"][name*="return_link"]'),
+                saveBtn = modal.find('a[data-action="save"]'),
+                cancelBtn = modal.find('a[data-action="cancel"]');
+            modal.on('hidden.bs.modal', function() {
+                returnLink.val('');
+            });
+            saveBtn.on('click', function() {
+                returnLink.val($(this).data('return-link'));
+                $('#form1').append('<input type="hidden" name="mode" value="register">');
+                form.submit();
+            });
+            target.on('click', function() {
+                modal.find('.modal-body .screen-name').text($(this).attr('title'));
+                modal.modal('show');
+                saveBtn.data('return-link', $(this).attr('href'));
+                cancelBtn.attr('href', $(this).attr('href'));
+                return false;
+            });
+        };
+        confirmFormChange($('#form1'), $('a[data-action="confirm"]'), $('#confirmFormChangeModal'))
+
+        // 配送業者選択時にお届け時間を設定
+        var times = {{ shippingDeliveryTimes|raw }};
+        $('#regular_order_RegularShipping_Delivery').change(function() {
+            var deliveryId = $(this).val();
+            var $shippingDeliveryTime = $('#regular_order_RegularShipping_DeliveryTime');
+            $shippingDeliveryTime.find('option').remove();
+            $shippingDeliveryTime.append($('<option></option>').val('').text('指定なし'));
+            if (typeof(times[deliveryId]) !== 'undefined') {
+                for (var timeId in times[deliveryId]) {
+                    timeValue = times[deliveryId][timeId];
+                    $shippingDeliveryTime.append($('<option></option>')
+                        .val(timeId)
+                        .text(timeValue));
+                }
+            }
+        });
+    });
+</script>
+{% endblock javascript %}
+
+{% block main %}
+    <!-- 移動確認モーダル-->
+    <div class="modal fade" id="confirmFormChangeModal" tabindex="-1" role="dialog"
+         aria-labelledby="confirmFormChangeModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'admin.common.move_to_confirm_title'|trans }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="screen-name"></p>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-ec-conversion" data-action="save" href="javascript:void(0)">
+                        {{ 'admin.common.move_to_confirm_save_and_move'|trans }}
+                    </a>
+                    <a class="btn btn-ec-sub" data-action="cancel" href="javascript:void(0)">
+                        {{ 'admin.common.move_to_confirm_move_only'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form name="form1" id="form1" method="post" action="?">
+        <input type="hidden" name="mode" value="">
+        <input type="hidden" name="modal" value="">
+        {{ form_widget(form._token) }}
+        {{ form_widget(form.return_link) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="定期情報の確認ができます。">
+                                        <span class="card-title">定期情報</span>
+                                        <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-right"><a data-toggle="collapse" href="#orderOverview" aria-expanded="false" aria-controls="orderOverview"><i class="fa fa-angle-up fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="orderOverview">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                定期ID
+                                            </div>
+                                            <div class="col">{{ RegularOrder.id }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                定期回数
+                                            </div>
+                                            <div class="col">{{ RegularOrder.regular_order_count }}回</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                定期継続状況
+                                            </div>
+                                            <div class="col">{{ RegularOrder.RegularStatus.name }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                支払方法
+                                            </div>
+                                            <div class="col">{{ RegularOrder.payment_method }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                定期サイクル
+                                            </div>
+                                            <div class="col">
+                                                {{ form_widget(form.RegularCycle) }}
+                                                {{ form_errors(form.RegularCycle) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row mb-3">
+                                            <div class="col-3"><i class="fa fa-inbox fa-fw mr-1" aria-hidden="true"></i>作成日時</div>
+                                            <div class="col">{{ RegularOrder.order_date ? RegularOrder.order_date|date_sec : '' }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><i class="fa fa-refresh fa-fw mr-1" aria-hidden="true"></i>更新日時</div>
+                                            <div class="col">{{ RegularOrder.update_date ? RegularOrder.update_date|date_sec : '' }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><i class="fa fa-truck fa-fw mr-1" aria-hidden="true"></i>前回お届け日</div>
+                                            <div class="col">
+                                                {{ RegularOrder.RegularShippings.first.shippingDeliveryDate|date_day_with_weekday }}
+                                            </div>
+                                        </div>
+                                        {% if form.RegularStatus is defined %}
+                                            <div class="row mb-3 form-group">
+                                                <label class="col-3 col-form-label">定期ステータス</label>
+                                                <div class="col">
+                                                    {% if RegularOrder.id is not empty %}
+                                                        {{ form_widget(form.RegularStatus) }}
+                                                        {{ form_errors(form.RegularStatus) }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div class="row mb-3 form-group">
+                                            <label class="col-3 col-form-label">
+                                                <i class="fa fa-calendar-check-o fa-fw mr-1" aria-hidden="true"></i>
+                                                次回お届け予定日
+                                            </label>
+                                            <div class="col">
+                                                {{ form_widget(form.RegularShipping.next_delivery_date) }}
+                                                {{ form_errors(form.RegularShipping.next_delivery_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 form-group">
+                                            <label class="col-3 col-form-label">
+                                                <i class="fa fa-clock-o fa-fw mr-1" aria-hidden="true"></i>
+                                                次回お届け時間
+                                            </label>
+                                            <div class="col">
+                                                {{ form_widget(form.RegularShipping.DeliveryTime) }}
+                                                {{ form_errors(form.RegularShipping.DeliveryTime) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="d-inline-block"><span class="card-title">{{ 'admin.order.orderer'|trans }}</span></div>
+                                </div>
+                                <div class="col">{% if id %}<span class="mr-5">{% if form.Customer.vars.value is empty %}{{ 'admin.order.non_member'|trans }}{% else %}<a href="{{ url('admin_customer_edit', {'id': form.Customer.vars.value}) }}">{{ form.Customer.vars.value }}</a>{% endif %}</span>{{ RegularOrder.full_name }} ({{ RegularOrder.full_name_kana }}) 〒{{ RegularOrder.postal_code }} {{ RegularOrder.pref }}{{ RegularOrder.addr01 }}{{ RegularOrder.addr02 }} {{ RegularOrder.email }}{% endif %}</div>
+                                <div class="col-1 text-right"><a class="d-block" data-toggle="collapse" href="#ordererInfo" aria-expanded="false" aria-controls="ordererInfo"><i class="fa {{ id ? 'fa-angle-down' : 'fa-angle-up' }} fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse {{ id ? '' : 'show' }} ec-cardCollapse h-adr" id="ordererInfo">
+                            <span class="p-country-name" style="display:none;">Japan</span>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <label class="col-3 col-form-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.order.customer_id'|trans }}">{{ 'admin.customer.customer_id'|trans }}<i class="fa fa-question-circle fa-lg ml-1"></i></label>
+                                            <div class="col">
+                                                <p id="order_CustomerId">{% if form.Customer.vars.value is empty %}{{ 'admin.order.non_member'|trans }}{% else %}<a href="{{ url('admin_customer_edit', {'id': form.Customer.vars.value}) }}">{{ form.Customer.vars.value }}</a>{% endif %}</p>
+                                                {{ form_widget(form.Customer) }}
+                                                {{ form_errors(form.Customer) }}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.name'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        {{ form_widget(form.name.name01) }}
+                                                        {{ form_errors(form.name.name01) }}
+                                                    </div>
+                                                    <div class="col">
+                                                        {{ form_widget(form.name.name02) }}
+                                                        {{ form_errors(form.name.name02) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.kana'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        {{ form_widget(form.kana.kana01) }}
+                                                        {{ form_errors(form.kana.kana01) }}
+                                                    </div>
+                                                    <div class="col">
+                                                        {{ form_widget(form.kana.kana02) }}
+                                                        {{ form_errors(form.kana.kana02) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.address'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                            <div class="col">
+                                                <div class="row mb-3">
+                                                    <div class="col form-inline">
+                                                        {{ 'admin.common.postal_symbol'|trans }}
+                                                        {{ form_widget(form.postal_code) }}
+                                                        {{ form_errors(form.postal_code) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        {{ form_widget(form.address.pref) }}
+                                                        {{ form_errors(form.address.pref) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col">
+                                                        {{ form_widget(form.address.addr01) }}
+                                                        {{ form_errors(form.address.addr01) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        {{ form_widget(form.address.addr02) }}
+                                                        {{ form_errors(form.address.addr02) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.mail_address'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                            <div class="col">
+                                                {{ form_widget(form.email) }}
+                                                {{ form_errors(form.email) }}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.phone_number'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                            <div class="col">
+                                                {{ form_widget(form.phone_number) }}
+                                                {{ form_errors(form.phone_number) }}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.common.company_name'|trans }}</label>
+                                            <div class="col">
+                                                {{ form_widget(form.company_name) }}
+                                                {{ form_errors(form.company_name) }}
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <label class="col-3 col-form-label">{{ 'admin.order.message'|trans }}</label>
+                                            <div class="col">
+                                                {{ form_widget(form.message, { attr : {'rows': 8 }}) }}
+                                                {{ form_errors(form.message) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.order.shipping_info'|trans }}"><span class="card-title">{{ 'admin.order.shipping_info'|trans }}</span><i class="fa fa-question-circle fa-lg ml-1"></i></div>
+                                </div>
+                                <div class="col-4 text-right"><a data-toggle="collapse" href="#shippingInfo" aria-expanded="false" aria-controls="shippingInfo"><i class="fa fa-angle-up fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="shippingInfo">
+                            <div class="card-body">
+                                {% if RegularOrder.isMultiple %}
+                                    {# 複数配送の場合は配送先の表示のみ #}
+                                    <div class="mb-3">
+                                    </div>
+                                    {% for shipping in RegularOrder.Shippings %}
+                                        <div class="col">
+                                            <span class="mr-5">{{ 'admin.order.delivery'|trans }}({{ loop.index }})</span>
+                                            {% set shipping_name = shipping.full_name ~ '(' ~ shipping.full_name_kana ~ ')' ~ shipping.company_name is not null ? shipping.company_name : '' %}
+                                            {% set shipping_addr = 'admin.common.postal_symbol'|trans ~ shipping.postal_code ~ ' ' ~ shipping.pref ~ shipping.addr01 ~ shipping.addr02 %}
+                                            {% set shipping_date = shipping.shipping_date is not null ? shipping.shipping_date|date_day : '' %}
+                                            {{ shipping_name }} {{ shipping_addr }} {{ shipping.phone_number }} {{ shipping_date }}
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    {# 単数配送の場合は配送先の編集が可能 #}
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-ec-regular copy-customer">{{ 'admin.order.copy_orderer'|trans }}</button>
+                                        </div>
+                                        {% if RegularOrder.id is not empty %}
+                                            <div class="col-6 text-right">
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row h-adr">
+                                        <span class="p-country-name" style="display:none;">Japan</span>
+                                        <div class="col-6">
+                                            <div class="row form-group">
+                                                <label class="col-3 col-form-label">{{ 'admin.common.name'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.name.name01) }}
+                                                            {{ form_errors(form.RegularShipping.name.name01) }}
+                                                        </div>
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.name.name02) }}
+                                                            {{ form_errors(form.RegularShipping.name.name02) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <label class="col-3 col-form-label">{{ 'admin.common.kana'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.kana.kana01) }}
+                                                            {{ form_errors(form.RegularShipping.kana.kana01) }}
+                                                        </div>
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.kana.kana02) }}
+                                                            {{ form_errors(form.RegularShipping.kana.kana02) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <label class="col-3 col-form-label">{{ 'admin.common.address'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                                <div class="col">
+                                                    <div class="row mb-3">
+                                                        <div class="col form-inline">
+                                                            {{ 'admin.common.postal_symbol'|trans }}
+                                                            {{ form_widget(form.RegularShipping.postal_code) }}
+                                                            {{ form_errors(form.RegularShipping.postal_code) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.address.pref) }}
+                                                            {{ form_errors(form.RegularShipping.address.pref) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.address.addr01) }}
+                                                            {{ form_errors(form.RegularShipping.address.addr01) }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            {{ form_widget(form.RegularShipping.address.addr02) }}
+                                                            {{ form_errors(form.RegularShipping.address.addr02) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row form-group">
+                                                <label class="col-3 col-form-label">{{ 'admin.common.phone_number'|trans }}<span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span></label>
+                                                <div class="col">
+                                                    {{ form_widget(form.RegularShipping.phone_number) }}
+                                                    {{ form_errors(form.RegularShipping.phone_number) }}
+                                                </div>
+                                            </div>
+
+                                            <div class="row form-group">
+                                                <label class="col-3 col-form-label">{{ 'admin.common.company_name'|trans }}</label>
+                                                <div class="col">
+                                                    {{ form_widget(form.RegularShipping.company_name) }}
+                                                    {{ form_errors(form.RegularShipping.company_name) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-none">
+                                            {{ form_widget(form.RegularShipping.Delivery) }}
+                                            {{ form_errors(form.RegularShipping.Delivery) }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+                    <div id="order-product" class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.order.product_info'|trans }}"><span class="card-title">{{ 'admin.order.product_info'|trans }}<i class="fa fa-question-circle fa-lg ml-1"></i></span></div>
+                                </div>
+                                <div class="col-4 text-right"><a data-toggle="collapse" href="#orderItem" aria-expanded="false" aria-controls="orderItem"><i class="fa fa-angle-up fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="orderItem">
+                            <div class="card-body">
+                                <div class="row justify-content-between mb-2">
+                                    <div class="col-6">
+                                        {# 複数配送の場合は商品追加できない #}
+                                        {% if not RegularOrder.isMultiple %}
+                                            <a class="btn btn-ec-regular mr-2 add" data-toggle="modal" data-target="#addProduct">{{ 'admin.order.add_product_item'|trans }}</a>
+                                            <div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProduct" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">{{ 'admin.order.add_product_item'|trans }}</h5>
+                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ form_widget(searchProductModalForm.id, { attr : {'class': 'mb-3', 'placeholder': 'admin.product.multi_search_label' }}) }}
+                                                            {{ form_widget(searchProductModalForm.category_id) }}
+                                                            <button type="button" id="searchProductModalButton" class="btn btn-ec-conversion px-5 mb-4 mt-2">{{ 'admin.common.search'|trans }}</button>
+                                                            <div id="searchProductModalList"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <a class="btn btn-ec-regular mr-2" data-toggle="modal" data-target="#addOrderItemType">{{ 'admin.order.add_other_item'|trans }}</a>
+                                        <div class="modal fade" id="addOrderItemType" tabindex="-1" role="dialog" aria-labelledby="addOrderItemType" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">{{ 'admin.order.add_other_item'|trans }}</h5>
+                                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div id="searchOrderItemTypeList"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{ form_errors(form.RegularOrderItemsErrors) }}
+                                    </div>
+                                    <div class="col-5 text-right">
+                                        <button type="submit" class="btn btn-ec-regular mr-2" name="mode" value="calc" data-link="order-product" id="calculate">{{ 'admin.order.update_calculation_results'|trans }}</button>
+                                    </div>
+                                </div>
+                                <table id="table-form-field" class="table table-striped table-sm mb-0"
+                                       data-prototype="{% filter escape %}{{ include('@admin/Order/order_item_prototype.twig', {'orderItemForm': form.RegularOrderItems.vars.prototype}) }}{% endfilter %}">
+                                    <thead class="table-active">
+                                    <tr class="text-nowrap">
+                                        <th class="pt-2 pb-2 pl-3">{{ 'admin.product.product_name_and_code'|trans }}</th>
+                                        <th class="pt-2 pb-2">
+                                            <div class="col-8">{{ 'admin.order.amount'|trans }}</div>
+                                        </th>
+                                        <th class="pt-2 pb-2">
+                                            <div class="col-8">{{ 'admin.order.quantity'|trans }}</div>
+                                        </th>
+                                        <th class="pt-2 pb-2">
+                                            <div class="col-8">{{ 'admin.order.tax_rate'|trans }}</div>
+                                        </th>
+                                        <th class="pt-2 pb-2">
+                                            <div class="col-8">{{ 'admin.order.tax_type'|trans }}</div>
+                                        </th>
+                                        <th class="pt-2 pb-2">
+                                            <div class="col-8">{{ 'admin.order.subtotal'|trans }}</div>
+                                        </th>
+                                        <th class="pt-2 pb-2 pr-3"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for orderItemForm in form.RegularOrderItems %}
+                                        {% set OrderItem = orderItemForm.vars.data %}
+                                        <tr>
+                                            {# hidden values #}
+                                            {{ form_widget(orderItemForm.ProductClass) }}
+                                            {{ form_widget(orderItemForm.order_item_type) }}
+                                            {{ form_widget(orderItemForm.tax_type) }}
+                                            <!-- 商品名 -->
+                                            <td class="align-middle w-25 pl-3">
+                                                <p class="mb-0 font-weight-bold">
+                                                    {# 商品とポイント値引きは名前変更できない #}
+                                                    {% if OrderItem.isProduct or OrderItem.isPoint %}
+                                                        {% if OrderItem.isProduct %}
+                                                            <a href="{{ url('admin_product_product_edit', {id: OrderItem.ProductClass.Product.id}) }}" target="_blank">
+                                                                {{ OrderItem.product_name }}
+                                                            </a>
+                                                        {% else %}
+                                                            {{ OrderItem.product_name }}
+                                                        {% endif %}
+                                                        {{ form_widget(orderItemForm.product_name, { 'type': 'hidden' }) }}
+                                                    {% else %}
+                                                        {{ form_widget(orderItemForm.product_name) }}
+                                                    {% endif %}
+                                                </p>
+                                                <span>
+                                                    {{ OrderItem.product_code }}
+                                                    {% if OrderItem.class_category_name1 is not empty %}
+                                                        / (
+                                                        {{ OrderItem.class_name1 }}：
+                                                        {{ OrderItem.class_category_name1 }}
+                                                        {% if OrderItem.class_category_name2 is not empty %}
+                                                            /
+                                                            {{ OrderItem.class_name2 }}：
+                                                            {{ OrderItem.class_category_name2 }}
+                                                        {% endif %}
+                                                        )
+                                                    {% endif %}
+                                                </span>
+                                                {{ form_errors(orderItemForm.product_name) }}
+                                            </td>
+                                            <!-- 金額 -->
+                                            <td class="align-middle">
+                                                <div class="col mt-3">
+                                                    {# ポイント値引きは価格変更できない #}
+                                                    {% if OrderItem.isPoint %}
+                                                        {{ form_widget(orderItemForm.price, {'attr': { 'readonly': 'readonly', 'class': 'pointPrice' } }) }}
+                                                    {% else %}
+                                                        {{ form_widget(orderItemForm.price) }}
+                                                    {% endif %}
+                                                    <div class="text-right small">({{ OrderItem.TaxDisplayType }})</div>
+                                                    {{ form_errors(orderItemForm.price) }}
+                                                </div>
+                                            </td>
+                                            <!-- 数量 -->
+                                            <td class="align-middle">
+                                                <div class="col-12 col-xl-8">
+                                                    {# 複数配送の場合は商品の個数を変更できない、ポイントの場合も個数を変更できない #}
+                                                    {% if (RegularOrder.isMultiple and OrderItem.isProduct) or OrderItem.isPoint %}
+                                                        {{ form_widget(orderItemForm.quantity, { 'attr': { 'readonly': 'readonly' } }) }}
+                                                    {% else %}
+                                                        {{ form_widget(orderItemForm.quantity) }}
+                                                    {% endif %}
+                                                    {{ form_errors(orderItemForm.quantity) }}
+                                                </div>
+                                            </td>
+                                            <!-- 税率 -->
+                                            <td class="align-middle">
+                                                <div class="col-12 col-xl-8">
+                                                    {# 複数配送・ポイント明細・不課税明細は商品の税率を変更できない #}
+                                                    {% if (RegularOrder.isMultiple and OrderItem.isProduct) or OrderItem.isPoint or OrderItem.TaxType.id == constant('Eccube\\Entity\\Master\\TaxType::NON_TAXABLE') %}
+                                                        {{ form_widget(orderItemForm.tax_rate, { 'attr': { 'readonly': 'readonly' } }) }}
+                                                    {% else %}
+                                                        {{ form_widget(orderItemForm.tax_rate) }}
+                                                    {% endif %}
+                                                    {{ form_errors(orderItemForm.tax_rate) }}
+                                                </div>
+                                            </td>
+                                            <!-- 課税区分 -->
+                                            <td class="align-middle">
+                                                <div class="col">
+                                                    {{ OrderItem.tax_type }}
+                                                </div>
+                                            </td>
+                                            <!-- 小計 -->
+                                            <td class="align-middle">
+                                                <div class="col">
+                                                    <span>{{ OrderItem.total_price|price }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="align-middle text-right pr-3">
+                                                <div class="row justify-content-end">
+                                                    {# 複数配送の場合は商品を削除できない #}
+                                                    {% if (RegularOrder.isMultiple and OrderItem.isProduct) or OrderItem.isPoint %}
+                                                        <div class="col-auto text-center">
+                                                            <div class="d-inline-block mr-3" data-tooltip="true"
+                                                                 data-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                                                                <a class="btn btn-ec-actionIcon disabled">
+                                                                    <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="col-auto text-center">
+                                                            <div class="d-inline-block mr-3" data-tooltip="true"
+                                                                 data-placement="top" title="{{ 'admin.common.delete'|trans }}">
+                                                                <a class="btn btn-ec-actionIcon" data-toggle="modal" data-target="#delete_{{ orderItemForm.vars.id }}">
+                                                                    <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                                                                </a>
+                                                            </div>
+                                                            <!-- 明細の削除確認モーダル -->
+                                                            <div class="modal fade" id="delete_{{ orderItemForm.vars.id }}" tabindex="-1" role="dialog" aria-labelledby="delete_{{ orderItemForm.vars.id }}" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title font-weight-bold">{{ 'admin.common.delete_modal__title'|trans }}</h5>
+                                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">×</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="modal-body text-left">
+                                                                            <p class="text-left">{{ 'admin.order.delete_item__confirm_message'|trans({ '%name%' : OrderItem.product_name }) }}</p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button class="btn btn-ec-sub" type="button" data-dismiss="modal">{{ 'admin.common.cancel'|trans }}</button>
+                                                                            <a href="#order-product" class="btn delete btn-ec-delete">{{ 'admin.common.delete'|trans }}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <hr class="mt-0">
+                                <!-- 小計 -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.order.subtotal'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle font-weight-normal">{{ RegularOrder.subtotal|price }}</span></div>
+                                </div>
+                                <!-- 送料 -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.order.delivery_fee'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle font-weight-normal">{{ RegularOrder.delivery_fee_total|price }}</span></div>
+                                </div>
+                                <!-- 手数料 -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.common.charge'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle font-weight-normal">{{ RegularOrder.charge|price }}</span></div>
+                                </div>
+                                <!-- 値引き -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.order.discount'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle text-danger font-weight-normal">{{ RegularOrder.taxable_discount|price }}</span></div>
+                                </div>
+                                <hr>
+                                <!-- 合計 -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.order.total'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle font-weight-normal">{{ RegularOrder.taxable_total|price }}</span></div>
+                                </div>
+{#                                {% for rate, total in RegularOrder.taxable_total_by_tax_rate %}#}
+{#                                    <div class="row justify-content-end mb-3">#}
+{#                                        <div class="col-auto"><span class="align-middle">{{ 'common.tax_rate_target'|trans({ '%rate%': rate }) }}</span></div>#}
+{#                                        <div class="col-2 text-right"><span class="align-middle font-weight-normal">{{ total|price }}</span></div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+                                <hr>
+                                {% for item in RegularOrder.tax_free_discount_items %}
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ item.product_name }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle text-danger font-weight-normal">{{ item.total_price|price }}</span></div>
+                                </div>
+                                {% endfor %}
+                                <!-- お支払い合計 -->
+                                <div class="row justify-content-end mb-3">
+                                    <div class="col-auto"><span class="align-middle">{{ 'admin.order.payment_total'|trans }}</span></div>
+                                    <div class="col-2 text-right"><span class="h4 align-middle font-weight-normal">{{ RegularOrder.payment_total|price }}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+
+                    <!-- ショップ用メモ欄 -->
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.order.shop_memo'|trans }}"><span class="card-title">{{ 'admin.common.shop_memo'|trans }}<i class="fa fa-question-circle fa-lg ml-1"></i></span></div>
+                                </div>
+                                <div class="col-4 text-right"><a data-toggle="collapse" href="#freeArea" aria-expanded="false" aria-controls="freeArea"><i class="fa fa-angle-up fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="freeArea">
+                            <div class="card-body">
+                                {{ form_widget(form.note, {'attr': {'rows': 8}}) }}
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+
+                    <!-- 定期履歴 -->
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block"><span class="card-title">{{ 'gmo_epsilon.admin.regular_order_edit.order_history'|trans }}</span></div>
+                                </div>
+                                <div class="col-4 text-right"><a data-toggle="collapse" href="#orderHistoryArea" aria-expanded="false" aria-controls="freeArea"><i class="fa fa-angle-up fa-lg"></i></a></div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="orderHistoryArea">
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>回数</th>
+                                            <th>受注番号</th>
+                                            <th>作成日時</th>
+                                            <th>更新日時</th>
+                                            <th>入金日</th>
+                                            <th>発送日</th>
+                                            <th>支払方法</th>
+                                            <th>対応状況</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for index, Order in OrderHistories %}
+                                        <tr>
+                                            <td>{{ index + 1 }}</td>
+                                            <td><a href="{{ url('admin_order_edit', { id : Order.id }) }}" target="blank">{{ Order.id }}</a></td>
+                                            <td>{{ Order.create_date|date('Y/m/d H:m:s') }}</td>
+                                            <td>{{ Order.update_date|date('Y/m/d H:m:s') }}</td>
+                                            <td>{{ Order.payment_date|date_format }}</td>
+                                            <td>{{ Order.Shippings[0].shipping_date|date_format }}</td>
+                                            <td>{{ Order.payment_method }}</td>
+                                            <td>{{ Order.OrderStatus }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!-- .card.rounded -->
+                </div>
+            </div>
+        </div>
+
+        <!-- コンバージョンエリア -->
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('eccube_payment_lite4_admin_regular_index', { 'resume': 1 }) }}"><i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'common.back'|trans }}</span></a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-ec-conversion px-5" name="mode" value="register">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

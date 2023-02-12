@@ -1,0 +1,62 @@
+<script>
+    $(function() {
+        {# テーブルヘッダーを追加 #}
+        $('#ex-product_class thead tr').children('th:nth-child(9)').after(
+            '<th class="pt-2 pb-2">定期サイクル</th>'
+        );
+        {# 定期サイクルのフォームを追加 #}
+        $('table tbody tr').each(function(i) {
+            var $elem = $('#product_class_matrix_product_classes_' + i + '_RegularCycle');
+            $('#ex-product_class-' + i).children('td:nth-child(9)').after('<td class="pt-2 pb-2">' + $elem.html() + '</td>');
+            {# エラーメッセージがレンダリングされている場合はエラーメッセージも追加する #}
+            if ($elem.next('span').length > 0) {
+                $elementError = $elem.next('span');
+                $('#ex-product_class-' + i).children('td:nth-child(10)').append('<span class="invalid-feedback d-block">' + $elementError.html() + '</span>');
+                {# 定期サイクルのエラーメッセージを削除 #}
+                $elementError.remove();
+            }
+            {# 定期サイクルのフォームを削除 #}
+            $elem.remove();
+            i++;
+        })
+
+        var regularSaleTypeId = '{{ regularSaleTypeId }}';
+        var $selectorProductClassMatrix = $('[id$=_sale_type]');
+        {# ページ読み込み時 #}
+        $selectorProductClassMatrix.each(function() {
+            var selectedSaleTypeId = $(this).val();
+            var index = $(this).attr('id').replace(/[^0-9]/g, '');
+
+            if (selectedSaleTypeId === regularSaleTypeId) {
+                enableRegularCycleForm(index);
+            } else {
+                disableRegularCycleForm(index);
+            }
+        });
+
+        {# 販売種別の選択変更時 #}
+        $selectorProductClassMatrix.on("change", function() {
+            var selectedSaleTypeId = $(this).val();
+            var index = $(this).attr('id').replace(/[^0-9]/g, '');
+
+            if (selectedSaleTypeId === regularSaleTypeId) {
+                enableRegularCycleForm(index);
+            } else {
+                disableRegularCycleForm(index);
+            }
+        });
+    });
+
+    function enableRegularCycleForm(index){
+        $("input[id^=product_class_matrix_product_classes_"+ index +"_RegularCycle_]").prop('disabled', false);
+    }
+
+    function disableRegularCycleForm(index){
+        $("input[id^=product_class_matrix_product_classes_"+ index +"_RegularCycle_]").prop('disabled', true);
+    }
+
+</script>
+{% for product_class_form in form.product_classes %}
+    {{ form_widget(product_class_form.RegularCycle) }}
+    {{ form_errors(product_class_form.RegularCycle) }}
+{% endfor %}

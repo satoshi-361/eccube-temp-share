@@ -1,0 +1,412 @@
+{% extends '@admin/default_frame.twig' %}
+{% set menus = ['regular', 'order'] %}
+
+{% block title %}定期受注一覧{% endblock %}
+{% block sub_title %}定期管理{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block javascript %}
+<script>
+$(function() {
+// datetimepicker と競合するため HTML5 のカレンダ入力を無効に
+    $('input[type="date"]').attr('type','text');
+
+    $.when(
+        $.getScript("{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"),
+        $.getScript("{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"),
+        $.getScript("{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}")
+    ).done(function() {
+        // datetimepicker で value が消えてしまうので data-value に保持しておく
+        $('input.datetimepicker-input').each(function() {
+            $(this).data('value', $(this).val());
+        });
+        $('#admin_search_regular_order_first_order_date_start').datetimepicker({
+            locale: '{{ eccube_config.locale }}',
+            format: 'YYYY-MM-DD',
+            useCurrent: false,
+            buttons: {
+                showToday: true,
+                showClose: true
+            }
+        });
+
+        $('#admin_search_regular_order_first_order_date_end').datetimepicker({
+            locale: '{{ eccube_config.locale }}',
+            format: 'YYYY-MM-DD',
+            useCurrent: false,
+            buttons: {
+                showToday: true,
+                showClose: true
+            }
+        });
+        $('#admin_search_regular_order_next_delivery_date_start').datetimepicker({
+            locale: '{{ eccube_config.locale }}',
+            format: 'YYYY-MM-DD',
+            useCurrent: false,
+            buttons: {
+                showToday: true,
+                showClose: true
+            }
+        });
+
+        $('#admin_search_regular_order_next_delivery_date_end').datetimepicker({
+            locale: '{{ eccube_config.locale }}',
+            format: 'YYYY-MM-DD',
+            useCurrent: false,
+            buttons: {
+                showToday: true,
+                showClose: true
+            }
+        });
+    });
+});
+</script>
+{{ include('@EccubePaymentLite4/admin/Regular/Order/confirmationModal_js.twig') }}
+{% endblock javascript %}
+
+{% block main %}
+    <!--検索条件設定テーブルここから-->
+    <div class="c-outsideBlock">
+        <form name="search_form" id="search_form" method="POST" action="{{ url('eccube_payment_lite4_admin_regular_index_page') }}">
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    <div class="col-12">
+                        {{ form_widget(searchForm._token) }}
+                        <div>
+                            <label class="col-form-label" data-tooltip="true" data-placement="top" title="定期受注ID・お名前・会社名・メールアドレス・電話番号">定期受注ID・注文番号・お名前・会社名・メールアドレス・電話番号<i class="fa fa-question-circle fa-lg ml-1"></i></label>
+                            {{ form_widget(searchForm.multi) }}
+                            {{ form_errors(searchForm.multi) }}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <label class="col-form-label">{{ 'gmo_epsilon.admin.regular_order.regular_status'|trans }}</label>
+                                {{ form_widget(searchForm.regular_status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                                {{ form_errors(searchForm.regular_status) }}
+                            </div>
+                        </div>
+                        <div class="d-inline-block mb-3 collapsed" data-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail">
+                            <a>
+                                <i class="fa font-weight-bold mr-1 fa-plus-square-o">
+                                    <span class="font-weight-bold">{{ 'admin.common.search_detail'|trans }}</span>
+                                </i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-subContents ec-collapse collapse{{ has_errors ? ' show' }}" id="searchDetail">
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.order.orderer_name'|trans }}</label>
+                        {{ form_widget(searchForm.name) }}
+                        {{ form_errors(searchForm.name) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.common.gender'|trans }}</label>
+                        {{ form_widget(searchForm.sex, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                        {{ form_errors(searchForm.sex) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.order.orderer_kana'|trans }}</label>
+                        {{ form_widget(searchForm.kana) }}
+                        {{ form_errors(searchForm.kana) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">{{ '初回購入日'|trans }}</label>
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                {{ form_widget(searchForm.first_order_date_start) }}
+                                {{ form_errors(searchForm.first_order_date_start) }}
+                            </div>
+                            <div class="col-auto text-center">{{ 'admin.common.separator__range'|trans }}</div>
+                            <div class="col">
+                                {{ form_widget(searchForm.first_order_date_end) }}
+                                {{ form_errors(searchForm.first_order_date_end) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.common.company_name'|trans }}</label>
+                        {{ form_widget(searchForm.company_name) }}
+                        {{ form_errors(searchForm.company_name) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">次回お届け予定日</label>
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                {{ form_widget(searchForm.next_delivery_date_start) }}
+                                {{ form_errors(searchForm.next_delivery_date_start) }}
+                            </div>
+                            <div class="col-auto text-center">{{ 'admin.common.separator__range'|trans }}</div>
+                            <div class="col">
+                                {{ form_widget(searchForm.next_delivery_date_end) }}
+                                {{ form_errors(searchForm.next_delivery_date_end) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.common.mail_address'|trans }}</label>
+                        {{ form_widget(searchForm.email) }}
+                        {{ form_errors(searchForm.email) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">最新対応状況</label>
+                        {{ form_widget(searchForm.latest_status) }}
+                        {{ form_errors(searchForm.latest_status) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.common.phone_number'|trans }}</label>
+                        {{ form_widget(searchForm.phone_number) }}
+                        {{ form_errors(searchForm.phone_number) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">定期回数</label>
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                {{ form_widget(searchForm.regular_count_start) }}
+                                {{ form_errors(searchForm.regular_count_start) }}
+                            </div>
+                            <div class="col-auto text-center">{{ 'admin.common.separator__range'|trans }}</div>
+                            <div class="col">
+                                {{ form_widget(searchForm.regular_count_end) }}
+                                {{ form_errors(searchForm.regular_count_end) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">定期受注ID</label>
+                        {{ form_widget(searchForm.regular_order_id) }}
+                        {{ form_errors(searchForm.regular_order_id) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">{{ 'gmo_epsilon.admin.regular_order.buy_product_id'|trans }}</label>
+                        {{ form_widget(searchForm.buy_product_id) }}
+                        {{ form_errors(searchForm.buy_product_id) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">注文番号</label>
+                        {{ form_widget(searchForm.order_no) }}
+                        {{ form_errors(searchForm.order_no) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">{{ 'admin.order.purchase_price'|trans }}</label>
+                        <div class="form-row align-items-center">
+                            <div class="col">
+                                <div class="input-group">
+                                    {{ form_widget(searchForm.payment_total_start) }}
+                                    {{ form_errors(searchForm.payment_total_start) }}
+                                </div>
+                            </div>
+                            <div class="col-auto text-center">{{ 'admin.common.separator__range'|trans }}</div>
+                            <div class="col">
+                                <div class="input-group">
+                                    {{ form_widget(searchForm.payment_total_end) }}
+                                    {{ form_errors(searchForm.payment_total_end) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="col-form-label">カード変更依頼メール送信状況</label>
+                        {{ form_widget(searchForm.card_change_request_mail_status) }}
+                        {{ form_errors(searchForm.card_change_request_mail_status) }}
+                    </div>
+                    <div class="col">
+                        <label class="col-form-label">{{ 'gmo_epsilon.admin.regular_order.buy_product_name'|trans }}</label>
+                        {{ form_widget(searchForm.buy_product_name) }}
+                        {{ form_errors(searchForm.buy_product_name) }}
+                    </div>
+                </div>
+            </div>
+            <div class="c-outsideBlock__contents">
+                <div class="row">
+                    <div class="mb-4">
+                        <div class="col-12">
+                            <button class="btn btn-ec-conversion px-5" type="submit" id="search_submit">{{ 'admin.common.search'|trans }}</button>
+                            {% if pagination %}
+                                <span class="font-weight-bold ml-2" id="search_total_count">{{ 'admin.common.search_result'|trans({"%count%":pagination.totalItemCount})|raw }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-outsideBlock__contents mb-5">
+                {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
+            </div>
+        </form>
+    </div>
+    <!--検索条件設定テーブルここまで-->
+
+    <div class="c-contentsArea__cols">
+        <div class="c-contentsArea__primaryCol">
+            <div class="c-primaryCol">
+                {% if pagination and pagination.totalItemCount %}
+                    <form id="form_bulk" method="POST" action="">
+                        <input type="hidden" name="{{ constant('Eccube\\Common\\Constant::TOKEN_NAME') }}" value="{{ csrf_token(constant('Eccube\\Common\\Constant::TOKEN_NAME')) }}">
+                        <div class="row justify-content-between mb-2">
+                            <div class="col-7">
+                                <div class="row justify-content-between">
+                                    <div class="col-auto d-none btn-bulk-wrapper">
+                                        <button type="button" id="order_add" class="btn btn-ec-regular mr-2" data-type="create_order">
+                                            {{ 'gmo_epsilon.admin.regular_order.order_add'|trans }}
+                                        </button>
+                                        <button id="bulkSendNotifyChangeCardMail" type="button" class="btn btn-ec-regular mr-2" data-type="mail">
+                                            カード変更依頼メール送信
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-5 text-right">
+                                <div class="d-inline-block">
+                                    <select class="custom-select" onchange="location = this.value;">
+                                        {% for pageMax in pageMaxis %}
+                                            <option {% if pageMax.name == page_count %} selected {% endif %}
+                                                value="{{ path('eccube_payment_lite4_admin_regular_index_page', {'page_no': 1, 'page_count': pageMax.name}) }}">
+                                                {{ 'admin.common.count'|trans({ '%count%': pageMax.name }) }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card rounded border-0 mb-4 d-block">
+                            <div class="card-body p-0">
+                                <table class="table table-sm" id="search_result">
+                                    <thead>
+                                    <tr>
+                                        <th class="border-top-0 pt-2 pb-2 text-center pl-3">
+                                            <input type="checkbox" id="toggle_check_all" name="filter" value="open">
+                                        </th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.id'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.name'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.regular_status'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.email'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.regular_order_count'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.next_delivery_date'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.card_change_request_mail_send_date'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.first_order_id'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.last_order_id'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2 text-center">{{ 'gmo_epsilon.admin.regular_order.table.last_order_status'|trans }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for RegularOrder in pagination %}
+                                        {% for RegularShipping in RegularOrder.RegularShippings %}
+                                            <tr>
+                                                <td class="align-middle text-center pl-3">
+                                                    <input type="checkbox" id="check_{{ RegularOrder.id }}"
+                                                           data-id="{{ RegularOrder.id }}"
+                                                           name="ids[]"
+                                                           value="{{ RegularOrder.id }}"
+                                                           data-notify-mail-url="{{ url('eccube_payment_lite4_admin_send_change_mail', { id: RegularShipping.id}) }}"
+                                                    />
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <a href="{{ url('eccube_payment_lite4_admin_regular_order_edit', { id : RegularOrder.id }) }}">{{ RegularOrder.id }}</a>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularOrder.name01 }} {{ RegularOrder.name02 }}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularOrder.RegularStatus }}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularOrder.email }}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularOrder.regular_order_count }}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularShipping.nextDeliveryDate|date("Y/m/d") }}
+                                                <td class="align-middle text-center">
+                                                    {% if RegularShipping.RegularOrder.Customer.card_change_request_mail_send_date  %}
+                                                        {{ RegularShipping.RegularOrder.Customer.card_change_request_mail_send_date|date_day }}
+                                                        <i class="fa fa-envelope fa-lg text-secondary"
+                                                           aria-hidden="true"
+                                                           data-tooltip="true"
+                                                           data-placement="top"
+                                                           data-original-title="{{ RegularShipping.RegularOrder.Customer.card_change_request_mail_send_date|date_day }}にカード変更依頼メールを送信済みです"></i>
+                                                    {% else %}
+                                                        {{ 'gmo_epsilon.admin.regular.unsent'|trans }}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <a href="{{ url('admin_order_edit', { id : RegularOrder.getFirstOrder.id }) }}">{{ RegularOrder.getFirstOrder.id }}</a>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <a href="{{ url('admin_order_edit', { id : RegularOrder.getLastOrder.id }) }}">{{ RegularOrder.getLastOrder.id }}</a>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    {{ RegularOrder.getLastOrder.OrderStatus }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row justify-content-md-center mb-4">
+                                {% if pagination.totalItemCount > 0 %}
+                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'eccube_payment_lite4_admin_regular_index_page' } %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                {% elseif has_errors %}
+                    <div class="card rounded border-0">
+                        <div class="card-body p-4">
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_invalid_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                        </div>
+                    </div>
+                    {# 検索結果なし #}
+                {% else %}
+                    <div class="card rounded border-0">
+                        <div class="card-body p-4">
+                            <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                            <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal fade" id="sentUpdateModal" tabindex="-1" role="dialog" aria-labelledby="sentUpdateModal" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title font-weight-bold"><!--confirmationModal_js.twig--></h5>
+                                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="modal-message"></p>
+                                <ul id="bulkErrors"></ul>
+                                <div class="progress" style="display: none">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">{{ 'admin.common.cancel'|trans }}</button>
+                                <button id="bulkChange" class="btn btn-ec-conversion" type="button"><!--confirmationModal_js.twig--></button>
+                                <button id="bulkChangeComplete" class="btn btn-ec-regular" style="display: none" type="button">{{ 'admin.common.close'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

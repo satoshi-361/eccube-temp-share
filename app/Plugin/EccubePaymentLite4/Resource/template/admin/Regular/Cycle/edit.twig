@@ -1,0 +1,300 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['regular', 'cycle'] %}
+
+{% block title %}{{ 'gmo_epsilon.admin.title.regular.cycle'|trans }}{% endblock %}
+{% block sub_title %}{{ 'gmo_epsilon.admin.sub_title.regular.cycle.edit'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
+    <script>
+        $(function() {
+            var $regularCycleFormRegularCycleType = $('#regular_cycle_form_regular_cycle_type');
+            setRegularCycleDayOrWeek($regularCycleFormRegularCycleType.val());
+            $regularCycleFormRegularCycleType.on('change', function() {
+                if($(this).val() !== '') {
+                    setRegularCycleDayOrWeek($(this).val())
+                }
+            });
+        });
+        function setRegularCycleDayOrWeek(regulerCycletypeId){
+            var $regularCycleFormDay = $('#regular_cycle_form_day');
+            var $regularCycleFormWeek = $('#regular_cycle_form_week');
+            var selectedDayValue = $regularCycleFormDay.find('option:selected').val();
+            var selectedWeekValue = $regularCycleFormWeek.find('option:selected').val();
+            $regularCycleFormDay.find('option').remove();
+            $regularCycleFormWeek.find('option').remove();
+            var daily = {
+                '-': '',
+                '1日': '1',
+                '2日': '2',
+                '3日': '3',
+                '4日': '4',
+                '5日': '5',
+                '6日': '6',
+                '7日': '7',
+                '8日': '8',
+                '9日': '9',
+                '10日': '10',
+                '11日': '11',
+                '12日': '12',
+                '13日': '13',
+                '14日': '14',
+                '15日': '15',
+                '16日': '16',
+                '17日': '17',
+                '18日': '18',
+                '19日': '19',
+                '20日': '20',
+                '21日': '21',
+                '22日': '22',
+                '23日': '23',
+                '24日': '24',
+                '25日': '25',
+                '26日': '26',
+                '27日': '27',
+                '28日': '28',
+                '29日': '29',
+                '30日': '30',
+                '31日': '31',
+                '32日': '32',
+                '33日': '33',
+                '34日': '34',
+                '35日': '35',
+                '36日': '36',
+                '37日': '37',
+                '38日': '38',
+                '39日': '39',
+                '40日': '40',
+                '41日': '41',
+                '42日': '42',
+                '43日': '43',
+                '44日': '44',
+                '45日': '45',
+                '46日': '46',
+                '47日': '47',
+                '48日': '48',
+                '49日': '49',
+                '50日': '50',
+                '51日': '51',
+                '52日': '52',
+                '53日': '53',
+                '54日': '54',
+                '55日': '55',
+                '56日': '56',
+                '57日': '57',
+                '58日': '58',
+                '59日': '59',
+                '60日': '60',
+                '61日': '61',
+                '62日': '62',
+                '63日': '63',
+                '64日': '64',
+                '65日': '65',
+                '66日': '66',
+                '67日': '67',
+                '68日': '68',
+                '69日': '69',
+                '70日': '70',
+                '71日': '71',
+                '72日': '72',
+                '73日': '73',
+                '74日': '74',
+                '75日': '75',
+                '76日': '76',
+                '77日': '77',
+                '78日': '78',
+                '79日': '79',
+                '80日': '80',
+                '81日': '81',
+                '82日': '82',
+                '83日': '83',
+                '84日': '84',
+                '85日': '85',
+                '86日': '86',
+                '87日': '87',
+                '88日': '88',
+                '89日': '89',
+                '90日': '90',
+                '91日': '91',
+                '92日': '92',
+                '93日': '93',
+                '94日': '94',
+                '95日': '95',
+                '96日': '96',
+                '97日': '97',
+                '98日': '98',
+                '99日': '99',
+            };
+            var weekly = {
+                '-': '',
+                '1週間': '1',
+                '2週間': '2',
+                '3週間': '3',
+                '4週間': '4',
+            };
+            var monthly = {
+                '-': '',
+                '1ヶ月': '1',
+                '2ヶ月': '2',
+                '3ヶ月': '3',
+                '4ヶ月': '4',
+                '5ヶ月': '5',
+                '6ヶ月': '6',
+                '7ヶ月': '7',
+                '8ヶ月': '8',
+                '9ヶ月': '9',
+                '10ヶ月': '10',
+                '11ヶ月': '11',
+                '12ヶ月': '12',
+            };
+            var specificDay = {
+                '-': '',
+                '1日': '1',
+                '2日': '2',
+                '3日': '3',
+                '4日': '4',
+                '5日': '5',
+                '6日': '6',
+                '7日': '7',
+                '8日': '8',
+                '9日': '9',
+                '10日': '10',
+                '11日': '11',
+                '12日': '12',
+                '13日': '13',
+                '14日': '14',
+                '15日': '15',
+                '16日': '16',
+                '17日': '17',
+                '18日': '18',
+                '19日': '19',
+                '20日': '20',
+                '21日': '21',
+                '22日': '22',
+                '23日': '23',
+                '24日': '24',
+                '25日': '25',
+                '26日': '26',
+                '27日': '27',
+                '28日': '28',
+                '29日': '29',
+                '30日': '30',
+                '31日': '31',
+            };
+            var week = {
+                '-': '',
+                '日曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::SUNDAY') }}',
+                '月曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::MONDAY') }}',
+                '火曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::TUESDAY') }}',
+                '水曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::WEDNESDAY') }}',
+                '木曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::THURSDAY') }}',
+                '金曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::FRIDAY') }}',
+                '土曜日': '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycle::SATURDAY') }}',
+            };
+            if (regulerCycletypeId === '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycleType::REGULAR_DAILY_CYCLE') }}') {
+                changeOptions(daily, selectedDayValue, $regularCycleFormDay);
+                $regularCycleFormDay.prop('disabled', false);
+                $regularCycleFormWeek.prop('disabled', true);
+            } else if (regulerCycletypeId === '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycleType::REGULAR_WEEKLY_CYCLE') }}') {
+                changeOptions(weekly, selectedDayValue, $regularCycleFormDay);
+                $regularCycleFormDay.prop('disabled', false);
+                $regularCycleFormWeek.prop('disabled', true);
+            } else if (regulerCycletypeId === '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycleType::REGULAR_MONTHLY_CYCLE') }}') {
+                changeOptions(monthly, selectedDayValue, $regularCycleFormDay);
+                $regularCycleFormDay.prop('disabled', false);
+                $regularCycleFormWeek.prop('disabled', true);
+            } else if (regulerCycletypeId === '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycleType::REGULAR_SPECIFIC_DAY_CYCLE') }}') {
+                changeOptions(specificDay, selectedDayValue, $regularCycleFormDay);
+                $regularCycleFormDay.prop('disabled', false);
+                $regularCycleFormWeek.prop('disabled', true);
+            } else if (regulerCycletypeId === '{{ constant('Plugin\\EccubePaymentLite4\\Entity\\RegularCycleType::REGULAR_SPECIFIC_WEEK_CYCLE') }}') {
+                changeOptions(week, selectedWeekValue, $regularCycleFormWeek);
+                $regularCycleFormDay.prop('disabled', true);
+                $regularCycleFormWeek.prop('disabled', false);
+            } else {
+                $regularCycleFormDay.prop('disabled', true);
+                $regularCycleFormWeek.prop('disabled', true);
+            }
+        }
+        function changeOptions(dayObj, selectedValue, $target) {
+            $.each(dayObj, function (key, value) {
+                $option = $('<option>')
+                    .val(value)
+                    .text(key);
+                if (selectedValue === value) {
+                    $option.prop('selected', true);
+                }
+                $target.append($option)
+            });
+        }
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <form
+        id="regular_cycle_form"
+        method="post"
+        action="{{ regular_cycle_id is defined ? url('eccube_payment_lite4_admin_regular_cycle_edit', {'id': regular_cycle_id}) : url('eccube_payment_lite4_admin_regular_cycle_new') }}">
+    <form>
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>定期サイクル設定</span></div>
+                        <div id="ex-regular-cycle" class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.regular.edit.label.regular_cycle_type'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_cycle_type) }}
+                                    {{ form_errors(form.regular_cycle_type) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.regular.edit.label.day'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.day) }}
+                                    {{ form_errors(form.day) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.regular.edit.label.week'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.week) }}
+                                    {{ form_errors(form.week) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink" href="{{ url('eccube_payment_lite4_admin_regular_cycle') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i><span>{{ 'gmo_epsilon.admin.regular.cycle.index'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div id="ex-conversion-action" class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'admin.common.registration'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

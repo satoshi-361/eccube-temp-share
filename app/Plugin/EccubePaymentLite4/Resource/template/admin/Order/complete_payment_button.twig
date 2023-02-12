@@ -1,0 +1,42 @@
+<script>
+    $(function() {
+        {% if Order.id != null %}
+            $('#orderOverview .col-6:first').append(
+                '<div class="row mb-3">' +
+                    '<div class="col-3 col-form-label">' +
+                        '登録済みクレジットカード決済登録' +
+                    '</div>' +
+                    '<div class="col">' +
+                        '<a class="btn btn-ec-regular px-3" data-toggle="modal" data-target="#completePaymentBtn">' +
+                            '{{ 'gmo_epsilon.admin.order.complete_payment.button_text'|trans }}' +
+                        '</a>' +
+                    '</div>' +
+                '</div>'
+            );
+            $('#registerGmoEpsilonCreditCardBtn').on('click', function() {
+                location.href = '{{ url('eccube_payment_lite4_admin_create_reg_credit_order', {id: Order.id}) }}';
+            });
+        {% endif %}
+    });
+</script>
+<div class="modal fade" id="completePaymentBtn" tabindex="-1" role="dialog" aria-labelledby="completePaymentBtn" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'gmo_epsilon.admin.order.complete_payment.confirm'|trans }}</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div id="">注文番号: {{ Order.id }}の受注情報を、支払方法「登録済みのクレジットカードで決済」でイプシロン決済サービスに登録します。</div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-ec-sub" data-dismiss="modal" href="javascript:void(0)">
+                    {{ 'gmo_epsilon.admin.complete_payment.cancel'|trans }}
+                </a>
+                <a class="btn btn-ec-conversion" id="registerGmoEpsilonCreditCardBtn" href="javascript:void(0)">
+                    {{ 'gmo_epsilon.admin.complete_payment.register'|trans }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

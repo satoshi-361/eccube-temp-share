@@ -1,0 +1,48 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'regular_resume' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_resume'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-withdrawRole">
+        <form method="post" action="{{ url('eccube_payment_lite4_mypage_regular_resume', { id: RegularOrder.id }) }}">
+            {{ form_widget(form._token) }}
+            <div class="ec-off3Grid">
+                <div class="ec-off3Grid__cell">
+                    <div style="font-size:100px;text-align:center;">
+                        <div class="ec-icon"><img src="{{ asset('assets/icon/exclamation.svg') }}" alt=""></div>
+                    </div>
+                    <p class="ec-withdrawRole__title">
+                        再開手続きの前にご確認ください
+                    </p>
+                    <p class="ec-withdrawRole__description">
+                        本日再開した場合の次回お届け予定日は「{{ nextDeliveryDate|date_day_with_weekday|default('common.select__unspecified'|trans) }}」となります。
+                    </p>
+                </div>
+            </div>
+            <div class="ec-off4Grid">
+                <div class="ec-off4Grid__cell">
+                    <button type="submit" class="ec-blockBtn--cancel">定期を再開する</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

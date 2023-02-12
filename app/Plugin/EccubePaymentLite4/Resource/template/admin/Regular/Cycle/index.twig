@@ -1,0 +1,208 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['regular', 'cycle'] %}
+
+{% block title %}{{ 'gmo_epsilon.admin.title.regular.cycle'|trans }}{% endblock %}
+{% block sub_title %}{{ 'gmo_epsilon.admin.sub_title.regular.cycle.index'|trans }}{% endblock %}
+
+{% block javascript %}
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
+    <script>
+        $(function() {
+            var oldSortNos = [];
+            $('.sortable-item').each(function() {
+                oldSortNos.push(this.dataset.sortNo);
+            });
+            oldSortNos.sort(function(a, b) {
+                return a - b;
+            }).reverse();
+            // 並び替え後にsort noを更新
+            var updateSortNo = function() {
+                var newSortNos = {};
+                var i = 0;
+                $('.sortable-item').each(function() {
+                    newSortNos[this.dataset.id] = oldSortNos[i];
+                    i++;
+                });
+                $.ajax({
+                    url: '{{ url('eccube_payment_lite4_admin_regular_cycle_sort_no_move') }}',
+                    type: 'POST',
+                    data: newSortNos
+                }).always(function() {
+                    $(".modal-backdrop").remove();
+                });
+            };
+            // 最初と最後の↑↓を再描画
+            var redrawDisableAllows = function() {
+                var items = $('.sortable-item');
+                items.find('a').removeClass('disabled');
+                items.first().find('a.action-up').addClass('disabled');
+                items.last().find('a.action-down').addClass('disabled');
+            };
+            // オーバレイ後, 表示順の更新を行う
+            var moveSortNo = function() {
+                $('body').append($('<div class="modal-backdrop show"></div>'));
+                updateSortNo();
+                redrawDisableAllows();
+            };
+            // Drag and Drop
+            $(".sortable-container").sortable({
+                items: '> .sortable-item',
+                cursor: 'move',
+                update: function(e, ui) {
+                    moveSortNo();
+                }
+            });
+            // Up
+            $('.sortable-item').on('click', 'a.action-up', function(e) {
+                e.preventDefault();
+                var current = $(this).parents('li');
+                if (current.prev().hasClass('sortable-item')) {
+                    current.prev().before(current);
+                    moveSortNo();
+                }
+            });
+            // Down
+            $('.sortable-item').on('click', 'a.action-down', function(e) {
+                e.preventDefault();
+                var current = $(this).parents('li');
+                if (current.next().hasClass('sortable-item')) {
+                    current.next().after(current);
+                    moveSortNo();
+                }
+            });
+
+            // 削除モーダルのhrefとmessageの変更
+            $('#DeleteModal').on('shown.bs.modal', function(event) {
+                var target = $(event.relatedTarget);
+                // hrefの変更
+                $(this).find('[data-method="delete"]').attr('href', target.data('url'));
+
+                // messageの変更
+                $(this).find('p.modal-message').text(target.data('message'));
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+    <form name="form1" method="post">
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="d-block mb-3">
+                        <a class="btn btn-ec-regular" href="{{ url('eccube_payment_lite4_admin_regular_cycle_new') }}">{{ 'admin.common.create__new'|trans }}</a>
+                    </div>
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-body p-0">
+                            <div class="card rounded border-0">
+                                <ul class="list-group list-group-flush sortable-container">
+                                    <li class="list-group-item">
+                                        <div class="row justify-content-between">
+                                            <div class="col-2">
+                                                <div class="row">
+                                                    <div class="col-auto offset-6">
+                                                        <strong>{{ 'admin.common.id'|trans }}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-2"><strong>{{ 'gmo_epsilon.admin.regular.table_head.regular_cycle'|trans }}</strong></div>
+                                            <div class="col-2"><strong>{{ 'gmo_epsilon.admin.regular.table_head.day'|trans }}</strong></div>
+                                            <div class="col-2"><strong>{{ 'gmo_epsilon.admin.regular.table_head.week'|trans }}</strong></div>
+                                            <div class="col-2">&nbsp;</div>
+                                        </div>
+                                    </li>
+                                    {% if RegularCycles|length > 0 %}
+                                        {% for RegularCycle in RegularCycles %}
+                                            <li id="ex-regular-{{ RegularCycle.id }}"
+                                                class="list-group-item sortable-item"
+                                                data-id="{{ RegularCycle.id }}"
+                                                data-sort-no="{{ RegularCycle.sortNo }}">
+                                                <div class="row justify-content-between align-items-center">
+                                                    <div class="col-2">
+                                                        <div class="row d-flex">
+                                                            <div class="col-6">
+                                                                <i class="fa fa-bars text-ec-gray"></i>
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                {{ RegularCycle.id }}
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    <div class="col-2">
+                                                        <a href="{{ url('eccube_payment_lite4_admin_regular_cycle_edit', {id: RegularCycle.id} ) }}">
+                                                            {{ RegularCycle.RegularCycleType.name }}
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                            {{ RegularCycle.day }}
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        {{ RegularCycle.getWeekName }}
+                                                    </div>
+                                                    <div class="col-auto text-right">
+                                                        <a href="#" class="btn btn-ec-actionIcon mr-2 action-up {% if loop.first %}disabled{% endif %}" data-tooltip="true" data-placement="top" title="{{ 'admin.common.up'|trans }}">
+                                                            <i class="fa fa-arrow-up fa-lg text-secondary"></i>
+                                                        </a>
+                                                        <a href="#" class="btn btn-ec-actionIcon mr-2 action-down {% if loop.last %}disabled{% endif %}" data-tooltip="true" data-placement="top" title="{{ 'admin.common.down'|trans }}">
+                                                            <i class="fa fa-arrow-down fa-lg text-secondary"></i>
+                                                        </a>
+                                                        <div class="d-inline-block mr-2" data-tooltip="true" data-placement="top"
+                                                             title="{{ 'admin.common.delete'|trans }}">
+                                                            <a class="btn btn-ec-actionIcon {% if RegularCycle.hasProductClassRegularCycles %} disabled{% endif %}"
+                                                                data-toggle="modal"
+                                                                data-target="#DeleteModal"
+                                                                data-url="{{ url('eccube_payment_lite4_admin_regular_cycle_delete', {id: RegularCycle.Id} ) }}"
+                                                                data-message="{{ 'admin.common.delete_modal__message'|trans({ "%name%" : RegularCycle.RegularCycleType.name }) }}"
+
+                                                            >
+                                                                <i class="fa fa-close fa-lg"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </ul>
+                                <!-- 削除モーダル -->
+                                <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog"
+                                     aria-labelledby="DeleteModal" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title font-weight-bold">
+                                                    {{ 'admin.common.delete_modal__title'|trans }}
+                                                </h5>
+                                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body text-left">
+                                                <p class="text-left modal-message"><!-- jsでメッセージを挿入 --></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-ec-sub" type="button" data-dismiss="modal">
+                                                    {{ 'admin.common.cancel'|trans }}
+                                                </button>
+                                                <a class="btn btn-ec-delete" href="#" {{ csrf_token_for_anchor() }}
+                                                   data-method="delete" data-confirm="false">
+                                                    {{ 'admin.common.delete'|trans }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p>{{ 'admin.common.drag_and_drop_description'|trans }}</p>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

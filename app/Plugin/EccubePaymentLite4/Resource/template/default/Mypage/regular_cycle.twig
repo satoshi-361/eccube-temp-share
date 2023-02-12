@@ -1,0 +1,83 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'regular_cycle' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_cycle'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-mypageRole">
+        <form method="post" action="{{ url('eccube_payment_lite4_mypage_regular_cycle', { id: RegularOrder.id }) }}">
+            {{ form_widget(form._token) }}
+            <div class="ec-off1Grid">
+                <div class="ec-off1Grid__cell">
+                    <div class="ec-borderedDefs">
+                        <div class="ec-orderPayment">
+                            <div class="ec-rectHeading">
+                                <h2>お届けサイクル</h2>
+                            </div>
+                            <div class="ec-radio">
+                                {{ form_widget(form.RegularCycle) }}
+                            </div>
+                        </div>
+                        <div class="ec-orderPayment">
+                            <div class="ec-rectHeading">
+                                <h2>お届け日の確認</h2>
+                            </div>
+                            <div class="ec-input">
+                                <p id="next_delivery_date">次回のお届け日は{{ RegularShipping.nextDeliveryDate|date_day_with_weekday|default('common.select__unspecified'|trans) }}です。</p>
+                                <p id="one_after_another_next_delivery_date">次々回のお届け日は{{ oneAfterAnotherNextDeliveryDate|date_day_with_weekday|default('common.select__unspecified'|trans) }}です。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ec-off4Grid">
+                <div class="ec-off4Grid__cell">
+                    <button type="submit" class="ec-blockBtn--cancel">登録する</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block javascript %}
+<script>
+$('input[id^=regular_cycle_RegularCycle_]').on('change', function() {
+    var regular_cycle_id = $('[id^=regular_cycle_RegularCycle_]:checked').val();
+    $.ajax({
+    url: '{{ url('eccube_payment_lite4_mypage_delivery_date') }}',
+        type: 'POST',
+        data: {
+            regular_shipping_id: '{{ RegularShipping.id }}',
+            regular_cycle_id: regular_cycle_id,
+        },
+        dataType: 'json',
+    }).done(function(data) {
+        if (data) {
+            $('#next_delivery_date').text('次回のお届け日は、'+data.next_delivery_date+'です。');
+            $('#one_after_another_next_delivery_date').text('次々回のお届け日は、'+data.one_after_another_next_delivery_date+'です。');
+        }
+    }).fail(function() {
+        alert('お届け日の取得に失敗しました。');
+    });
+});
+</script>
+{% endblock %}

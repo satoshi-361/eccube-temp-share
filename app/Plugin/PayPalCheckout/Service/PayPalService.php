@@ -566,14 +566,14 @@ class PayPalService
             'name02' => $Order->getName02(),
             'email' => $Order->getEmail(),
             'phone_number' => $Order->getPhoneNumber(),
-            'address' => [
-                'address_line_1' => $Order->getAddr02(),
-                'address_line_2' => null,
-                'admin_area_2' => $Order->getAddr01(),
-                'admin_area_1' => $Order->getPref()->getName(),
-                'postal_code' => $Order->getPostalCode(),
-                'country_code' => 'JP'
-            ]
+            // 'address' => [
+            //     'address_line_1' => $Order->getAddr02(),
+            //     'address_line_2' => null,
+            //     'admin_area_2' => $Order->getAddr01(),
+            //     'admin_area_1' => $Order->getPref()->getName(),
+            //     'postal_code' => $Order->getPostalCode(),
+            //     'country_code' => 'JP'
+            // ]
         ];
     }
 
@@ -653,14 +653,14 @@ class PayPalService
                 ],
 //                "phone_number" => $Shipping->getPhoneNumber(),
 //                "email" => $Order->getEmail(),
-                'address' => [
-                    'address_line_1' => $Shipping->getAddr02(),
-                    'address_line_2' => null,
-                    'admin_area_2' => $Shipping->getAddr01(),
-                    'admin_area_1' => $Shipping->getPref()->getName(),
-                    'postal_code' => $Shipping->getPostalCode(),
-                    'country_code' => 'JP'
-                ]
+                // 'address' => [
+                //     'address_line_1' => $Shipping->getAddr02(),
+                //     'address_line_2' => null,
+                //     'admin_area_2' => $Shipping->getAddr01(),
+                //     'admin_area_1' => $Shipping->getPref()->getName(),
+                //     'postal_code' => $Shipping->getPostalCode(),
+                //     'country_code' => 'JP'
+                // ]
             ];
         }
     }

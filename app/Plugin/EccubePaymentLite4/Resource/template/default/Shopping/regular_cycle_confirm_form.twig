@@ -1,0 +1,89 @@
+<script>
+    $(function() {
+        $('.ec-orderPayment:first').after(
+            '<div class="ec-orderPayment">'+
+                '<div class="ec-rectHeading">'+
+                    '<h2>{{ 'gmo_epsilon.front.shopping.regular_cycle'|trans }}</h2>'+
+                '</div>'+
+                '<div class="ec-radio">'+
+                    '<div style="display: none;">'+
+                    {% for key, child in form.RegularCycles %}
+                        {% set RegularCycle = form.RegularCycles.vars.choices[key].data %}
+                        '<input type="radio" id="shopping_order_RegularCycles_{{ key }}" name="_shopping_order[RegularCycles]" required="required" data-trigger="change" value="{{ RegularCycle.id }}" {% if form.RegularCycles.vars.value == RegularCycle.id  %}checked="checked"{% endif %} />'+
+                    {% endfor %}
+                    '</div>'+
+                    '{{ label }}'+
+                '</div>'+
+
+                {% if form.RegularCycles.vars.errors|length > 0 %}
+                    {% for error in form.RegularCycles.vars.errors %}
+                        '<span class="invalid-feedback d-block">' +
+                            '<span class="d-block">' +
+                                '<span class="form-error-icon badge badge-danger text-uppercase">エラー</span> <span class="form-error-message">{{ error.message }}</span>' +
+                            '</span>' +
+                        '</span>' +
+                    {% endfor %}
+                {% endif %}
+
+            '</div>'+
+            '<div class="ec-orderPayment">'+
+                '<div class="ec-rectHeading">'+
+                    '<h2>お届け日・お支払い時期について</h2>'+
+                '</div>'+
+                {% for key, Items in ProductItems %}
+                    {% set product = Items.product %}
+                    {% if product.free_description_of_payment_delivery is not empty %}
+                    {% set free_description_of_payment_delivery = product.free_description_of_payment_delivery|replace({ '\r\n': '<br>', '\n': '<br>', '\r': '<br>' })|escape('js') %}
+                        '<p>{{ product.name }} : {{ free_description_of_payment_delivery }}</p>'+
+                    {% endif %}
+                {% endfor %}
+            '</div>' +
+
+                {% set charge = 0 %}
+                {% for item in Order.order_items if item.isCharge %}
+                {% set charge = item.total_price %}
+                {% endfor %}
+            '<p style="margin-top: 10px;margin-bottom: 10px;">お届けサイクル：{{ label }}　{{ limitCycle }}回購入　決済方法： {{ Order.Payment }}({{ charge|price }})</p>' +
+                '<div class="table-responsive-sm">' +
+            '<table class="table table-sm">' +
+                '<tbody>' +
+                '<tr>' +
+                '<th>日程/回数</th>' +
+                {% for i in 1..limitCycle %}
+                    '<td class="align-middle;">{{ loop.index }}</td>' +
+                {% endfor %}
+
+                '</tr>' +
+                '<tr>' +
+                '<th>お届け日</th>' +
+                {% for key, value in nextOrderDate %}
+                    '<td class="align-middle;" style="line-break: auto;">{{ value|date('Y/m/d') }}</td>' +
+                {% endfor %}
+
+                '</tr>' +
+                '<tr>' +
+                    '<th>お支払い時期</th>' +
+                {% set firstDay = firstDay %}
+                {% set deadline = deadlineDay %}
+
+                {% if isCashPayment %}
+                    {% for key, value in nextOrderDate %}
+                        '<td class="align-middle;">{{ value|date('Y/m/d') }}</td>' +
+                    {% endfor %}
+                {% else %}
+                    {% for key, value in nextOrderDate %}
+                        {% if key == 0 %}
+                            '<td class="align-middle;">{{ value|date_modify("-" ~ firstDay  ~ " day")|date('Y/m/d') }}</td>' +
+                        {% else %}
+                            '<td class="align-middle;">{{ value|date_modify("-" ~ deadline  ~ " day")|date('Y/m/d') }}</td>' +
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                '</tr>' +
+                '</tbody>' +
+            '</table>' +
+            '</div>' +
+            '</div>'
+        );
+    });
+</script>

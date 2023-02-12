@@ -1,0 +1,9 @@
+<script>
+    $(function() {
+        $('#gmoEpsilonRegularNavList').append(
+            '<li class="ec-navlistRole__item {% if regular_mypage_no|default('') == 'regular_cancel' %}active{% endif %}">' +
+                '<a href="{{ url('eccube_payment_lite4_mypage_regular_cancel', { 'id': RegularOrder.id }) }}">{{ 'gmo_epsilon.front.mypage.regular_nav__cancel'|trans }}</a>' +
+            '</li>'
+        );
+    });
+</script>

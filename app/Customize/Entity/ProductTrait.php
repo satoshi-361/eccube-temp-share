@@ -21,6 +21,7 @@ trait ProductTrait
      *          "required": true,
      *          "label": false,
      *          "choices": {
+     *              "0%" : 0,
      *              "10%" : 10,
      *              "20%" : 20,
      *              "30%" : 30,
@@ -43,6 +44,17 @@ trait ProductTrait
      * })
      */
     private $Customer;
+    
+
+    /**
+     * @var \Customize\Entity\Master\ProductStatusColor
+     *
+     * @ORM\ManyToOne(targetEntity="Customize\Entity\Master\ProductStatusColor")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_status_id", referencedColumnName="id")
+     * })
+     */
+    private $StatusColor;
     
     /**
      * Get affiliate_reward
@@ -88,5 +100,29 @@ trait ProductTrait
     public function getCustomer()
     {
         return $this->Customer;
+    }
+
+    /**
+     * Set StatusColor.
+     *
+     * @param \Customize\Entity\Master\ProductStatusColor|null $StatusColor
+     *
+     * @return Order
+     */
+    public function setStatusColor(\Customize\Entity\Master\ProductStatusColor $StatusColor = null)
+    {
+        $this->StatusColor = $StatusColor;
+
+        return $this;
+    }
+
+    /**
+     * Get StatusColor.
+     *
+     * @return \Customize\Entity\Master\ProductStatusColor|null
+     */
+    public function getStatusColor()
+    {
+        return $this->StatusColor;
     }
 }

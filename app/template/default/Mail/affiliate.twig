@@ -1,0 +1,33 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% autoescape 'safe_textmail' %}
+{{ Affiliater.name01 }} {{ Affiliater.name02 }} 様
+
+お世話になっております。goodhabits Share!運営事業部です。
+アフィリエイトした下記の記事が購入されましたので、お知らせいたします。 
+
+記事タイトル：{{ OrderItem.Product.name }}
+記事URL：{{ url('product_detail', { id: OrderItem.Product.id }) }}
+
+記事販売者：{{ OrderItem.Product.Customer.__toString }}
+
+販売日時：{{ Order.order_date|date_sec|date('Y年m月d日 H:i:s') }}
+
+アフィリエイト報酬額：{{ ( OrderItem.Product.getPrice02IncTaxMax * OrderItem.Product.affiliate_reward / 100 )|price }}
+
+今後ともShare!をよろしくお願いいたします。 
+
+============================================
+・goodhabits Share!運営事業部
+・https://share-departmentshop.com
+・info@share-departmentshop.com
+============================================
+{% endautoescape %}

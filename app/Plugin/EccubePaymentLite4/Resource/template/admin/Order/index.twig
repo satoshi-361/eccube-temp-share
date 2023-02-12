@@ -1,0 +1,160 @@
+<script>
+    $(function() {
+        // 決済状況 列見出し名
+        var PAY_STATUS_COL_LABEL = '決済状況';
+        // 決済状況 追加先の列番号
+        var PAY_STATUS_COL_BEFORE_INDEX = 4;
+
+        // 注文一覧テーブル要素
+        var $orderTable       = $('#search_result');
+        var $orderTableHeader = $orderTable.find('thead');
+        var $orderTableBody   = $orderTable.find('tbody');
+
+        // テーブルヘッダ行に決済状況列を追加
+        $orderTableHeader
+            .find('th:eq('+(PAY_STATUS_COL_BEFORE_INDEX-1)+')')
+            .after('<th class="border-top-0 pt-2 pb-2 text-center text-nowrap">'+PAY_STATUS_COL_LABEL+'</th>');
+        // 注文レコードに決済状況列を追加
+        var orders = JSON.parse('{{ orders|json_encode|raw}}');
+        var $orderRowList = $orderTableBody.find('tr');
+        var count = 0;
+        $.each(orders, function(i, order) {
+            $.each(order.Shippings, function(j, shipping) {
+                var paymentStatusText = order.PaymentStatus ? order.PaymentStatus.name : '';
+                if (order.payment_method === '{{ virtual_account }}' && order.PaymentStatus && order.PaymentStatus.id === parseInt('{{ payment_status_id }}')) {
+                    paymentStatusText += order.PaymentStatus ? '<i class="fa fa-exclamation-circle text-secondary" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="イプシロン管理画面で入金金額を確認してください"></i>' : '';
+                }
+                $($orderRowList[count]).find('input[name="ids[]"]').attr({'shipping-id': shipping.id});
+                $($orderRowList[count])
+                    .find('td:eq('+(PAY_STATUS_COL_BEFORE_INDEX-1)+')')
+                    .after('<td class="align-middle text-center">'+paymentStatusText+'</td>');
+                count++;
+            });
+        });
+        $('[data-toggle="tooltip"]').tooltip();
+    {# ↓EC-CUBE本体側 confirmationModal_js.twig(L41-)を参考に実装 ↓ #}
+        var BulkPayStatusUpdate = function(modal, eventTarget) {
+            ConfirmationModal.call(this, modal);
+            this.eventTarget = eventTarget;
+        };
+        // extend super class
+        BulkPayStatusUpdate.prototype = Object.create(ConfirmationModal.prototype, {
+            constructor: {
+                value: ConfirmationModal
+            },
+            modalTitle: {
+                value: '決済状況の変更'
+            },
+            getTotalCount: {
+                value: function() {
+                    var $checkedList = $('input[data-id]:checked');
+                    // 注文IDの重複を除外
+                    var orderIdList = $checkedList.get().reduce(function(acc, val, idx) {
+                        var orderId = val.getAttribute('shipping-id');
+                        if (acc.indexOf(orderId) === -1) {
+                            acc.push(orderId);
+                        }
+                        return acc;
+                    }, []);
+                    return orderIdList.length;
+                }
+            },
+            progress: {
+                value: function(result, progress) {
+                    // プログレスバーの更新
+                    $('.progress-bar', this.modal).css('width', (++this.currentCount / this.totalCount * 100) + '%');
+                    if (result['message']) {
+                        var badge = (result['status'] == 'OK')
+                            ? '<span class="badge badge-success">OK</span>'
+                            : '<span class="badge badge-warning">NOTICE</span>';
+                        $('<li>'+badge+' </li>')
+                            .append($('<span></span>').text(result['message']))
+                            .appendTo('#bulkErrors');
+                    }
+                    if (this.currentCount >= this.totalCount) {
+                        progress.resolve();
+                    }
+                }
+            },
+            getPromises: {
+                value: function(progress) {
+                    var requestOrderIdList = [];
+                    var promises = [];
+                    // チェックされているチェックボックスごとに処理を行う
+                    $('input[data-id]:checked').each(function(idx, elm) {
+                        var shippingId = elm.getAttribute('shipping-id');
+                        var params = {
+                            paymentStatusId: $('#gmo_epsilon_option_bulk_payment_status').val(),
+                            bulk: true,
+                            shippingId: shippingId
+                        };
+                        var url = '{{ url('eccube_payment_lite4_admin_change_payment_status') }}'
+                        // 既にリクエストが行われている注文の場合はスキップ
+                        if (requestOrderIdList.indexOf(shippingId) !== -1) {
+                            return;
+                        }
+                        // リクエストを行う配送IDを保持
+                        requestOrderIdList.push(shippingId);
+                        var promise = $.post(url, params)
+                            .fail(function(err) {
+                                progress.reject();
+                                ConfirmationModal.prototype.fail.call(this);
+                            })
+                            .always(function(data) {
+                                progress.notifyWith(data);
+                            });
+                        promises.push(promise);
+                    });
+                    return promises;
+                }
+            }
+        });
+        // プログレスバーの表示を制御
+        var handleClickUpdatePayStatus = function(e) {
+            var eventTarget = $(e.currentTarget);
+            var modal = $('#sentUpdateModal');
+            if (!$('#gmo_epsilon_option_bulk_payment_status').val()) {
+                alert('決済状況を選択してください');
+                return;
+            }
+            updater = new BulkPayStatusUpdate(modal, eventTarget);
+            modal.modal();
+            modal.find('.modal-title').text(updater.modalTitle);
+            modal.find('.modal-body > p.modal-message').text("{{ 'admin.order.bulk_action__in_progress_message'|trans }}");
+            modal.find('button').hide();
+            $('#bulk-options').hide();
+            modal.find('.progress').show();
+            updater.totalCount = updater.getTotalCount();
+            var progress = new $.Deferred();
+            progress.progress(function() {
+                updater.progress(this, progress);
+            })
+                .fail(function() {
+                    updater.fail(this);
+                })
+                .always(function() {
+                    updater.always(this);
+                });
+            updater.getPromises(progress);
+        };
+         // ↑EC-CUBE本体側 confirmationModal_js.twig(L41-)を参考に実装 ↑
+        // 決済状況更新用のプルダウン追加
+        var $target = $('#btn_bulk_status').parents('.btn-bulk-wrapper');
+        var contents =
+            '<div class="col btn-bulk-wrapper d-none">' +
+                '<div class="d-inline-block mr-2">' +
+                    '<select class="custom-select" id="gmo_epsilon_option_bulk_payment_status">' +
+                        '<option value="" selected>決済状況の変更</option>' +
+                        {% for paymentStatus in PaymentStatuses %}
+                            '<option value="{{ paymentStatus.id }}">{{ paymentStatus.name }}</option>' +
+                        {% endfor %}
+                    '</select>' +
+                '</div>' +
+                '<button type="button" id="gmo_epsilon_btn_bulk_payment_status" class="btn btn-ec-regular mr-2 progressModal" data-type="status" data-bulk-update="true" data-submit="bulk">' +
+                    '決定' +
+                '</button>' +
+            '</div>';
+        $target.css('max-width', '240px').after(contents);
+        $('#gmo_epsilon_btn_bulk_payment_status').on('click', handleClickUpdatePayStatus);
+    });
+</script>

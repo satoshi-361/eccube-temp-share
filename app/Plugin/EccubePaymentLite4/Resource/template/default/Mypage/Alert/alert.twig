@@ -1,0 +1,44 @@
+{% if error_only is not defined %}
+    {% set error_only = false %}
+{% endif %}
+{% for error in app.session.flashbag.get('eccube.front.error') %}
+    <div class="ec-cartRole__error">
+        <div class="ec-alert-warning">
+            <div class="ec-alert-warning__icon"><img src="{{ asset('assets/icon/exclamation-white.svg') }}"></div>
+            <div class="ec-alert-warning__text">
+                {{ error|trans|nl2br }}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% if error_only == false %}
+    {% for error in app.session.flashbag.get('eccube.front.warning') %}
+        <div class="ec-cartRole__error">
+            <div class="ec-alert-warning">
+                <div class="ec-alert-warning__icon"><img src="{{ asset('assets/icon/exclamation-white.svg') }}">
+                </div>
+                <div class="ec-alert-warning__text">
+                    {{ error|trans|nl2br }}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+{% if (app.request.get('_route')) == 'mypage_change_complete' %}
+<script>
+    $(function () {
+        var $element = $('.ec-cartRole__error');
+        $('.ec-registerCompleteRole').prepend($element);
+    });
+</script>
+{% endif %}
+
+{% if (app.request.get('_route')) == 'mypage_delivery' %}
+<script>
+    $(function () {
+        var $element = $('.ec-cartRole__error');
+        console.log($element);
+        $('.ec-mypageRole:last').prepend($element);
+    });
+</script>
+{% endif %}

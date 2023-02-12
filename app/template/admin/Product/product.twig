@@ -12,6 +12,8 @@ file that was distributed with this source code.
 
 {% set menus = ['product', 'product_edit'] %}
 
+{% set ProductStatusRepository = repository('Eccube\\Entity\\Master\\ProductStatus') %}
+
 {% block title %}{{ 'admin.product.product_registration'|trans }}{% endblock %}
 {% block sub_title %}{{ 'admin.product.product_management'|trans }}{% endblock %}
 
@@ -32,6 +34,11 @@ file that was distributed with this source code.
             width: 70px;
             border: dashed 1px #ccc;
             background: #fff;
+        }
+
+        #admin_product_Status option[value="3"],
+        #admin_product_Status option[value="4"] {
+            display: none;
         }
     </style>
 {% endblock stylesheet %}

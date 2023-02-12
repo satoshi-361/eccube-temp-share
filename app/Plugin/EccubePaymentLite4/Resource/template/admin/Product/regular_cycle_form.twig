@@ -1,0 +1,49 @@
+<script>
+    function changeRegularCycleForm(selectedSaleTypeId, regularSaleTypeId) {
+        if (selectedSaleTypeId === regularSaleTypeId) {
+            $('input[id^=admin_product_class_RegularCycle]').prop('disabled', false);
+        } else {
+            $('input[id^=admin_product_class_RegularCycle]').prop('disabled', true);
+        }
+    }
+    $(function() {
+        {# 定期サイクルフォームの追加 #}
+        $('#admin_product_class_delivery_duration').closest('#basicConfig > .card-body').append(
+            '<div class="row">' +
+                '<div class="col-3">' +
+                    '<span>定期サイクル</span>' +
+                '</div>' +
+                '<div class="col mb-2">' +
+                    '<div id="admin_product_class_RegularCycle">' +
+                        {% for key, child in form.class.RegularCycle.vars.choices %}
+                        {% set Cycle = form.class.RegularCycle.vars.choices[key].data %}
+                        '<div class="form-check">' +
+                            '<input type="checkbox" id="admin_product_class_RegularCycle_{{ key }}" name="admin_product[class][RegularCycle][]" class="form-check-input" {% for key2, child2 in form.class.RegularCycle.vars.value %}{% if child2 == key %}checked="checked"{% endif %}{% endfor %} value="{{ key }}">' +
+                            '<label class="form-check-label" for="admin_product_class_RegularCycle_{{ key }}">{{ Cycle }}</label>' +
+                        '</div>' +
+                        {% endfor %}
+                    '</div>' +
+
+                    {% if form.class.RegularCycle.vars.errors|length > 0 %}
+                        {% for error in form.class.RegularCycle.vars.errors %}
+                            '<span class="invalid-feedback d-block">' +
+                                '<span class="d-block">' +
+                                    '<span class="form-error-icon badge badge-danger text-uppercase">エラー</span> <span class="form-error-message">{{ error.message }}</span>' +
+                                '</span>' +
+                            '</span>' +
+                        {% endfor %}
+                    {% endif %}
+
+                '</div>' +
+            '</div>'
+        );
+        var regularSaleTypeId = '{{ regularSaleTypeId }}';
+        {# 定期サイクルフォーム初期読み込み時、使用可、不可を設定 #}
+        changeRegularCycleForm($('#admin_product_class_sale_type option:selected').val(), regularSaleTypeId);
+        {# 販売種別変更時に、定期サイクルフォームの使用可、不可を設定 #}
+        $('#admin_product_class_sale_type').on('change', function() {
+            var selectedSaleTypeId = $(this).val();
+            changeRegularCycleForm(selectedSaleTypeId, regularSaleTypeId);
+        });
+    });
+</script>

@@ -11,6 +11,7 @@ file that was distributed with this source code.
 {% extends 'default_frame.twig' %}
 
 {% set body_class = 'front_page' %}
+{% set CustomerReviewTotalRepository = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal') %}
 
 {% block stylesheet %}
     <style>
@@ -48,6 +49,21 @@ file that was distributed with this source code.
                                 <div style="padding-left: 15px">
                                     <span class="">{{ Blog.Customer.nick_name }}</span><br />
                                     <span class="">{{ Blog.create_date|date("Y年m月d日") }}発売</span>
+                                    {% set review_list = CustomerReviewTotalRepository.getRecommend(Blog.id) %}
+                                    {% set reviewer_total = 0 %}
+                                    {% set review_total_point = 0 %}
+                                    {% set count = 5 %}
+                                    {% for i in review_list %}
+                                        {% set reviewer_total = reviewer_total + i %}
+                                        {% set review_total_point = review_total_point + i * count %}
+                                        {% set count = count - 1 %}
+                                    {% endfor %}
+                                    {% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+                                    <i class="fas fa-star reviewList star"></i>
+                                    <span>
+                                        {{ review_point|number_format(1, '.', ',') }}
+                                        ({{reviewer_total}}件)
+                                    </span>
                                 </div>
                             </div>
                             <div class="blog-category">

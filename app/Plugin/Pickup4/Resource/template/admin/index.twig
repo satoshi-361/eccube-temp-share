@@ -113,9 +113,9 @@
                                                     {% endif %}
                                                 </a>
                                             </div>
-                                            <div class="col-6 d-flex">{{ RecommendProduct.comment|raw|nl2br }}</div>
+                                            <div class="col-6 d-flex align-items-center">{{ RecommendProduct.comment|raw|nl2br }}</div>
 
-                                            <div class="col text-right">
+                                            <div class="col text-right d-flex align-items-center">
                                                 <a href="{{ url('plugin_pickup_edit', { id : RecommendProduct.id }) }}"
                                                    class="btn btn-ec-actionIcon mr-3 action-edit"
                                                    data-toggle="tooltip"

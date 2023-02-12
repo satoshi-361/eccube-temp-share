@@ -1,0 +1,48 @@
+<script>
+    $(function() {
+        $('#admin_product_class_delivery_duration').closest('#basicConfig > .card-body').append(
+            '<div class="row">' +
+                '<div class="col-3">' +
+                    '<span>定期回数別商品金額割引</span>' +
+                '</div>' +
+                '<div class="col mb-2">' +
+                    '<select id="admin_product_class_RegularDiscount" name="admin_product[class][RegularDiscount]" class="form-control">' +
+                        '<option value="">選択してください</option>' +
+                        {% for key, child in form.class.RegularDiscount.vars.choices %}
+                        {% set Discount = form.class.RegularDiscount.vars.choices[key].data %}
+                        '<option value="{{ Discount }}" {% if form.class.RegularDiscount.vars.value == Discount %}selected="selected"{% endif %}>{{ form.class.RegularDiscount.vars.choices[key].label }}</option>' +
+                        {% endfor %}
+                    '</select>' +
+
+                    {% if form.class.RegularDiscount.vars.errors|length > 0 %}
+                        {% for error in form.class.RegularDiscount.vars.errors %}
+                            '<span class="invalid-feedback d-block">' +
+                                '<span class="d-block">' +
+                                    '<span class="form-error-icon badge badge-danger text-uppercase">エラー</span> <span class="form-error-message">{{ error.message }}</span>' +
+                                '</span>' +
+                            '</span>' +
+                        {% endfor %}
+                    {% endif %}
+
+                '</div>' +
+            '</div>'
+        );
+
+        var regularSaleTypeId = '{{ regularSaleTypeId }}';
+        changeRegularDiscountForm($('#admin_product_class_sale_type option:selected').val(), regularSaleTypeId);
+
+        {# 販売種別変更時に、定期サイクルフォームの使用可、不可を設定 #}
+        $('#admin_product_class_sale_type').on('change', function() {
+            var selectedSaleTypeId = $(this).val();
+            changeRegularDiscountForm(selectedSaleTypeId, regularSaleTypeId);
+        });
+
+        function changeRegularDiscountForm(selectedSaleTypeId, regularSaleTypeId) {
+            if (selectedSaleTypeId === regularSaleTypeId) {
+                $('#admin_product_class_RegularDiscount').prop('disabled', false);
+            } else {
+                $('#admin_product_class_RegularDiscount').prop('disabled', true);
+            }
+        }
+    });
+</script>

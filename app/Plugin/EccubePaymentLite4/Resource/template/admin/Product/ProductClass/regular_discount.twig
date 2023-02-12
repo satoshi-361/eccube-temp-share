@@ -1,0 +1,65 @@
+<style>
+    .regular-discount-id {
+        width: 165px;
+    }
+    .input-group > .form-control {
+        max-width: 90px;
+    }
+    #ex-product_class select[id$="delivery_duration"] {
+        max-width: 120px;
+    }
+</style>
+<script>
+    $(function() {
+        {# テーブルヘッダーを追加 #}
+        $('#ex-product_class thead tr').children('th:nth-child(9)').after(
+            '<th class="pt-2 pb-2">定期回数別商品金額割引</th>'
+        );
+        {# 定期サイクルのフォームを追加 #}
+        $('table tbody tr').each(function(i) {
+            var $elem = $('#product_class_matrix_product_classes_' + i + '_RegularDiscount');
+            $('#ex-product_class-' + i).children('td:nth-child(9)').after($('<td class="align-middle regular-discount-id"></td>').append($elem));
+            i++;
+        });
+
+        var regularSaleTypeId = '{{ regularSaleTypeId }}';
+        var $selectorProductClassMatrix = $('[id$=_sale_type]');
+        {# ページ読み込み時 #}
+        $selectorProductClassMatrix.each(function() {
+            var selectedSaleTypeId = $(this).val();
+            var index = $(this).attr('id').replace(/[^0-9]/g, '');
+
+            if (selectedSaleTypeId === regularSaleTypeId) {
+                enableRegularDiscountForm(index);
+            } else {
+                disableRegularDiscountForm(index);
+            }
+        });
+
+        {# 販売種別の選択変更時 #}
+        $selectorProductClassMatrix.on("change", function() {
+            var selectedSaleTypeId = $(this).val();
+            var index = $(this).attr('id').replace(/[^0-9]/g, '');
+
+            if (selectedSaleTypeId === regularSaleTypeId) {
+                enableRegularDiscountForm(index);
+            } else {
+                disableRegularDiscountForm(index);
+            }
+        });
+
+        function enableRegularDiscountForm(index){
+            $('#product_class_matrix_product_classes_' + index + '_RegularDiscount').prop('disabled', false);
+        }
+
+        function disableRegularDiscountForm(index){
+            $('#product_class_matrix_product_classes_' + index + '_RegularDiscount').prop('disabled', true);
+        }
+    });
+</script>
+<div style="display: none;">
+    {% for product_class_form in form.product_classes %}
+        {{ form_widget(product_class_form.RegularDiscount) }}
+        {{ form_errors(product_class_form.RegularDiscount) }}
+    {% endfor %}
+</div>

@@ -1,0 +1,61 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'next_delivery_date' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_next_delivery_date'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-editRole">
+            <div class="ec-off1Grid">
+                <div class="ec-off1Grid__cell">
+                    <form
+                        method="post"
+                        action="{{ url('eccube_payment_lite4_mypage_regular_next_delivery_date', { id: RegularOrder.id }) }}">
+                        {{ form_widget(form._token) }}
+                        <div class="ec-selects">
+                            <div class="ec-select ec-select__delivery">
+                                <label>次回お届け予定日</label>
+                                {{ form_widget(form.NextDeliveryDate, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.NextDeliveryDate) }}
+                            </div>
+                            <div class="ec-select ec-select__time">
+                                <label>次回お届け時間</label>
+                                {{ form_widget(form.ShippingDeliveryTime, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.ShippingDeliveryTime) }}
+                            </div>
+                        </div>
+                        <div class="ec-RegisterRole__actions">
+                            <div class="ec-off4Grid">
+                                <div class="ec-off4Grid__cell">
+                                    <button type="submit" class="ec-blockBtn--cancel">
+                                        登録する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

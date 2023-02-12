@@ -14,10 +14,10 @@ file that was distributed with this source code.
             <a href="{{ url('mypage_blog_list') }}">{{ '記事一覧'|trans }}</a>
         </li>
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'index' %}active{% endif %}">
-            <a href="{{ url('mypage') }}">{{ 'front.mypage.nav__history'|trans }}</a>
+            <a href="{{ url('mypage') }}">{{ '注文履歴'|trans }}</a>
         </li>
         <li class="ec-navlistRole__item {% if mypageno|default('') == 'transfer' %}active{% endif %}">
-            <a href="{{ url('mypage_transfer_history') }}">{{ '売上履歴'|trans }}</a>
+            <a href="{{ url('mypage_transfer_history') }}">{{ '売上管理'|trans }}</a>
         </li>
         {% if BaseInfo.option_favorite_product %}
             <li class="ec-navlistRole__item {% if mypageno|default('') == 'favorite' %}active{% endif %}">

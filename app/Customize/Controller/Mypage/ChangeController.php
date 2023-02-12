@@ -25,6 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 class ChangeController extends AbstractController
 {
@@ -100,6 +101,11 @@ class ChangeController extends AbstractController
                     $encoder->encodePassword($Customer->getPassword(), $Customer->getSalt())
                 );
             }
+            if ($Customer->getImage() != '') {
+                $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$Customer->getImage());
+                $file->move($this->eccubeConfig['eccube_save_image_dir']);
+            }
+
             $this->entityManager->flush();
 
             log_info('会員編集完了');

@@ -1,0 +1,31 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% autoescape 'safe_textmail' %}
+{{ Customer.name01 }} {{ Customer.name02 }} 様
+
+お世話になっております。goodhabits Share!運営事業部でございます。
+
+記事販売報酬のお振込に失敗しましたのでお知らせいたします。 
+
+{{ month }} 月分　　{{ transferAmount }}円 
+
+お手数をおかけいたしますが、下記サポートまでご連絡をお願いいたします。
+こちらでお振込失敗の原因をお調べいたします。 
+
+
+今後ともShare!をよろしくお願いいたします。 
+
+============================================
+・goodhabits Share!運営事業部
+・https://share-departmentshop.com
+・info@share-departmentshop.com
+============================================
+{% endautoescape %}

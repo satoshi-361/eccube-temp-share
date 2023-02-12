@@ -31,7 +31,7 @@ if (!class_exists(ProductStatus::class, false)) {
     class ProductStatus extends \Eccube\Entity\Master\AbstractMasterEntity
     {
         /**
-         * 公開
+         * 公開 | 承認
          *
          * フロント画面: 表示されます。
          * 管理画面商品一覧: デフォルトで検索対象となります。
@@ -42,6 +42,7 @@ if (!class_exists(ProductStatus::class, false)) {
 
         /**
          * 非公開
+         * 審査・再審査
          *
          * フロント画面: 表示されません。
          * 管理画面商品一覧: デフォルトで検索対象となります。
@@ -61,5 +62,20 @@ if (!class_exists(ProductStatus::class, false)) {
          * @var integer
          */
         const DISPLAY_ABOLISHED = 3;
+
+        /**
+         * 下書き
+         * 削除
+         *
+         * @var integer
+         */
+        const DISPLAY_DRAFT = 4;
+
+        /**
+         * 不可
+         *
+         * @var integer
+         */
+        const DISPLAY_DENY = 5;
     }
 }

@@ -1,0 +1,623 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['setting', 'gmo_epsilon_config'] %}
+
+{% block title %}{{ 'gmo_epsilon.admin.config.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'gmo_epsilon.admin.config.sub_title'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+
+{% endblock stylesheet %}
+{% block javascript %}
+<script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.core.min.js', 'admin') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.widget.min.js', 'admin') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.mouse.min.js', 'admin') }}"></script>
+<script src="{{ asset('assets/js/vendor/jquery.ui/jquery.ui.sortable.min.js', 'admin') }}"></script>
+<script>
+    // 降順にソートする
+    $(function() {
+        var $items_wrapper = $('.sortable-container');
+        var $items = $('.sortable-item');
+        $items.sort(function(a, b) {
+            return parseInt($(a).find('.sort-no').val()) > parseInt($(b).find('.sort-no').val());
+        });
+        $items.each(function() {
+            $items_wrapper.append($(this).remove());
+        })
+    });
+
+    // 並び替え後にsort noを更新
+    function updateSortNo() {
+        var $items = $('.sortable-container').find('.sortable-item');
+        $items.each(function() {
+            $(this).find('.sort-no').val($items.index(this) + 1);
+        });
+    }
+    // 表示順の更新を行う
+    function moveSortNo() {
+        updateSortNo();
+        redrawDisableAllows();
+    }
+    // 最初と最後の↑↓を再描画
+    function redrawDisableAllows() {
+        var items = $('.sortable-item');
+        items.find('a').removeClass('disabled');
+        items.first().find('a.action-up').addClass('disabled');
+        items.last().find('a.action-down').addClass('disabled');
+    }
+    $(function() {
+        var $collectionHolder = $('#ip_black_list_group');
+        var index = $collectionHolder.find('.ip_black_list_item').length;
+        redrawDisableAllows();
+
+        $('#add_ip_black_list_button').on('click', function(event) {
+
+            // 追加するお届け時間名を取得
+            var ipBlackList = $('#add_ip_black_list_value').val();
+
+            if (ipBlackList == '') {
+                return;
+            }
+
+            var prototype = $collectionHolder.data('prototype');
+
+            var newForm = prototype.replace(/__name__/g, index);
+            var newForm = newForm.replace(/__value__/g, ipBlackList);
+
+            // 要素を追加
+            var $lastRow = $('#ip_black_list_group > li:last');
+            $lastRow.after(newForm);
+
+            // ブラックリストIP名を入れる
+            var inputId = '#config_ip_black_list_' + index + '_ip_address';
+            $(inputId).val(ipBlackList);
+            $(inputId).attr('data-origin-value', ipBlackList);
+
+            // 入力欄を初期化
+            $('#add_ip_black_list_value').val('');
+
+            // 要素数をインクリメント
+            index++;
+
+            moveSortNo();
+        });
+        $('#ip_black_list_group').on('click', '.remove_ip_black_list_item', function(event) {
+            event.preventDefault();
+
+            $(this).tooltip('hide');
+
+            // 自身の行を削除.
+            $(event.target).parents('li').remove();
+
+            moveSortNo();
+        });
+        // Drag and Drop
+        $('.sortable-container').sortable({
+            items: '> .sortable-item',
+            cursor: 'move',
+            update: function(e, ui) {
+                moveSortNo();
+            }
+        });
+        // Up
+        $('#ip_black_list_group').on('click', 'a.action-up', function(e) {
+            e.preventDefault();
+            var current = $(this).parents('li');
+            if (current.prev().hasClass('sortable-item')) {
+                current.prev().before(current);
+                moveSortNo();
+            }
+        });
+        // Down
+        $('#ip_black_list_group').on('click', 'a.action-down', function(e) {
+            e.preventDefault();
+            var current = $(this).parents('li');
+            if (current.next().hasClass('sortable-item')) {
+                current.next().after(current);
+                moveSortNo();
+            }
+        });
+
+        // 編集
+        $('#ip_black_list_group').on('click', 'a.action-edit', function(e) {
+            e.preventDefault();
+            var current = $(this).parents('li');
+            current.find('.mode-view').addClass('d-none');
+            current.find('.mode-edit').removeClass('d-none');
+            current.find('.action-edit-submit').attr('disabled', false);
+            current.find('.action-edit-cancel').attr('disabled', false);
+        });
+
+        // 編集決定
+        $('#ip_black_list_group').on('click', 'button.action-edit-submit', function(e) {
+            e.preventDefault();
+            var current = $(this).parents('li');
+            var value = current.find('.form-control').val();
+            current.find('.display-label').text(value);
+            current.find('.mode-view').removeClass('d-none');
+            current.find('.mode-edit').addClass('d-none');
+            current.find('[data-origin-value]').each(function(e) {
+                $(this).attr('data-origin-value', value);
+            });
+        });
+        // 編集キャンセル
+        $('#ip_black_list_group').on('click', 'button.action-edit-cancel', function(e) {
+            e.preventDefault();
+            var current = $(this).parents('li');
+            current.find('[data-origin-value]').each(function(e) {
+                $(this).val($(this).attr('data-origin-value'));
+            });
+            var value = current.find('.form-control').val();
+            current.find('.display-label').text(value);
+            current.find('.mode-view').removeClass('d-none');
+            current.find('.mode-edit').addClass('d-none');
+        });
+        // 編集時, エラーがあれば入力欄を表示.
+        $('#ip_black_list_group').find('.is-invalid').each(function(e) {
+            var current = $(this).parents('li');
+            current.find('.mode-view').addClass('d-none');
+            current.find('.mode-edit').removeClass('d-none');
+        });
+    });
+</script>
+{% endblock %}
+
+{% block main %}
+
+    <form role="form" method="post">
+
+        {{ form_widget(form._token) }}
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">当プラグインのご利用には「EC-CUBEペイメントlite」のお申込、ご契約が必要となります。<br/>
+                            以下URLにてサービス料金ご確認の上、お申込手続きへお進み下さい。<br/>
+                            <a href="https://www.ec-cube.net/product/epsilon.php#link01" target="_blank">https://www.ec-cube.net/product/epsilon.php#link01</a>
+                        </div>
+                        <div class="card-header"><span>{{ 'gmo_epsilon.admin.config.header'|trans }}</span></div>
+                        <!-- /.box-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.contract_code'|trans }}</span><span class="badge badge-primary ml-1">{{ 'gmo_epsilon.admin.config.required'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.contract_code) }}
+                                    {{ form_errors(form.contract_code) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.environmental_setting'|trans }}</span><span class="badge badge-primary ml-1">{{ 'gmo_epsilon.admin.config.required'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.environmental_setting) }}
+                                    {{ form_errors(form.environmental_setting) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.credit_payment_setting'|trans }}</span><span class="badge badge-primary ml-1">{{ 'gmo_epsilon.admin.config.required'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.credit_payment_setting) }}
+                                    {{ form_errors(form.credit_payment_setting) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.use_payment'|trans }}</span><span class="badge badge-primary ml-1">{{ 'gmo_epsilon.admin.config.required'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.gmo_epsilon_payments) }}
+                                    {{ form_errors(form.gmo_epsilon_payments) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.use_convenience'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.convenience_stores) }}
+                                    {{ form_errors(form.convenience_stores) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'gmo_epsilon.admin.config.card_expiration_notification_days'|trans }}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.card_expiration_notification_days) }}
+                                    {{ form_errors(form.card_expiration_notification_days) }}
+                                    <span>有効期限切れの○日前</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>{{ 'gmo_epsilon.admin.config.section_regular'|trans }}</span></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'gmo_epsilon.admin.config.regular'|trans }}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular) }}
+                                    {{ form_errors(form.regular) }}
+                                    <span>{{ 'gmo_epsilon.admin.config.regular_message'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_order_notification_email'|trans }}</span>
+                                    </div>
+                                    <span class="badge badge-primary ml-1">
+                                {{ 'admin.common.required'|trans }}
+                            </span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_order_notification_email) }}
+                                    {{ form_errors(form.regular_order_notification_email) }}
+                                    <span>※ 定期課金機能を利用する場合は、「{{ 'gmo_epsilon.admin.config.regular_order_notification_email'|trans }}」は必須入力となります。</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.my_page_regular_settings'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.my_page_regular_settings) }}
+                                    {{ form_errors(form.my_page_regular_settings) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.next_delivery_date_changeable_range_days'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">
+                                    {{ 'admin.common.required'|trans }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.next_delivery_date_changeable_range_days) }}
+                                    {{ form_errors(form.next_delivery_date_changeable_range_days) }}
+                                    <span>次回配送予定日の前後○日</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.first_delivery_days'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">
+                                    {{ 'admin.common.required'|trans }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.first_delivery_days) }}
+                                    {{ form_errors(form.first_delivery_days) }}
+                                    <span>受注日の○日後</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.next_delivery_days_at_regular_resumption'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">
+                                    {{ 'admin.common.required'|trans }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.next_delivery_days_at_regular_resumption) }}
+                                    {{ form_errors(form.next_delivery_days_at_regular_resumption) }}
+                                    <span>再開日の○日後</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.next_delivery_days_after_re_payment'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">
+                                    {{ 'admin.common.required'|trans }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.next_delivery_days_after_re_payment) }}
+                                    {{ form_errors(form.next_delivery_days_after_re_payment) }}
+                                    <span>再決済日の○日後</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_order_deadline'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">
+                                    {{ 'admin.common.required'|trans }}
+                                </span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_order_deadline) }}
+                                    {{ form_errors(form.regular_order_deadline) }}
+                                    <span>次回配送予定日の○日前</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_delivery_notification_email_days'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_delivery_notification_email_days) }}
+                                    {{ form_errors(form.regular_delivery_notification_email_days) }}
+                                    <span>次回配送予定日の○日前</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_stoppable_count'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_stoppable_count) }}
+                                    {{ form_errors(form.regular_stoppable_count) }}
+                                    <span>○回目以降は停止可能</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_cancelable_count'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_cancelable_count) }}
+                                    {{ form_errors(form.regular_cancelable_count) }}
+                                    <span>○回目以降は解約可能</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_resumable_period'|trans }}</span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_resumable_period) }}
+                                    {{ form_errors(form.regular_resumable_period) }}
+                                    <span>未入力の場合無制限となります</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block" data-tooltip="true" title="通常購入時と比較した定期受注時のポイント付与倍率を設定します。">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_point_magnification'|trans }}<i class="fa fa-question-circle fa-lg ml-1"></i></span>
+                                        <span class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.regular_point_magnification, { attr : { style : 'display:inline-block; width:10%' } }) }}
+                                    {{ form_errors(form.regular_point_magnification) }}
+                                    <div class="col-auto text-left d-inline-block">
+                                        <span>倍</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block"  data-tooltip="true" data-placement="top" title="設定した定期回数に達した場合、対象の会員メールアドレス当てに「定期指定回数お知らせメール」を送信します。">
+                                        <span>{{ 'gmo_epsilon.admin.config.regular_specified_count_notification_mail'|trans }}</span>
+                                        <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                    </div>
+
+                                </div>
+                                <div class="col-2">
+                                    {{ form_widget(form.regular_specified_count_notification_mail) }}
+                                    {{ form_errors(form.regular_specified_count_notification_mail) }}
+                                </div>
+                                <div class="col-auto text-left">
+                                    <span>回目に通知</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>{{ 'gmo_epsilon.admin.config.access_block'|trans }}</span></div>
+                        <div class="card-body">
+                            <span>{{ 'gmo_epsilon.admin.config.access_block_message'|trans|raw }}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.block_mode'|trans }}</span><span class="badge badge-primary ml-1">{{ 'gmo_epsilon.admin.config.required'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.block_mode) }}
+                                    {{ form_errors(form.block_mode) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.access_frequency'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    <div class="row justify-content-start">
+                                        <div class="col-2">
+                                            {{ form_widget(form.access_frequency_time) }}
+                                        </div>
+                                        <div class="col-auto text-center">
+                                            {{ 'gmo_epsilon.admin.config.access_frequency_message_1'|trans }}
+                                        </div>
+                                        <div class="col-2">
+                                            {{ form_widget(form.access_frequency) }}
+                                        </div>
+                                        <div class="col-auto text-center">
+                                            {{ 'gmo_epsilon.admin.config.access_frequency_message_2'|trans }}
+                                        </div>
+                                        {{ form_errors(form.access_frequency) }}
+                                        {{ form_errors(form.access_frequency_time) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.block_time'|trans }}</span></div>
+                                <div class="col-2">
+                                    {{ form_widget(form.block_time) }}
+                                    {{ form_errors(form.block_time) }}
+                                </div>
+                                <div class="col-auto text-left">
+                                    <span>{{ 'gmo_epsilon.admin.config.block_time_message'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3"><span>{{ 'gmo_epsilon.admin.config.white_list'|trans }}</span></div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.white_list) }}
+                                    {{ form_errors(form.white_list) }}
+                                    <span>{{ 'gmo_epsilon.admin.config.white_list_message'|trans }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-2">
+                        <div class="card-header"><span>{{ 'gmo_epsilon.admin.config.ip_black_list'|trans }}</span></div>
+                        <div id="ex-ip-black-list" class="card-body p-0">
+                                <ul id="ip_black_list_group"
+                                    class="list-group list-group-flush sortable-container"
+                                    data-prototype="{% filter escape %}{{ include('@EccubePaymentLite4/admin/ip_black_list_prototype.twig', {'form': form.ip_black_list.vars.prototype}) }}{% endfilter %}"
+                                >
+                                    <li class="list-group-item">
+                                        <div class="form-row">
+                                            <div class="col-3">
+                                                <span>{{ 'gmo_epsilon.admin.config.black_list'|trans }}</span>
+                                            </div>
+                                            <div class="col-auto d-flex align-items-center">
+                                                <input id="add_ip_black_list_value" class="form-control" type="text">
+                                            </div>
+                                            <div class="col-auto d-flex align-items-center">
+                                                <button id="add_ip_black_list_button" class="btn btn-ec-regular" type="button">
+                                                    {{ 'admin.common.create__new'|trans }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {% for child in form.ip_black_list %}
+                                        {{ include('@EccubePaymentLite4/admin/ip_black_list_prototype.twig', {'form': child}) }}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_store_plugin') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>{{ 'gmo_epsilon.admin.config.back'|trans }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">{{ 'gmo_epsilon.admin.config.save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form action="{{ url('eccube_payment_lite4_admin_update_payment_table') }}" method="post">
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-2">
+                        <div class="card-header"><span>{{ 'gmo_epsilon.admin.config.update_payment_block'|trans }}</span></div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush sortable-container">
+                                <div class="list-group-item">
+                                    <div class="form-row">
+                                        <div class="col-auto d-flex align-items-center">
+                                            <button class="btn btn-ec-regular" type="submit">
+                                                {{ 'gmo_epsilon.admin.config.update'|trans }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

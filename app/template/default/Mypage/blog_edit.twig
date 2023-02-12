@@ -118,7 +118,7 @@ file that was distributed with this source code.
             font-size: 14px;
         }
         .cs-dflex.datetime .cs-datetime-title {
-            width: 75px;
+            width: 80px;
         }
         .cs-dflex.datetime cs-datetime {
             width: calc(100% - 75px);
@@ -394,7 +394,7 @@ file that was distributed with this source code.
                                 <dt>
                                     <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
                                         <span>{{ 'admin.product.image'|trans }}</span>
-                                        <br>{{ 'admin.product.image_size'|trans }}
+                                        <br>{{ '推奨サイズ : 1280px×670px'|trans }}
                                     </div>
                                 </dt>
                                 <dd>
@@ -492,7 +492,7 @@ file that was distributed with this source code.
                                     </ul>
                                 </li>
                             {% endmacro %}
-                            <div class="c-directoryTree--register rounded mb-3">
+                            <div class="c-directoryTree--register rounded mb-3 ec-check{{ has_errors(form.Category) ? ' error' }}">
                                 {% import _self as renderMacro %}
                                 {% for TopCategory in TopCategories %}
                                     <ul class="list-unstyled">
@@ -528,10 +528,10 @@ file that was distributed with this source code.
                                     class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
                                     
                             <button type="submit"
-                                    class="ec-blockBtn--action mb-3" name="status" value="2">{{ 'common.registration'|trans }}</button>
+                                    class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
                                     
                             <button type="submit"
-                                    class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '廃止'|trans }}</button>
+                                    class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '削除'|trans }}</button>
                         </div>
                     </div>
                 </div>

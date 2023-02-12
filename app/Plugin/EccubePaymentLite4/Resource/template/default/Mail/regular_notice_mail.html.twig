@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<body bgcolor="#F0F0F0" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="margin-top:0;margin-bottom:0;margin-right:0;margin-left:0;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+<br>
+<br>
+<div align="center"><a href="{{ url('homepage') }}" style="font-family:Helvetica, Arial, sans-serif;font-size:30px;color:#333333;text-decoration:none;">{{ BaseInfo.shop_name }}</a></div>
+<!-- 100% background wrapper (grey background) -->
+<table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" bgcolor="#F0F0F0" style="border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+    <tr>
+        <td align="center" valign="top" bgcolor="#F0F0F0" style="background-color:#F0F0F0;border-collapse:collapse;">
+            <br>
+            <!-- 600px container (white background) -->
+            <table id="html-mail-table1" border="0" width="600px" cellpadding="10" cellspacing="0" class="container" style="border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+                <tr>
+                    <td class="container-padding content" align="left" style="border-collapse:collapse;padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;background-color:#ffffff;">
+                        <br>
+                        <div class="body-text" style="font-family:Helvetica, Arial, sans-serif;font-size:14px;line-height:20px;text-align:left;color:#333333;">
+                            {{ RegularOrder.name01 }} {{ RegularOrder.name02 }} 様<br/>
+                            <br/>
+                            こちらは定期購入内容の事前お知らせメールとなります。<br/>
+                            下記ご注文内容にお間違えがないかご確認下さい。<br/>
+                            <br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            　ご請求金額<br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            お支払い合計：{{ RegularOrder.payment_total|price }}<br/>
+                            お支払い方法：{{ RegularOrder.payment_method }}<br/>
+                            <br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            　ご注文商品明細<br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            {% for RegularOrderItem in RegularOrder.MergedRegularProductOrderItems %}
+                                商品コード：{{ RegularOrderItem.product_code }}<br/>
+                                商品名：{{ RegularOrderItem.product_name }}  {{ RegularOrderItem.classcategory_name1 }}  {{ RegularOrderItem.classcategory_name2 }}<br/>
+                                小計：{{ RegularOrderItem.total_price|price }}<br/>
+                                数量：{{ RegularOrderItem.quantity|number_format }}<br/>
+                                <br/>
+                            {% endfor %}
+                            <hr style="border-top: 2px dashed #8c8b8b;">
+                            小　計：{{ RegularOrder.subtotal|price }}<br/>
+                            <br/>
+                            手数料：{{ RegularOrder.charge|price }}<br/>
+                            送　料：{{ RegularOrder.delivery_fee_total|price }}<br/>
+                            {% if RegularOrder.discount > 0 %}
+                                値引き：{{ (0 - RegularOrder.discount)|price }}<br/>
+                            {% endif %}
+                            <hr style="border-top: 1px dotted #8c8b8b;">
+                            合　計：{{ RegularOrder.payment_total|price }}<br/>
+                            <br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            ご注文者情報<br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            お名前：{{ RegularOrder.name01 }} {{ RegularOrder.name02 }} 様<br/>
+                            お名前(カナ)：{{ RegularOrder.kana01 }} {{ RegularOrder.kana02 }} 様<br/>
+                            {% if RegularOrder.company_name %}
+                                会社名：{{ RegularOrder.company_name }}<br/>
+                            {% endif %}
+                            郵便番号：〒{{ RegularOrder.postal_code }}<br/>
+                            住所：{{ RegularOrder.Pref.name }}{{ RegularOrder.addr01 }}{{ RegularOrder.addr02 }}<br/>
+                            電話番号：{{ RegularOrder.phone_number }}<br/>
+                            メールアドレス：{{ RegularOrder.email }}<br/>
+                            <br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+                            　配送情報<br/>
+                            <hr style="border-top: 3px double #8c8b8b;">
+
+                            {% for RegularShipping in RegularOrder.RegularShippings %}
+                                ◎お届け先{% if RegularOrder.multiple %}{{ loop.index }}{% endif %}<br/>
+                                <br/>
+                                お名前：{{ RegularShipping.name01 }} {{ RegularShipping.name02 }} 様<br/>
+                                お名前(カナ)：{{ RegularShipping.kana01 }} {{ RegularShipping.kana02 }} 様<br/>
+                                {% if RegularShipping.company_name %}
+                                    会社名：{{ RegularShipping.company_name }}<br/>
+                                {% endif %}
+                                郵便番号：〒{{ RegularShipping.postal_code }}<br/>
+                                住所：{{ RegularShipping.Pref.name }}{{ RegularShipping.addr01 }}{{ RegularShipping.addr02 }}<br/>
+                                電話番号：{{ RegularShipping.phone_number }}<br/>
+                                <br/>
+                                配送方法：{{ RegularShipping.shipping_delivery_name }}<br/>
+                                お届け日：{{ RegularShipping.next_delivery_date is empty ? '指定なし' : RegularShipping.next_delivery_date|localizeddate('medium', 'short', 'Japanese', null, 'YYYY/MM/dd') }}<br/>
+                                お届け時間：{{ RegularShipping.shipping_delivery_time|default('指定なし') }}<br/>
+                                <br/>
+                                {% for RegularOrderItem in RegularShipping.RegularProductOrderItems %}
+                                    商品コード：{{ RegularOrderItem.product_code }}<br/>
+                                    商品名：{{ RegularOrderItem.product_name }}  {{ RegularOrderItem.classcategory_name1 }}  {{ RegularOrderItem.classcategory_name2 }}<br/>
+                                    数量：{{ RegularOrderItem.quantity|number_format }}<br/>
+                                    <br/>
+                                {% endfor %}
+                            {% endfor %}
+                            {% if RegularOrder.complete_mail_message is not empty %}
+                                {{ RegularOrder.complete_mail_message|nl2br }}<br/>
+                            {% endif %}
+                            <hr style="border-top: 2px dotted #8c8b8b;">
+                            このメッセージはお客様へのお知らせ専用ですので、<br/>
+                            このメッセージへの返信としてご質問をお送りいただいても回答できません。<br/>
+                            ご了承ください。<br/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <!--/600px container -->
+            <br>
+            <br>
+            <table id="html-mail-table2" border="0" width="600px" cellpadding="10" cellspacing="0" class="container" style="border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+                <tr>
+                    <td class="container-padding content footer-text" align="left" style="border-collapse:collapse;font-family:Helvetica, Arial, sans-serif;font-size:12px;line-height:16px;color:#aaaaaa;padding-left:24px;padding-right:24px;padding-top:12px;padding-bottom:12px;background-color:#ffffff;">
+                        本メールは、{{ BaseInfo.shop_name }}より送信しております。<br/>
+                        もしお心当たりが無い場合は、その旨 <a href="mailto:{{ BaseInfo.email02 }}" style="text-decoration:none;">{{ BaseInfo.email02 }}</a> までご連絡いただければ幸いです。<br/>
+                        <br/>
+                        <div class="title" style="font-size:14px;font-family:Helvetica, Arial, sans-serif;font-weight:600;color:#374550;"><a href="{{ url('homepage') }}" style="color:#aaaaaa;text-decoration:none;">{{ BaseInfo.shop_name }}</a></div>
+                        <div>copyright &copy; {{ BaseInfo.shop_name }} all rights reserved.</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<!--/100% background wrapper-->
+<br>
+<br>
+</body>
+
+</html>

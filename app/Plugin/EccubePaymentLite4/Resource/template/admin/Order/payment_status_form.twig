@@ -1,0 +1,34 @@
+<script>
+    $(function() {
+        $('#orderOverview .col-6:first').append(
+            '<div class="row mb-3 form-group">' +
+                '<div class="col-3 col-form-label">' +
+                    '{{ 'gmo_epsilon.admin.order.payment_status'|trans }}' +
+                '</div>' +
+                '<div class="col">' +
+                    '<select id="order_PaymentStatus" name="order[PaymentStatus]" class="form-control">' +
+                        '<option value="">-</option>' +
+                        {% for key, child in form.PaymentStatus.vars.choices %}
+                        {% set Status = form.PaymentStatus.vars.choices[key].data %}
+                        '<option value="{{ key }}" {% if form.PaymentStatus.vars.value == key %}selected="selected"{% endif %}>{{ Status }}</option>' +
+                        {% endfor %}
+                    '</select>' +
+
+                    {% if form.PaymentStatus.vars.errors|length > 0 %}
+                        {% for error in form.PaymentStatus.vars.errors %}
+                            '<span class="invalid-feedback d-block">' +
+                                '<span class="d-block">' +
+                                    '<span class="form-error-icon badge badge-danger text-uppercase">エラー</span> <span class="form-error-message">{{ error.message }}</span>' +
+                                '</span>' +
+                            '</span>' +
+                        {% endfor %}
+                    {% endif %}
+
+                '</div>' +
+            '</div>'
+        );
+        $('#submitPaymentStatusForm').on('click', function() {
+            $('#form1').submit();
+        });
+    });
+</script>

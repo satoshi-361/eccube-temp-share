@@ -1,0 +1,55 @@
+<script>
+    $(function() {
+        $('.ec-orderPayment:last').after(
+            '<div class="ec-orderPayment">'+
+                '<div class="ec-rectHeading">'+
+                    '<h2>{{ 'gmo_epsilon.front.shopping.regular_cycle'|trans }}</h2>'+
+                '</div>'+
+                '<div class="ec-radio">'+
+                    {% for key, child in form.RegularCycles %}
+                        {% set RegularCycle = form.RegularCycles.vars.choices[key].data %}
+                        '<div style="display: block;">'+
+                            '<input type="radio" id="shopping_order_RegularCycles_{{ key }}" name="_shopping_order[RegularCycles]" required="required" data-trigger="change" value="{{ RegularCycle.id }}" />'+
+                            '<label for="shopping_order_RegularCycles_{{ key }}">'+
+                                '<span>{{ RegularCycle }}</span>'+
+                            '</label>'+
+                        '</div>'+
+                    {% endfor %}
+                '</div>'+
+                '<div class="ec-input {{ has_errors(form.RegularCycles) ? ' error' }}">{{ form_errors(form.RegularCycles) }}</div>'+
+                '<p>'+
+                    '※ お届けサイクルの異なる定期商品を同時に購入する場合は、それぞれの定期商品で一致するお届けサイクルのみ選択可能です。'+
+                '</p>'+
+            '</div>'+
+            '<div class="ec-orderPayment">'+
+                '<div class="ec-rectHeading">'+
+                    '<h2>お届け日</h2>'+
+                '</div>'+
+                '<p id="first_delivery_date">'+
+                '</p>'+
+                '<p id="next_delivery_date">'+
+                '</p>'+
+            '</div>'
+        );
+        $('input[id^=shopping_order_RegularCycles]').on('change', function() {
+            var shipping_delivery_date = $("#shopping_order_Shippings_0_shipping_delivery_date").val();
+            var regular_cycle = $('[id^=shopping_order_RegularCycles_]:checked').val();
+            $.ajax({
+                url: '{{ url('eccube_payment_lite4_shipping_delivery_date') }}',
+                type: 'POST',
+                data: {
+                    'shipping_delivery_date' : shipping_delivery_date,
+                    'regular_cycle' : regular_cycle,
+                },
+                dataType: 'json',
+            }).done(function(data) {
+                if (data) {
+                    $('#first_delivery_date').text('初回のお届け日は、'+data.first_delivery_date+'です。');
+                    $('#next_delivery_date').text('2回目のお届け日は、'+data.next_delivery_date+'です。');
+                }
+            }).fail(function() {
+                alert('お届け日の取得に失敗しました。');
+            });
+        });
+    });
+</script>

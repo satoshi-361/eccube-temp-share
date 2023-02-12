@@ -18,7 +18,7 @@ file that was distributed with this source code.
     <div class="ec-layoutRole__main">
         <div class="ec-mypageRole">
             <div class="ec-pageHeader">
-                <h1>{{ 'front.mypage.title'|trans }}/{{ '売上履歴'|trans }}</h1>
+                <h1>{{ 'front.mypage.title'|trans }}/{{ '売上管理'|trans }}</h1>
             </div>
             {% include 'Mypage/navi.twig' %}
         </div>
@@ -55,6 +55,7 @@ file that was distributed with this source code.
                                 {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
                                     {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - 18.6 ) / 100 )|price }}
                                 {% else %}
+                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - 18.6 ) / 100 )|price }}
                                 {% endif %}
                             </td>
                             <td>

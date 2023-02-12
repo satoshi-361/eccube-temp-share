@@ -1,0 +1,171 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['regular', 'discount'] %}
+
+{% block title %}{{ 'gmo_epsilon.admin.title.regular.discount'|trans }}{% endblock %}
+{% block sub_title %}{{ 'gmo_epsilon.admin.sub_title.regular.discount'|trans }}{% endblock %}
+
+{% block stylesheet %}
+<style type="text/css">
+    .discount-group-item {
+        max-width: 800px;
+    }
+    .discount-group-item > table {
+        width: 100%;
+        border: 1px solid #c5c5c5;
+        position: relative;
+    }
+    .discount-group-item > table .group-action {
+        position: absolute;
+        right: -35px;
+        top: 15px;
+        width: 22px;
+        height: 22px;
+        text-align: center;
+        cursor: pointer
+    }
+    .discount-group-item > table td {
+        border: 1px solid #c3c3c3;
+    }
+    .discount-group-item > table .discount-id {
+        background: #efefef !important;
+        font-weight: bold;
+        padding-left: 10px;
+        width: 80px;
+    }
+    .discount-group-item > table tr:first-child td {
+        background: #f7f7f7;
+        font-weight: bold;
+    }
+    .discount-group-item > table tr td {
+        padding: 10px 20px;
+    }
+    .discount-group-item > table .discount-rate {
+        width: auto;
+        display: inline-block;
+        margin-right: 25px;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script>
+    $(function() {
+        let discountIdMax = {{ discountIdMax }};
+
+        $('#regular_discount_setting').on('click', '.group-action-add', function() {
+            addRegularDiscountGroup($(this));
+        });
+
+        $('#regular_discount_setting').on('click', '.group-action-remove', function() {
+            let container = $(this).closest('table');
+            $(container).closest('.card-body').remove();
+        });
+
+        function addRegularDiscountGroup(elm) {
+            let container = $(elm).closest('.discount-group-item');
+            let html = container.html();
+
+            discountIdMax = discountIdMax + 1;
+
+            html = html.replace(/regular_discount_matrix_regular_discounts_(\d+)/mg, 'regular_discount_matrix_regular_discounts_' + discountIdMax);
+            html = html.replace(/regular_discount_matrix\[regular_discounts\]\[(\d+)\]/mg, 'regular_discount_matrix[regular_discounts][' + discountIdMax + ']');
+
+            let group = $('<div class="discount-group-item"><div>').html(html);
+            group.find('.discount-id').html('ID: ' + discountIdMax + ' <div class="group-action group-action-remove"><i class="fas fa-trash-alt"></i></div>');
+
+            let cardBody = $('<div class="card-body"></div>').append(group)
+            $('#regular_discount_setting').append(cardBody);
+
+            // set discount_id
+            for (let i = 0; i < 3; i++) {
+                $('#regular_discount_matrix_regular_discounts_' + discountIdMax + '_regular_discount_items_' + i + '_discount_id').val(discountIdMax);
+            }
+            // reset select box
+            $('select[id^="regular_discount_matrix_regular_discounts_' + discountIdMax + '_regular_discount_items"]').val('');
+            $('select[id^="regular_discount_matrix_regular_discounts_' + discountIdMax + '_regular_discount_items_0_regular_count"]').val(1);
+        }
+    });
+</script>
+{% endblock javascript %}
+
+{% block main %}
+    <form role="form" method="post">
+        {{ form_widget(form._token) }}
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4" id="regular_discount_setting">
+                        <div class="card-header"><span>定期回数別商品金額割引</span></div>
+                        {% for regular_discount_form in form.regular_discounts %}
+                            <div class="card-body">
+                                {% if regular_discount_form.regular_discount_items|length > 0 %}
+                                <div class="discount-group-item">
+                                    <table>
+                                        <tr>
+                                            <td rowspan="2" class="discount-id">
+                                                ID: {{ regular_discount_form.regular_discount_items[0].vars.value.discount_id }}
+                                                <span class="group-action {% if loop.index == 1 %}group-action-add{% else %}group-action-remove{% endif %}">
+                                                    {% if loop.index == 1 %}
+                                                        <i class="fas fa-plus-circle"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    {% endif %}
+                                                </span>
+                                            </td>
+                                            {% for regular_discount_item_form in regular_discount_form.regular_discount_items %}
+                                                {{ form_widget(regular_discount_item_form.discount_id) }}
+                                                {{ form_widget(regular_discount_item_form.item_id) }}
+
+                                                {% if loop.index == 1 %}
+                                                    <td>
+                                                        <div class="d-none">{{ form_widget(regular_discount_item_form.regular_count, {'attr': {'class': "discount-rate" }}) }}</div>
+                                                        <span>初回から</span>
+                                                    </td>
+                                                {% else %}
+                                                    <td>
+                                                        {{ form_widget(regular_discount_item_form.regular_count, {'attr': {'class': "discount-rate" }}) }}
+                                                        {{ form_errors(regular_discount_item_form.regular_count) }}
+                                                        <span>回から</span>
+                                                    </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            {% for regular_discount_item_form in regular_discount_form.regular_discount_items %}
+                                                <td>
+                                                    {{ form_widget(regular_discount_item_form.discount_rate, {'attr': {'class': "discount-rate" }}) }}
+                                                    {{ form_errors(regular_discount_item_form.discount_rate) }}
+                                                    %割引
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5" type="submit">{{ 'gmo_epsilon.admin.config.save'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

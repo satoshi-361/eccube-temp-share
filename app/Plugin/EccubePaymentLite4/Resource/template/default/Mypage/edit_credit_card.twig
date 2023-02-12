@@ -1,0 +1,52 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'credit_card' %}
+
+{% set body_class = 'mypage' %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.edit_credit_card'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-historyRole__contents">
+            <div class="ec-historyRole__header">
+                <div class="ec-historyListHeader">
+                    <p class="ec-historyListHeader__date">お客様のクレジットカード</p>
+                    {% if isRegisteredCreditCard %}
+                        <dl class="ec-definitions">
+                            <dt>カードブランド：&nbsp;</dt>
+                            <dd>{{ cardBrand }}</dd>
+                        </dl>
+                        <dl class="ec-definitions">
+                            <dt>クレジットカード番号：&nbsp;</dt>
+                            <dd>**** - **** - **** - {{ cardNumberMask }}</dd>
+                        </dl>
+                        <dl class="ec-definitions">
+                            <dt>有効期限：&nbsp;</dt>
+                            <dd>{{ cardExpire }}</dd>
+                        </dl>
+                    {% else %}
+                        <div class="col-12">
+                            <p>クレジットカードは登録されていません。</p>
+                        </div>
+                    {% endif %}
+                    <div class="ec-historyListHeader__action">
+                        {% if isRegisteredCreditCard %}
+                            <a class="ec-inlineBtn" href="{{ path('eccube_payment_lite4_mypage_credit_card_edit') }}">
+                                {{ 'gmo_epsilon.front.mypage.change_credit_card'|trans }}
+                            </a>
+                        {% else %}
+                            <a class="ec-inlineBtn" href="{{ path('eccube_payment_lite4_mypage_credit_card_new') }}">
+                                {{ 'gmo_epsilon.front.mypage.create_credit_card'|trans }}
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

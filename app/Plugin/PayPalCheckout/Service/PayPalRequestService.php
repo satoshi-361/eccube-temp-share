@@ -112,7 +112,7 @@ class PayPalRequestService
                     ]
                 ],
                 'email_address' => $options->customer['email'],
-                'address' => $options->customer['address'],
+                // 'address' => $options->customer['address'],
             ];
         }
         return $request;

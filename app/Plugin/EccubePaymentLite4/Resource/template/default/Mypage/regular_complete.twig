@@ -1,0 +1,40 @@
+{% extends 'default_frame.twig' %}
+
+{% set mypageno = 'regular_list' %}
+{% set regular_mypage_no = 'regular_complete' %}
+
+{% set body_class = 'mypage' %}
+
+{% block stylesheet %}
+    {{ include('@EccubePaymentLite4/default/Mypage/RegularNav/style.twig') }}
+{% endblock stylesheet %}
+
+{% block main %}
+    <div class="ec-mypageRole">
+        <div class="ec-pageHeader">
+            <h1>{{ 'front.mypage.title'|trans }}/{{ 'gmo_epsilon.front.mypage.regular_complete'|trans }}</h1>
+        </div>
+        {{ include('Mypage/navi.twig') }}
+    </div>
+    <div class="ec-mypageRole">
+        <div class="ec-navlistRole">
+            <ul class="ec-navlistRole__navlist" id="gmoEpsilonRegularNavList">
+            </ul>
+        </div>
+    </div>
+    <div class="ec-registerCompleteRole">
+        {{ include('@EccubePaymentLite4/default/Mypage/Alert/alert.twig') }}
+        <div class="ec-off2Grid ec-text-ac">
+            <div class="ec-off2Grid__cell">
+                <p class="ec-reportDescription">それでは、引き続きショッピングをお楽しみください。</p>
+                <div class="ec-off4Grid">
+                    <div class="ec-off4Grid__cell">
+                        <a class="ec-blockBtn--cancel" href="{{ url('eccube_payment_lite4_mypage_regular_list') }}">
+                            戻る
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

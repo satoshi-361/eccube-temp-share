@@ -1,0 +1,35 @@
+<script>
+    $(function() {
+        $('#ex-delivery-basic:first').append(
+            '<div class="row">' +
+                '<div class="col-3">' +
+                    '<span>' +
+                        '{{ "gmo_epsilon.admin.setting.shop.delivery_company"|trans }}' +
+                    '</span>' +
+                '</div>' +
+                '<div class="col mb-2">' +
+                    '<div id="delivery_DeliveryCompany">' +
+                        {% for key, child in form.DeliveryCompany %}
+                        {% set Delivery = form.DeliveryCompany.vars.choices[key].data %}
+                        '<div class="form-check">' +
+                            '<input type="radio" id="delivery_DeliveryCompany_{{ key }}" name="delivery[DeliveryCompany]" {% if form.DeliveryCompany.vars.value == Delivery.id  %}checked="checked"{% endif %} required="required" class="form-check-input" value="{{ key }}">' +
+                            '<label class="form-check-label required" for="delivery_DeliveryCompany_{{ key }}">{{ Delivery }}</label>' +
+                        '</div>' +
+                        {% endfor %}
+                    '</div>' +
+
+                    {% if form.DeliveryCompany.vars.errors|length > 0 %}
+                        {% for error in form.DeliveryCompany.vars.errors %}
+                            '<span class="invalid-feedback d-block">' +
+                                '<span class="d-block">' +
+                                    '<span class="form-error-icon badge badge-danger text-uppercase">エラー</span> <span class="form-error-message">{{ error.message }}</span>' +
+                                '</span>' +
+                            '</span>' +
+                        {% endfor %}
+                    {% endif %}
+
+                '</div>' +
+            '</div>'
+        );
+    });
+</script>

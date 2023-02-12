@@ -1,0 +1,16 @@
+<script>
+    $(function () {
+        {% if isRegisteredCreditCard %}
+            $('.ec-orderPayment:first').after(
+                '<div class="ec-orderPayment">'+
+                    '<div class="ec-rectHeading">'+
+                        '<h2>お客様のクレジットカード</h2>'+
+                    '</div>'+
+                    '<p>カードブランド: {{ cardBrand }}</p>'+
+                    '<p>クレジットカード番号: **** - **** - **** - {{ cardNumberMask }}</p>'+
+                    '<p>有効期限: {{ cardExpire }}</p>'+
+                '</div>'
+            );
+        {% endif %}
+    });
+</script>

@@ -56,6 +56,10 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 
+use Eccube\Service\MailService;
+use Customize\Entity\Master\ProductStatusColor;
+use Customize\Repository\Master\ProductStatusColorRepository;
+
 class ProductController extends AbstractController
 {
     /**
@@ -109,6 +113,16 @@ class ProductController extends AbstractController
     protected $tagRepository;
 
     /**
+     * @var ProductStatusColorRepository
+     */
+    protected $productStatusColorRepository;
+
+    /**
+     * @var MailService
+     */
+    protected $mailService;
+
+    /**
      * ProductController constructor.
      *
      * @param CsvExportService $csvExportService
@@ -121,6 +135,8 @@ class ProductController extends AbstractController
      * @param PageMaxRepository $pageMaxRepository
      * @param ProductStatusRepository $productStatusRepository
      * @param TagRepository $tagRepository
+     * @param ProductStatusColorRepository $productStatusColorRepository
+     * @param MailService $mailService
      */
     public function __construct(
         CsvExportService $csvExportService,
@@ -132,7 +148,9 @@ class ProductController extends AbstractController
         BaseInfoRepository $baseInfoRepository,
         PageMaxRepository $pageMaxRepository,
         ProductStatusRepository $productStatusRepository,
-        TagRepository $tagRepository
+        TagRepository $tagRepository,
+        ProductStatusColorRepository $productStatusColorRepository,
+        MailService $mailService
     ) {
         $this->csvExportService = $csvExportService;
         $this->productClassRepository = $productClassRepository;
@@ -144,6 +162,8 @@ class ProductController extends AbstractController
         $this->pageMaxRepository = $pageMaxRepository;
         $this->productStatusRepository = $productStatusRepository;
         $this->tagRepository = $tagRepository;
+        $this->productStatusColorRepository = $productStatusColorRepository;
+        $this->mailService = $mailService;
     }
 
     /**
@@ -400,6 +420,8 @@ class ProductController extends AbstractController
 
         $builder = $this->formFactory
             ->createBuilder(ProductType::class, $Product);
+        
+        $OldProductStatus = $Product->getStatus();
 
         // 規格あり商品の場合、規格関連情報をFormから除外
         if ($has_class) {
@@ -445,6 +467,7 @@ class ProductController extends AbstractController
             $form->handleRequest($request);
             if ($form->isValid()) {
                 log_info('商品登録開始', [$id]);
+
                 $Product = $form->getData();
 
                 if (!$has_class) {
@@ -592,6 +615,16 @@ class ProductController extends AbstractController
                         ->setTag($Tag);
                     $Product->addProductTag($ProductTag);
                     $this->entityManager->persist($ProductTag);
+                }
+
+                $ProductStatus = $form['Status']->getData();
+                if ( $ProductStatus->getId() == ProductStatus::DISPLAY_SHOW && $OldProductStatus->getId() == ProductStatus::DISPLAY_HIDE ) {
+                    // 管理画面で記事公開に設定した場合「記事承認メール」を配信する
+                    $this->mailService->sendArticleApproveMail($Product);
+                } 
+                if ( $ProductStatus->getId() == ProductStatus::DISPLAY_DENY ) {
+                    // 管理画面で記事公開に設定した場合「記事否認メール」を配信する
+                    $this->mailService->sendArticleNoApproveMail($Product);
                 }
 
                 $Product->setUpdateDate(new \DateTime());

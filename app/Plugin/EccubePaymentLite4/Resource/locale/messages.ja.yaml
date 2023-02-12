@@ -1,0 +1,178 @@
+gmo_epsilon:
+  admin:
+    config:
+      title: イプシロン決済プラグイン
+      sub_title: プラグイン設定
+      header: 基本設定
+      save: 登録
+      required: 必須
+      back: プラグイン一覧
+      contract_code: 契約コード
+      environmental_setting: 環境設定
+      credit_payment_setting: クレジットカード決済設定
+      use_payment: 利用決済方法
+      use_convenience: 利用コンビニ
+      card_expiration_notification_days: カード有効期限切れ通知日数
+      section_regular: 定期課金設定
+      regular: 定期課金機能
+      regular_order_notification_email: 定期受注作成時通知メールアドレス
+      my_page_regular_settings: マイページ定期設定
+      next_delivery_date_changeable_range_days: 次回配送予定日変更可能範囲日数
+      first_delivery_days: 受注日からの初回配送予定日数
+      next_delivery_days_at_regular_resumption: 定期再開時の次回配送日数
+      next_delivery_days_after_re_payment: 再決済後の次回配送日数
+      regular_order_deadline: 定期受注注文締切日
+      regular_delivery_notification_email_days: 定期配送事前お知らせメール配信日数
+      regular_stoppable_count: 休止可能定期回数
+      regular_cancelable_count: 解約可能定期回数
+      regular_resumable_period: 定期再開可能期間
+      regular_point_magnification: 定期ポイント倍率
+      regular_message: '*定期課金機能を利用するにはクレジットカード決済が有効である必要があります。'
+      access_block: 不正アクセスブロック機能
+      access_block_message: 不正アクセスブロック機能は「クレジットカード決済」「登録済みのクレジットカードで決済」を対象とした機能です。<br>下記で設定したアクセス頻度の上限を超えた場合は設定したブロック時間分、クレジットカード情報入力ページへのアクセスをブロックします。<br>不正アクセス対象外としたいIPアドレスはホワイトリストにて設定が可能です。
+      ip_black_list: IPのブラックリスト機能
+      ip_black_list_message: IPをブラックリスト方式でアクセス制限できる機能です。
+      block_mode: ブロックモード
+      access_frequency: アクセス頻度
+      access_frequency_message_1: 秒間に
+      access_frequency_message_2: 回アクセスされた場合ブロックする
+      block_time: ブロック時間
+      block_time_message: 秒
+      white_list: ホワイトリスト
+      black_list: ブラックリスト
+      white_list_message: ※カンマ区切りで複数指定可
+      black_list_message: ※カンマ区切りで複数指定可
+      regular_specified_count_notification_mail: 指定定期回数の通知
+      update_payment_block: イプシロン決済プラグインから支払方法を引継ぐ
+      update: 更新する
+    save:
+      success: 登録しました。
+      failed: 登録に失敗しました。
+      update_success: 支払方法を更新しました。
+    nav:
+      regular_order: 定期受注管理
+      regular:
+        order: 定期受注管理
+        cycle: 定期サイクル管理
+        is_regular_sale_type: 定期販売種別設定
+    title:
+      regular:
+        order:
+          index: 定期受注一覧
+          detail: 定期受注詳細
+        cycle: 定期サイクル設定
+        discount: 定期回数別商品金額割引
+    sub_title:
+      regular:
+        cycle:
+          index: 定期サイクル一覧
+          edit: 定期サイクル編集
+        discount: 定期回数別管理
+    regular:
+      unsent: 未送信
+      table_head:
+        regular_cycle: サイクル
+        day: 日付
+        week: 曜日
+      cycle:
+        index: 定期サイクル一覧
+      edit:
+        label:
+          regular_cycle_type: 定期サイクルの種類
+          day: 日付
+          week: 曜日
+    regular_order:
+      latest_status: 最終対応状況
+      regular_status: 定期継続状況
+      first_order_date_start: 初回購入日(開始)
+      first_order_date_end: 初回購入日(終了)
+      next_delivery_date_start: 次回お届け予定日(開始)
+      next_delivery_date_end: 次回お届け予定日(終了)
+      buy_product_id: 購入商品ID
+      regular_order_id: 定期ID
+      order_no: 注文番号
+      card_change_request_mail_status: カード変更依頼メール送信状況
+      buy_product_name: 購入商品名
+      regular_count_start: 定期回数(開始)
+      regular_count_end: 定期回数(終了)
+      order_add: 受注一括作成
+      table:
+        id: 定期受注ID
+        name: 注文者
+        regular_status: 定期継続状況
+        email: メールアドレス
+        regular_order_count: 定期回数
+        next_delivery_date: 次回お届け予定日
+        card_change_request_mail_send_date: カード変更依頼メール送信日
+        first_order_id: 初回注文番号
+        last_order_id: 最新注文番号
+        last_order_status: 最新対応状況
+
+    regular_order_edit:
+      title: 定期受注編集
+      order_history: 定期履歴
+      table.number_no: 回数
+      table.order_number: 受注番号
+      table.create_date: 作成日時
+      table.update_date: 更新日時
+      table.payment_date: 入金日
+      table.shipping_date: 発送日
+      table.payment_method: 支払方法
+      table.status: 対応状況
+    order:
+      payment_status: イプシロン決済ステータス
+      complete_payment: イプシロン決済登録
+      payment_status.sync: 決済ステータス同期確認
+      complete_payment.confirm: 決済完了確認
+      complete_payment.button_text: 決済を登録する
+    complete_payment:
+      register: 登録する
+      cancel: キャンセル
+    setting:
+      shop:
+        delivery_company: 配送会社
+        is_regular_sale_type: 定期商品設定
+
+  message:
+    day:
+      not_blank: 日付は必須項目です
+  common:
+    credit_card_number: クレジットカード番号
+    expiration_date: 有効期限
+    security_code: セキュリティコード
+    holder_name: 名義人
+  front:
+    shopping:
+      use_conveni_unselected: 利用コンビニを選択してください。
+      use_conveni_not_fount: 選択できる利用コンビニがありません。
+      credit_card_for_token_payment: クレジットカード情報の入力
+      regular_cycle: お届けサイクル
+      error: システムエラーが発生しました。
+    mypage:
+      nav__credit_card: カード編集
+      nav__regular_index: 定期一覧
+      edit_credit_card: クレジットカード編集
+      change_credit_card: クレジットカードを変更
+      create_credit_card: クレジットカードを登録
+      regular_product_quantity: お届け商品数変更
+      regular_next_delivery_date: 次回お届け予定日変更
+      regular_cycle: 定期サイクル変更
+      regular_skip: 定期受注スキップ
+      regular_shipping: 定期お届け先変更
+      regular_cancel: 定期受注休止
+      regular_resume: 定期受注再開
+      regular_suspend: 定期受注解約
+      regular_complete: 定期受注編集(完了)
+      regular_nav__detail: 定期詳細
+      regular_nav__cycle: お届けサイクル変更
+      regular_nav__next_delivery_date: 次回お届け予定日変更
+      regular_nav__product_quantity: お届け商品数変更
+      regular_nav__shipping: お届け先変更
+      regular_nav__skip: スキップ
+      regular_nav__suspend: 休止
+      regular_nav__cancel: 解約
+      regular_nav__resume: 再開
+      nav__regular_list: 定期一覧
+      regular_list: 定期一覧
+      regular_detail: 定期購入詳細
+

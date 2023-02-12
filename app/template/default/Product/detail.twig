@@ -297,7 +297,7 @@ file that was distributed with this source code.
                                 <button type="submit" class="ec-blockBtn--action add-cart"
                                     {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
                                 >
-                                    {{ Product.getPrice01IncTaxMax|price }}
+                                    {{ Product.getPrice02IncTaxMax|price }}
                                 </button>
                             </div>
                         {% else %}
@@ -361,7 +361,7 @@ file that was distributed with this source code.
                                 <button type="submit" class="ec-blockBtn--action add-cart"
                                     {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
                                 >
-                                    {{ Product.getPrice01IncTaxMax|price }}
+                                    {{ Product.getPrice02IncTaxMax|price }}
                                 </button>
                             </div>
                         {% else %}
@@ -407,6 +407,19 @@ file that was distributed with this source code.
                         <button class="copy-btn" id="copyButton" onclick="copy()"><i class="far fa-copy" aria-hidden="true"></i></button>
                         <div id="copied-success" class="copied">
                             <span>アフィリエイトリンクをコピーしました！</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ec-modal">
+                <div class="ec-modal-overlay">
+                    <div class="ec-modal-wrap">
+                        <span class="ec-modal-close"><span class="ec-icon"><img src="{{ asset('assets/icon/cross-dark.svg') }}" alt=""/></span></span>
+                        <div id="ec-modal-header" class="text-center">{{ 'front.product.add_cart_complete'|trans }}</div>
+                        <div class="ec-modal-box">
+                            <div class="ec-role">
+                                <a href="{{ url('cart') }}" class="ec-inlineBtn--action">{{ 'common.go_to_cart'|trans }}</a>
+                            </div>
                         </div>
                     </div>
                 </div>

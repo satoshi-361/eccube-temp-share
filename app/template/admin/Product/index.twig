@@ -391,7 +391,7 @@ file that was distributed with this source code.
                                                 {{ Product.affiliate_reward }}%
                                             </td>
                                             <td class="align-middle">
-                                                {{ Product.status.name }}
+                                                <span class="badge badge-ec-blue" style="background-color: #fff; color: {{ Product.StatusColor }}; border-color: {{ Product.StatusColor }}">{{ Product.status.name }}</span>
                                             </td>
                                             <td class="align-middle">
                                                 {{ Product.create_date|date_min }}

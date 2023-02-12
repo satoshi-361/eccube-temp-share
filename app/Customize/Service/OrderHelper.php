@@ -68,9 +68,14 @@ class OrderHelper extends BaseService
     protected function createOrderItemsFromCartItems($CartItems)
     {
         $ProductItemType = $this->orderItemTypeRepository->find(OrderItemType::PRODUCT);
-        $affiliater = $this->session->get(\Eccube\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER);
 
-        return array_map(function ($item) use ($ProductItemType) {
+        $affiliater = null;
+
+        if ( $this->session->has(\Customize\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER) ) {
+            $affiliater = $this->session->get(\Customize\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER);
+        }
+
+        return array_map(function ($item) use ($ProductItemType, $affiliater) {
             /* @var $item CartItem */
             /* @var $ProductClass \Eccube\Entity\ProductClass */
             $ProductClass = $item->getProductClass();

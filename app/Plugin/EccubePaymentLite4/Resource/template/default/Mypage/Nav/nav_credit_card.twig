@@ -1,0 +1,9 @@
+<script>
+    $(function() {
+        $('ul.ec-navlistRole__navlist:first').append(
+            '<li class="ec-navlistRole__item {% if mypageno|default('') == 'credit_card' %}active{% endif %}">' +
+                '<a href="{{ url('eccube_payment_lite4_mypage_credit_card_index') }}">{{ 'gmo_epsilon.front.mypage.nav__credit_card'|trans }}</a>' +
+            '</li>'
+        );
+    });
+</script>
