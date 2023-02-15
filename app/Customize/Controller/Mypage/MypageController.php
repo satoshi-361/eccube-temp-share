@@ -454,6 +454,7 @@ class MypageController extends AbstractController
                     $this->entityManager->remove($ProductCategory);
                 }
 
+                $Product->setStatus($form['Status']->getData());
                 $Product->setCustomer($Customer);
                 $Customer->addBlog($Product);
 
@@ -513,7 +514,6 @@ class MypageController extends AbstractController
                     if ($ProductImage instanceof ProductImage) {
                         $Product->removeProductImage($ProductImage);
                         $this->entityManager->remove($ProductImage);
-                        $this->entityManager->flush();
 
                         // 他に同じ画像を参照する商品がなければ画像ファイルを削除
                         if (!$this->productImageRepository->findOneBy(['file_name' => $delete_image])) {
@@ -524,8 +524,6 @@ class MypageController extends AbstractController
                         $fs->remove($this->eccubeConfig['eccube_temp_image_dir'].'/'.$delete_image);
                     }
                 }
-
-                $this->entityManager->flush();
 
                 $sortNos = $request->get('sort_no_images');
                 if ($sortNos) {
@@ -566,7 +564,8 @@ class MypageController extends AbstractController
 
                 log_info('商品登録完了', [$id]);
 
-                switch ( $Product->getStatus()->getId() ) {
+                $ProductStatus = $form['Status']->getData();
+                switch ( $ProductStatus->getId() ) {
                     case ProductStatus::DISPLAY_HIDE:
                         $this->addSuccess('記事の申請ありがとうございます。審査を行いますので、しばらくお待ちください。');
                         break;
@@ -577,6 +576,8 @@ class MypageController extends AbstractController
                         
                     default:
                         $this->addSuccess('削除しました。');
+                        $cacheUtil->clearDoctrineCache();
+
                         return $this->redirectToRoute('mypage_blog_list');
                 }
 

@@ -102,7 +102,7 @@ class TabaHtmlEditorEvent implements EventSubscriberInterface
                             if (
                                 $page
                                 && $page['template']
-                                && $templateName == str_replace('@','',$page['template'])
+                                // && $templateName == str_replace('@','',$page['template'])
                                 && isset($page['selector'])
                             ) {
                                 $this->eventDispatcher->addListener($template->getTemplate(), function (TemplateEvent $templateEvent) use ($page) {
