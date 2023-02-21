@@ -31,8 +31,6 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
      */
     class Member extends \Eccube\Entity\AbstractEntity implements UserInterface, \Serializable
     {
-    use \Plugin\SiteKit\Entity\MemberTrait;
-
         public static function loadValidatorMetadata(ClassMetadata $metadata)
         {
             $metadata->addConstraint(new UniqueEntity([

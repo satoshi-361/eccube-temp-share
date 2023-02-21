@@ -21,6 +21,8 @@ use Eccube\Form\Type\RepeatedPasswordType;
 use Eccube\Form\Type\Master\CustomerStatusType;
 use Eccube\Form\Validator\Email;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Eccube\Form\Type\PostalType;
+use Eccube\Form\Type\AddressType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -71,8 +73,17 @@ class CustomerType extends BaseType
                     'placeholder' => 'common.mail_address_sample',
                 ],
             ])
+            ->add('postal_code', PostalType::class, [
+                'required' => true,
+            ])
+            ->add('address', AddressType::class, [
+                'required' => true,
+            ])
             ->add('phone_number', PhoneNumberType::class, [
-                'required' => false,
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
             ])
             ->add('email', EmailType::class, [
                 'required' => true,

@@ -231,7 +231,7 @@ class ReviewController extends AbstractController
                 $this->addError('customer_review4.admin.save.error', 'admin');
                 $this->entityManager->getConnection()->rollback();
             }
-            $this->mailService->sendReviewPointMail($Customer, $grantPoint);
+            // $this->mailService->sendReviewPointMail($Customer, $grantPoint);
 
             return $this->redirectToRoute('admin_review_edit', ['id' => $review->getId()]);
         }

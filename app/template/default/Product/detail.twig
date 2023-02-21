@@ -11,10 +11,10 @@ file that was distributed with this source code.
 {% extends 'default_frame.twig' %}
 
 {% set body_class = 'product_page' %}
+{% set blog_premium_enabled = is_blog_purchased(app.user, Product.id) %}
 
 {% block stylesheet %}
     <style>
-
         .slick-slider {
             margin-bottom: 30px;
         }
@@ -89,6 +89,34 @@ file that was distributed with this source code.
             height: 0;
         }
 
+        .blog-sales-letter {
+            margin-bottom: 30px;
+            padding: 10px;
+            background: azure;
+        }
+
+        .blog-manual {
+            padding: 10px;
+            background: ghostwhite;
+        }
+        button.tooltip {
+            position: relative;
+        }
+        button span.tooltip-content {
+            border-radius: 4px;
+            padding: 5px;
+            background: black;
+            transition: 0.4s all;
+            opacity: 0;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            line-height: 20px;
+        }
+        button.tooltip:hover span.tooltip-content {
+            opacity: 1;
+        }
     </style>
 {% endblock %}
 
@@ -268,8 +296,8 @@ file that was distributed with this source code.
                             <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
                         </div>
                         <div style="padding-left: 15px">
-                            <span class="">{{ Product.Customer.nick_name }}</span><br />
-                            <span class="">{{ Product.create_date|date("Y年m月d日") }}発売</span>
+                            <span class="editor-name">{{ Product.Customer.nick_name }}</span><br />
+                            <span class="launch-date">{{ Product.launch_date|date("Y年m月d日") }}発売</span>
                         </div>
                     </div>
 
@@ -294,16 +322,23 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="ec-productRole__btn">
-                                <button type="submit" class="ec-blockBtn--action add-cart"
-                                    {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
+                                <button type="submit" class="ec-blockBtn--action add-cart{% if payer_info_incorrect %} tooltip {% endif %}"
+                                    {% if is_owner or blog_premium_enabled or payer_info_incorrect %} disabled {% endif %}
                                 >
-                                    {{ Product.getPrice02IncTaxMax|price }}
+                                    <span class="tooltip-content">電話番号、住所を入力してください。</span>
+                                    {% if blog_premium_enabled %}
+                                        すでに購入しました。
+                                    {% elseif payer_info_incorrect %}
+                                        購入者情報が正しくありません。
+                                    {% else %}
+                                        {{ Product.getPrice02IncTaxMax|price }}
+                                    {% endif %}
                                 </button>
                             </div>
                         {% else %}
                             <div class="ec-productRole__btn">
                                 <button type="button" class="ec-blockBtn--action" disabled="disabled">
-                                    {{ 'front.product.out_of_stock'|trans }}
+                                    {{ '売り切れ中'|trans }}
                                 </button>
                             </div>
                         {% endif %}
@@ -315,14 +350,43 @@ file that was distributed with this source code.
                 <div class="d-flex align-center" style="margin-top: 25px">
                     <div class="affiliate">
                         <span class="label">アフィリエイト: 　{{ Product.affiliate_reward }}%</span>
+                        {# STOCK #}
+                        {% if Product.stock_find %}
+                            <span class="label stock">
+                                {% if Product.stockunlimited_min %}
+                                    {{ '部数制限なし'|trans }}
+                                {% else %}
+                                    残り{{ Product.stock_min }}部
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="label stock sold-out">売り切れ中</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
             <div class="cs-productRole__detail">
-                {% if blog_premium_enabled or is_owner %}
-                    {{ Product.free_area|raw|nl2br }}
+                {% if is_owner %}
+                    <div class="blog-sales-letter">
+                        {# セールスレター #}
+                        {{ Product.description_detail|raw|nl2br }}
+                    </div>
+                    <div class="blog-manual">
+                        {# マニュアル #}
+                        {{ Product.free_area|raw|nl2br }}
+                    </div>
                 {% else %}
-                    {{ Product.description_detail|raw|nl2br }}
+                    {% if blog_premium_enabled %}
+                        <div class="blog-manual">
+                            {# マニュアル #}
+                            {{ Product.free_area|raw|nl2br }}
+                        </div>
+                    {% else %}
+                        <div class="blog-sales-letter">
+                            {# セールスレター #}
+                            {{ Product.description_detail|raw|nl2br }}
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="ec-productRole__utils">
@@ -332,8 +396,8 @@ file that was distributed with this source code.
                             <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
                         </div>
                         <div style="padding-left: 15px">
-                            <span class="">{{ Product.Customer.nick_name }}</span><br />
-                            <span class="">{{ Product.create_date|date("Y年m月d日") }}発売</span>
+                            <span class="editor-name">{{ Product.Customer.nick_name }}</span><br />
+                            <span class="launch-date">{{ Product.launch_date|date("Y年m月d日") }}発売</span>
                         </div>
                     </div>
                     
@@ -358,16 +422,23 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="ec-productRole__btn">
-                                <button type="submit" class="ec-blockBtn--action add-cart"
-                                    {% if is_granted('ROLE_USER') and app.user.id == Product.Customer.id %} disabled {% endif %}
+                                <button type="submit" class="ec-blockBtn--action add-cart{% if payer_info_incorrect %} tooltip {% endif %}"
+                                    {% if is_owner or blog_premium_enabled or payer_info_incorrect %} disabled {% endif %}
                                 >
-                                    {{ Product.getPrice02IncTaxMax|price }}
+                                    <span class="tooltip-content">電話番号、住所を入力してください。</span>
+                                    {% if blog_premium_enabled %}
+                                        すでに購入しました。
+                                    {% elseif payer_info_incorrect %}
+                                        購入者情報が正しくありません。
+                                    {% else %}
+                                        {{ Product.getPrice02IncTaxMax|price }}
+                                    {% endif %}
                                 </button>
                             </div>
                         {% else %}
                             <div class="ec-productRole__btn">
                                 <button type="button" class="ec-blockBtn--action" disabled="disabled">
-                                    {{ 'front.product.out_of_stock'|trans }}
+                                    {{ '売り切れ中'|trans }}
                                 </button>
                             </div>
                         {% endif %}
@@ -379,6 +450,18 @@ file that was distributed with this source code.
                 <div class="d-flex align-center" style="margin-top: 25px">
                     <div class="affiliate">
                         <span class="label">アフィリエイト:　{{ Product.affiliate_reward }}%</span>
+                        {# STOCK #}
+                        {% if Product.stock_find %}
+                            <span class="label stock">
+                                {% if Product.stockunlimited_min %}
+                                    {{ '部数制限なし'|trans }}
+                                {% else %}
+                                    残り{{ Product.stock_min }}部
+                                {% endif %}
+                            </span>
+                        {% else %}
+                            <span class="label stock sold-out">売り切れ中</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="affiliate-panel">

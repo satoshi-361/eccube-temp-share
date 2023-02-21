@@ -67,6 +67,20 @@ file that was distributed with this source code.
             right: 2px;
         }
 
+        .c-form__fileUploadThumbnail:hover .delete-image {
+            display: inline-block;
+            font-family: FontAwesome;
+            font-size: 18px;
+            line-height: 1;
+            color: #54687A;
+            padding: 5px;
+            background: #fff;
+            border-radius: 3px;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+
         .d-none {
             display: none;
         }
@@ -134,9 +148,6 @@ file that was distributed with this source code.
             padding: 15px 0 15px;
         }
 
-        #admin_product_affiliate_reward {
-            width: 120px;
-        }
         #upload-zone {
             border: 1px dashed #ccc;
             border-radius: 0.25rem;
@@ -153,6 +164,19 @@ file that was distributed with this source code.
             border-color: #595959;
             color: #595959;
             cursor: pointer;
+        }
+
+        #admin_product_affiliate_reward {
+            width: 160px;
+        }
+
+        .datetime {
+            max-width: 160px;
+        }
+
+        .label {
+            color: #525263;
+            background: aliceblue;
         }
 
         @media only screen and (min-width: 768px) {
@@ -341,15 +365,59 @@ file that was distributed with this source code.
 
             $('button[name="status"]').on('click', function(){
                 $('#admin_product_Status').val($(this).attr('value')).change();
-
                 $('#form1').submit();
-            })
+            });
         });
 
         // searchWordの実行
         $('#search-category').on('input', function () {
             searchWord($(this).val(), $('.category-li'));
         });
+    </script>
+    <script type="text/javascript" src="{{ asset('assets/tinymce/tinymce.min.js', 'user_data') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: '#admin_product_description_detail',
+            height: '600',
+            plugins : 'code image link',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("mypage_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls: false,
+            hidden_input: false
+        });
+        tinymce.init({
+            selector: '#wysiwyg-area',
+            height: '600',
+            plugins : 'code image link ',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("mypage_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls: false,
+            hidden_input: false
+        });
+
+        $(function (){
+            {% if description_detail is not empty %}
+                var content = '{{ description_detail }}';
+                content = content.replace(/&lt;/g, '<');
+                content = content.replace(/&gt;/g, '>');
+                $('#admin_product_description_detail').val(content);
+            {% endif %}
+
+            {% if free_area is not empty %}
+                content = '{{ free_area }}';
+                content = content.replace(/&lt;/g, '<');
+                content = content.replace(/&gt;/g, '>');
+                $('#wysiwyg-area').val(content);
+            {% endif %}
+        })
     </script>
 {% endblock javascript %}
 
@@ -425,7 +493,7 @@ file that was distributed with this source code.
                                 </dt>
                                 <dd>
                                     <div class="ec-input{{ has_errors(form.description_detail) ? ' error' }}">
-                                        {{ form_widget(form.description_detail, { attr : { rows : "12"} }) }}
+                                        {{ form_widget(form.description_detail, { attr : { rows : "12" } }) }}
                                         {{ form_errors(form.description_detail) }}
                                     </div>
                                 </dd>
@@ -436,7 +504,7 @@ file that was distributed with this source code.
                                 </dt>
                                 <dd>
                                     <div class="ec-input{{ has_errors(form.free_area) ? ' error' }}">
-                                        {{ form_widget(form.free_area, {id: 'wysiwyg-area', attr : { rows : "12"} }) }}
+                                        {{ form_widget(form.free_area, {id: 'wysiwyg-area', attr : { rows : "12" } }) }}
                                         {{ form_errors(form.free_area) }}
                                     </div>
                                 </dd>
@@ -446,6 +514,7 @@ file that was distributed with this source code.
                                     <div class="d-inline-block ec-label">
                                         <span>{{ 'admin.product.sale_price'|trans }}</span>
                                         <span class="ec-required">必須</span>
+                                        <span class="label">最低価格100円</span>
                                     </div>
                                 </dt>
                                 <dd>
@@ -453,12 +522,24 @@ file that was distributed with this source code.
                                         <input type="text" id="admin_product_class_price02" name="admin_product[class][price02]" required="required" value="{{ form.class.price02.vars.value }}">
                                     </div>
                                     <div class="d-none">
-                                        {{ form_widget(form.class.stock) }}
-                                        {{ form_errors(form.class.stock) }}
-                                        {{ form_widget(form.class.stock_unlimited) }}
                                         {{ form_widget(form.Status) }}
                                         {{ form_errors(form.Status) }}
                                     </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'admin.product.stock'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.class.stock) ? ' error' }}">
+                                        {{ form_widget(form.class.stock) }}
+                                        {{ form_errors(form.class.stock) }}
+                                    </div>
+                                    {{ form_widget(form.class.stock_unlimited) }}
                                 </dd>
                             </dl>
                             <dl>
@@ -472,6 +553,19 @@ file that was distributed with this source code.
                                     <div class="ec-select{{ has_errors(form.affiliate_reward) ? ' error' }}">
                                         {{ form_widget(form.affiliate_reward) }}
                                         {{ form_errors(form.affiliate_reward) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ '記事投稿日'|trans }}</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.launch_date) ? ' error' }} datetime">
+                                        {{ form_widget(form.launch_date) }}
+                                        {{ form_errors(form.launch_date) }}
                                     </div>
                                 </dd>
                             </dl>
@@ -524,10 +618,13 @@ file that was distributed with this source code.
                             </div>
                         </div>
                         <div style="margin-top: 30px;">
-                            <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
-                                    
-                            <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
-                                    
+                            {% if Product.Status.id == 1 and Product.stock_find == false %}
+                                <button class="ec-blockBtn--action mb-3" name="status" value="1">{{ '在庫更新'|trans }}</button>
+                            {% else %}
+                                <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
+                                        
+                                <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
+                            {% endif %}
                             <button class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '削除'|trans }}</button>
                         </div>
                     </div>

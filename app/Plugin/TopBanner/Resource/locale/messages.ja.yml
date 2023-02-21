@@ -1,0 +1,29 @@
+plugin_top_banner.admin.navi: TOPバナー管理
+plugin_top_banner.admin.not_found: TOPバナー商品が存在しません。
+plugin_top_banner.admin.register.success: TOPバナー商品を登録しました。
+plugin_top_banner.admin.update.success: TOPバナー商品を修正しました。
+plugin_top_banner.admin.delete.success: TOPバナー商品を削除しました。
+plugin_top_banner.admin.delete.confirm: TOPバナー情報を削除してもよろしいですか？
+plugin_top_banner.admin.type.product.not_found: 商品を追加してください。
+plugin_top_banner.admin.type.comment.placeholder: 説明文を入力してください(HTMLタグ使用可)。
+
+plugin_top_banner.admin.index.title: TOPバナー商品管理
+plugin_top_banner.admin.index.subtitle: TOPバナー商品内容設定
+plugin_top_banner.admin.index.total_num: <strong>%number% 件</strong> が該当しました
+plugin_top_banner.admin.index.col2: 商品画像
+plugin_top_banner.admin.index.col3: 商品名
+plugin_top_banner.admin.index.col4: 説明文
+plugin_top_banner.admin.index.delete.confirm: このTOPバナー商品を削除しても宜しいですか？
+plugin_top_banner.admin.notice: 項目の順番はドラッグ＆ドロップでも変更可能です。
+plugin_top_banner.admin.new: TOPバナー商品を新規登録
+
+plugin_top_banner.admin.edit.title: TOPバナー商品管理
+plugin_top_banner.admin.edit.subtitle: TOPバナー商品内容設定
+plugin_top_banner.admin.edit.header: TOPバナー商品情報
+plugin_top_banner.admin.edit.product: 商品
+plugin_top_banner.admin.edit.comment: 説明文
+plugin_top_banner.admin.edit.comment.help: （最大%number%文字）
+plugin_top_banner.admin.edit.existed: この商品はすでにTOPバナー商品として登録されています。
+plugin_top_banner.admin.edit.search: 商品の追加
+plugin_top_banner.admin.edit.product_search.header: 商品検索
+plugin_top_banner.admin.edit.product_search.button: 検索

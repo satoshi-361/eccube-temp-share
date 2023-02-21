@@ -1,1 +1,1 @@
-{"name":"ec-cube\/pickup4","version":"4.1.0","description":"\u304a\u3059\u3059\u3081\u5546\u54c1\u7ba1\u7406\u30d7\u30e9\u30b0\u30a4\u30f3","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6 || ^2.0"},"extra":{"code":"Pickup4"}}
+{"name":"ec-cube\/pickup4","version":"4.1.0","description":"\u30D4\u30C3\u30AF\u30A2\u30C3\u30D7\u5546\u54C1\u7BA1\u7406\u30D7\u30E9\u30B0\u30A4\u30F3","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6 || ^2.0"},"extra":{"code":"Pickup4"}}

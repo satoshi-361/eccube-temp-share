@@ -358,8 +358,10 @@ file that was distributed with this source code.
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.image__short'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.name'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.price'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-2">{{ 'アフィリエイト報酬'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ '提携報酬'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ '在庫'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'admin.product.display_status__short'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-2">{{ '投稿日'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.create_date'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.update_date'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-2 pr-3" colspan="3"></th>
@@ -391,13 +393,24 @@ file that was distributed with this source code.
                                                 {{ Product.affiliate_reward }}%
                                             </td>
                                             <td class="align-middle">
+                                                {# 規格なし商品 は在庫数を表示 #}
+                                                {% if Product.stockunlimited_min %}
+                                                    {{ 'admin.product.stock_unlimited__short'|trans }}
+                                                {% else %}
+                                                    {{ Product.stock_min }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="align-middle">
                                                 <span class="badge badge-ec-blue" style="background-color: #fff; color: {{ Product.StatusColor }}; border-color: {{ Product.StatusColor }}">{{ Product.status.name }}</span>
                                             </td>
                                             <td class="align-middle">
-                                                {{ Product.create_date|date_min }}
+                                                {{ Product.launch_date|date('Y年m月d日') }}
                                             </td>
                                             <td class="align-middle">
-                                                {{ Product.update_date|date_min }}
+                                                {{ Product.create_date|date('Y年m月d日') }}
+                                            </td>
+                                            <td class="align-middle">
+                                                {{ Product.update_date|date('Y年m月d日') }}
                                             </td>
                                             <td class="align-middle pr-3" colspan="3">
                                                 <div class="text-right">

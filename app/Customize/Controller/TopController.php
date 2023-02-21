@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Eccube\Entity\Product as Blog;
+use Plugin\TopBanner\Entity\RecommendProduct as TopBanner;
 use Plugin\Pickup4\Entity\RecommendProduct as PickupBlog;
 use Plugin\OrderBySale4\Service\RankService;
 
@@ -59,12 +60,12 @@ class TopController extends AbstractController
      */
     public function topSlider(Request $request)
     {
-        $pickupRepository = $this->getDoctrine()->getRepository(PickupBlog::class);
+        $pickupRepository = $this->getDoctrine()->getRepository(TopBanner::class);
 
-        $Pickups = $pickupRepository->getRecommendProduct();
+        $TopBanners = $pickupRepository->getRecommendProduct();
 
         return [
-            'Pickups' => $Pickups,
+            'TopBanners' => $TopBanners,
         ];
     }
     
@@ -78,6 +79,8 @@ class TopController extends AbstractController
         
         $NewBlogs = $blogRepository->createQueryBuilder('b')
             ->andWhere('b.Status = 1')
+            ->andWhere('b.launch_date <= :today')
+            ->setParameter('today', new \DateTime())
             ->orderBy('b.update_date', 'DESC')
             ->setMaxResults(6)
             ->getQuery()

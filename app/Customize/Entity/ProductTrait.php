@@ -36,6 +36,28 @@ trait ProductTrait
     private $affiliate_reward = 50;
 
     /**
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="launch_date", type="datetimetz", nullable=true)
+     * @Eccube\Annotation\FormAppend(
+     *     auto_render=true,
+     *     type="\Symfony\Component\Form\Extension\Core\Type\DateType",
+     *     options={
+     *          "required": false,
+     *          "label": false,
+     *          "input": "datetime",
+     *          "widget": "single_text",
+     *          "format": "yyyy-MM-dd",
+     *          "attr": {
+     *              "class": "datetimepicker-input",
+     *              "data-target": "#admin_product_launch_date",
+     *              "data-toggle": "datetimepicker"
+     *          }
+     *     })
+     */
+    private $launch_date = null;
+
+    /**
      * @var \Eccube\Entity\Customer
      *
      * @ORM\ManyToOne(targetEntity="\Eccube\Entity\Customer", inversedBy="Blogs")
@@ -44,7 +66,6 @@ trait ProductTrait
      * })
      */
     private $Customer;
-    
 
     /**
      * @var \Customize\Entity\Master\ProductStatusColor
@@ -124,5 +145,29 @@ trait ProductTrait
     public function getStatusColor()
     {
         return $this->StatusColor;
+    }
+
+    /**
+     * Set launchDate.
+     *
+     * @param \DateTime $launchDate
+     *
+     * @return Product
+     */
+    public function setLaunchDate($launchDate)
+    {
+        $this->launch_date = $launchDate;
+
+        return $this;
+    }
+
+    /**
+     * Get launchDate.
+     *
+     * @return \DateTime
+     */
+    public function getLaunchDate()
+    {
+        return $this->launch_date;
     }
 }

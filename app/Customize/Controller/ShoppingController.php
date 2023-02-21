@@ -40,6 +40,8 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 use Eccube\Controller\AbstractShoppingController;
+use Eccube\Entity\Customer;
+use Eccube\Repository\CustomerRepository;
 
 class ShoppingController extends AbstractShoppingController
 {
@@ -63,15 +65,22 @@ class ShoppingController extends AbstractShoppingController
      */
     protected $orderRepository;
 
+    /**
+     * @var CustomerRepository
+     */
+    protected $customerRepository;
+
     public function __construct(
         CartService $cartService,
         MailService $mailService,
         OrderRepository $orderRepository,
+        CustomerRepository $customerRepository,
         OrderHelper $orderHelper
     ) {
         $this->cartService = $cartService;
         $this->mailService = $mailService;
         $this->orderRepository = $orderRepository;
+        $this->customerRepository = $customerRepository;
         $this->orderHelper = $orderHelper;
     }
 
@@ -415,11 +424,46 @@ class ShoppingController extends AbstractShoppingController
 
             // 受注IDをセッションにセット
             $this->session->set(OrderHelper::SESSION_ORDER_ID, $Order->getId());
-            $this->session->remove(\Eccube\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER);
+            $this->session->remove(\Customize\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER);
+            $this->session->remove(\Customize\Controller\ProductController::SESSION_AFFILIATE_BLOG);
 
             // メール送信
             log_info('[注文処理] 注文メールの送信を行います.', [$Order->getId()]);
             $this->mailService->sendOrderMail($Order);
+
+            $BaseInfoRepository = $this->getDoctrine()->getRepository(\Eccube\Entity\BaseInfo::class);
+            $shopFee = $BaseInfoRepository->get()->getFee();
+
+            foreach ( $Order->getMergedProductOrderItems() as $OrderItem ) {
+                // 記事が売り切れた場合に、販売者に売り切れのメールをお届けします。
+                if ( $OrderItem->getProduct()->getStockFind() ) {
+                    $this->mailService->sendSoldOutMail($OrderItem->getProduct());
+                }
+
+                /**
+                 * 各会員の残高合計設定
+                 */
+                $Blog = $OrderItem->getProduct();
+
+                // 記事の所有者がいない場合、管理者が登録した記事
+                // 記事の所有者がいる場合を判定しなければならない。
+                if ( $Owner = $Blog->getCustomer() ) {
+                    $ownerBalance = $Owner->getBalance();
+
+                    if ( $OrderItem->getAffiliater() ) {
+                        $Owner->setBalance( $ownerBalance + $Blog->getPrice02IncTaxMax() * ( 100 - $Blog->getAffiliateReward() - $shopFee ) / 100  );
+    
+                        $Affiliater = $this->customerRepository->find($OrderItem->getAffiliater());
+                        $affiliaterBalance = $Affiliater->getBalance();
+                        $Affiliater->setBalance( $affiliaterBalance + $Blog->getPrice02IncTaxMax() * $Blog->getAffiliateReward() / 100  );
+                        $this->entityManager->persist($Affiliater);
+                    } else {
+                        $Owner->setBalance( $ownerBalance + $Blog->getPrice02IncTaxMax() * ( 100 - $shopFee ) / 100  );
+                    }
+                    $this->entityManager->persist($Owner);
+                }
+
+            }
             $this->entityManager->flush();
 
             log_info('[注文処理] 注文処理が完了しました. 購入完了画面へ遷移します.', [$Order->getId()]);

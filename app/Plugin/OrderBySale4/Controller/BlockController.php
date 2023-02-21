@@ -73,7 +73,9 @@ class BlockController extends AbstractController
             ->createQueryBuilder('p');
         $qb
             ->where('p.Status = :Disp')
-            ->setParameter('Disp', ProductStatus::DISPLAY_SHOW);
+            ->andWhere('p.launch_date <= :today')
+            ->setParameter('Disp', ProductStatus::DISPLAY_SHOW)
+            ->setParameter('today', new \DateTime());
 
         /* @var $Config Config */
         $Config = $this->configRepository->findOneBy([]);

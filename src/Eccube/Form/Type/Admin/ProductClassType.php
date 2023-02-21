@@ -95,6 +95,13 @@ class ProductClassType extends AbstractType
                 'required' => false,
             ])
             ->add('price02', PriceType::class, [
+                'required' => true,
+                'constraints' => [
+                    new Assert\Range([
+                        'min' => 100,
+                    ]),
+                    new Assert\NotBlank(),
+                ],
             ])
             ->add('tax_rate', TextType::class, [
                 'required' => false,

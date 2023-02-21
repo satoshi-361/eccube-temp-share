@@ -41,8 +41,7 @@ if (!class_exists(ProductStatus::class, false)) {
         const DISPLAY_SHOW = 1;
 
         /**
-         * 非公開
-         * 審査・再審査
+         * 非公開 | 審査・再審査
          *
          * フロント画面: 表示されません。
          * 管理画面商品一覧: デフォルトで検索対象となります。
@@ -52,7 +51,7 @@ if (!class_exists(ProductStatus::class, false)) {
         const DISPLAY_HIDE = 2;
 
         /**
-         * 廃止
+         * 廃止 | 削除
          *
          * 通常、商品情報は受注情報などに紐づいているため、商品情報を物理削除することはできません。
          * 廃止のステータスは2系や3系での論理削除に近い役割となります。
@@ -65,7 +64,6 @@ if (!class_exists(ProductStatus::class, false)) {
 
         /**
          * 下書き
-         * 削除
          *
          * @var integer
          */

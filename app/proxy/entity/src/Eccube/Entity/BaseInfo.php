@@ -28,7 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
      */
     class BaseInfo extends \Eccube\Entity\AbstractEntity
     {
-    use \Plugin\SiteKit\Entity\BaseInfoTrait;
+    use \Customize\Entity\BaseInfoTrait;
 
         /**
          * @var int

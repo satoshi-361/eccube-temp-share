@@ -12,6 +12,8 @@ file that was distributed with this source code.
 {% extends '@admin/default_frame.twig' %}
 
 {% set menus = ['customer', 'customer_edit'] %}
+{% set baseInfoRepository = repository('\\Eccube\\Entity\\BaseInfo') %}
+{% set shopFee = baseInfoRepository.get().fee|number_format %}
 
 {% block title %}{{ 'admin.customer.customer_registration'|trans }}{% endblock %}
 {% block sub_title %}{{ 'admin.customer.customer_management'|trans }}{% endblock %}
@@ -175,6 +177,43 @@ file that was distributed with this source code.
                                     </div>
                                     <div class="col">
                                         {{ Customer.balance }}
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3"><span>{{ 'admin.common.address'|trans }}</span><span
+                                                class="badge badge-primary ml-1">{{ 'admin.common.required'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto pr-0 align-self-center"><span>{{ 'admin.common.postal_symbol'|trans }}</span></div>
+                                                <div class="col-2">
+                                                    {{ form_widget(form.postal_code) }}
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    {{ form_errors(form.postal_code) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row justify-content-start">
+                                                <div class="col-auto">
+                                                    {{ form_widget(form.address.pref) }}
+                                                    {{ form_errors(form.address.pref) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            {{ form_widget(form.address.addr01, { attr : { placeholder : 'admin.common.address_sample_01' }} ) }}
+                                            {{ form_errors(form.address.addr01) }}
+                                        </div>
+                                        <div class="mb-3">
+                                            {{ form_widget(form.address.addr02, { attr : { placeholder : 'admin.common.address_sample_02' }}) }}
+                                            {{ form_errors(form.address.addr02) }}
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -351,7 +390,7 @@ file that was distributed with this source code.
                                                     </td>
                                                     <td class="align-middle">
                                                         {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - 18.6 ) / 100 )|price }}
+                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - shopFee ) / 100 )|price }}
                                                         {% else %}
                                                         {% endif %}
                                                     </td>
@@ -366,7 +405,7 @@ file that was distributed with this source code.
                                                                 <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
                                                                 <span class="plus"> + </span>
                                                         {% endif %}
-                                                                <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * 0.186)|price }} </span>
+                                                                <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
                                                                 <span class="minus"> - </span>
                                                                 <span class="label">（手数料）</span><br />
                                                     </td>

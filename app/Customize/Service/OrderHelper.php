@@ -70,12 +70,14 @@ class OrderHelper extends BaseService
         $ProductItemType = $this->orderItemTypeRepository->find(OrderItemType::PRODUCT);
 
         $affiliater = null;
+        $affiliatedBlog = null;
 
         if ( $this->session->has(\Customize\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER) ) {
             $affiliater = $this->session->get(\Customize\Controller\ProductController::SESSION_AFFILIATE_CUSTOMER);
+            $affiliatedBlog = $this->session->get(\Customize\Controller\ProductController::SESSION_AFFILIATE_BLOG);
         }
 
-        return array_map(function ($item) use ($ProductItemType, $affiliater) {
+        return array_map(function ($item) use ($ProductItemType, $affiliater, $affiliatedBlog) {
             /* @var $item CartItem */
             /* @var $ProductClass \Eccube\Entity\ProductClass */
             $ProductClass = $item->getProductClass();
@@ -90,8 +92,11 @@ class OrderHelper extends BaseService
                 ->setProductCode($ProductClass->getCode())
                 ->setPrice($ProductClass->getPrice02())
                 ->setQuantity($item->getQuantity())
-                ->setOrderItemType($ProductItemType)
-                ->setAffiliater($affiliater);
+                ->setOrderItemType($ProductItemType);
+
+            if ( $affiliatedBlog == $Product->getId() ) {
+                $OrderItem->setAffiliater($affiliater);
+            }
 
             $ClassCategory1 = $ProductClass->getClassCategory1();
             if (!is_null($ClassCategory1)) {

@@ -69,7 +69,7 @@ a:hover img {
 
 .cs-side-blog {
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     box-shadow: 0 0 15px #ddd;
 }
 
@@ -120,11 +120,12 @@ a:hover img {
     display: block;
     box-shadow: 0 0 15px #ddd;
     color: black;
+    position: relative;
 }
 
 .blog:hover {
     text-decoration: none;
-    color: brown;
+    color: #a98217;
 }
 
 .blog .image.photo img {
@@ -134,6 +135,18 @@ a:hover img {
     border-radius: 6px;
 }
 
+.blog .rank-icon {
+    width: 40px;
+    max-width: 40px;
+    position: absolute;
+    top: 90px;
+    left: -15px;
+    transform: translate(-100%, -50%);
+}
+.blog .rank-icon img {
+    width: 100%;
+}
+
 .blog .title {
     padding: 8px;
     font-size: 19px;
@@ -141,6 +154,10 @@ a:hover img {
     line-height: 30px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+}
+
+.blog .editor-name {
+    font-weight: bold;
 }
 
 .blog .badges {
@@ -162,6 +179,13 @@ a:hover img {
     font-size: 85%;
     color: black;
     padding: 5px;
+}
+.blog .badges .label.launch-date {
+    background-color: antiquewhite;
+}
+
+.blog .badges .label.stock.sold-out {
+    background-color: darkgrey;
 }
 
 .blog .badges .image.profile {
@@ -248,10 +272,26 @@ a:hover img {
 }
 
 .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
-    width: 150px;
+    width: 220px;
     border-radius: 4px;
     height: 45px;
     line-height: 45px;
+    font-size: 13px;
+}
+
+.ec-productRole .ec-productRole__utils .editor-name {
+    font-weight: bold;
+}
+
+.ec-productRole .ec-productRole__utils .launch-date {
+    margin-top: 4px;
+    border-radius: 3px;
+    padding: 3px;
+    display: inline-block;
+    background-color: antiquewhite;
+}
+.ec-productRole .ec-productRole__utils .sold-out {
+    background-color: darkgrey;
 }
 
 .ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
@@ -513,6 +553,7 @@ a:hover img {
         flex-wrap: wrap;
         justify-content: center;
     }
+
     .ec-headerTitle__title .image {
         margin: 15px 0 10px;
     }
@@ -534,6 +575,10 @@ a:hover img {
     .ec-shelfGrid .cs-blogList__item {
         margin: auto;
     }
+    .blog {
+        width: 300px;
+        margin-top: 35px;
+    }
 
     .affiliate-panel {
         width: 100%;
@@ -552,5 +597,63 @@ a:hover img {
     }
     .ec-layoutRole .ec-layoutRole__contents {
         padding-bottom: 250px;
+    }
+    .cs-transfer__date form .cs-balance {
+        margin-right: 5px;
+        border-radius: 3px;
+        padding: 7px 9px;
+        font-size: 14px;
+    }
+    .cs-transfer__date form input[type="month"] {
+        width: 150px;
+        border: 1px solid gray;
+        border-radius: 5px;
+        padding: 6px 5px;
+        font-size: 14px;
+    }
+    .cs-transfer__date .ec-blockBtn--action {
+        width: 80px;
+        height: 35px;
+        margin-left: 10px;
+        line-height: 35px;
+        border-radius: 3px;
+    }
+    .cs-transfer__history tbody tr td:last-child {
+        width: 130px;
+    }
+    .cs-transfer__history span.label {
+        padding: 0;
+    }
+    .cs-transfer__history span.price {
+        width: 35px;
+        margin-right: 5px;
+    }
+    .cs-transfer__history span.plus {
+        font-size: 14px;
+    }
+
+    @media only screen and (max-width: 450px) {
+        .ec-headerNaviRole .ec-headerNaviRole__left {
+            width: calc(100% - 300px);
+        }
+        .ec-headerNaviRole .ec-headerNaviRole__right {
+            width: 300px;
+        }
+        .cs-contentRole .cs-rank,
+        .cs-contentRole .cs-pickup {
+            width: 300px;
+            margin-right: 0;
+        }
+
+        .blog {
+            width: 300px;
+        }
+        .blog .image.photo img {
+            height: 165px;
+        }
+        .blog .rank-icon {
+            top: 80px;
+            left: -10px;
+        }
     }
 }

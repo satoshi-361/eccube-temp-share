@@ -532,4 +532,64 @@ class MailService extends BaseService
 
         return $message;
     }
+
+    /**
+     * Send stock out mail.
+     *
+     * @param \Eccube\Entity\Product $Blog 売り切れの記事
+     *
+     * @return \Swift_Message
+     */
+    public function sendSoldOutMail(Product $Blog)
+    {
+        log_info('売り切れのメール送信開始');
+
+        $MailTemplate = $this->mailTemplateRepository->find($this->eccubeConfig['eccube_sold_out_mail_template_id']);
+
+        $body = $this->twig->render($MailTemplate->getFileName(), [
+            'Blog' => $Blog,
+        ]);
+
+        $message = (new \Swift_Message())
+            ->setSubject('['.$this->BaseInfo->getShopName().'] '.$MailTemplate->getMailSubject())
+            ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
+            ->setTo([$Blog->getCustomer()->getEmail()])
+            ->setBcc($this->BaseInfo->getEmail01())
+            ->setReplyTo($this->BaseInfo->getEmail03())
+            ->setReturnPath($this->BaseInfo->getEmail04());
+
+        // HTMLテンプレートが存在する場合
+        $htmlFileName = $this->getHtmlTemplate($MailTemplate->getFileName());
+        if (!is_null($htmlFileName)) {
+            $htmlBody = $this->twig->render($htmlFileName, [
+                'Blog' => $Blog,
+            ]);
+
+            $message
+                ->setContentType('text/plain; charset=UTF-8')
+                ->setBody($body, 'text/plain')
+                ->addPart($htmlBody, 'text/html');
+        } else {
+            $message->setBody($body);
+        }
+
+        $count = $this->mailer->send($message);
+
+        $MailHistory = new MailHistory();
+        $MailHistory->setMailSubject($message->getSubject())
+            ->setMailBody($message->getBody())
+            ->setSendDate(new \DateTime());
+
+        // HTML用メールの設定
+        $multipart = $message->getChildren();
+        if (count($multipart) > 0) {
+            $MailHistory->setMailHtmlBody($multipart[0]->getBody());
+        }
+
+        $this->mailHistoryRepository->save($MailHistory);
+
+        log_info('売り切れのメール送信完了', ['count' => $count]);
+
+        return $message;
+    }
 }

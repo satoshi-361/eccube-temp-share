@@ -12,6 +12,7 @@ use Eccube\Entity\Product;
 use Eccube\Repository\BaseInfoRepository;
 use Eccube\Repository\ProductRepository;
 use Knp\Component\Pager\Paginator;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +68,7 @@ class ReviewController extends AbstractController
      * @Template("@CustomerReview4/list.twig")
      * @ParamConverter("Product", options={"repository_method" = "findWithSortedClassCategories"})
      */
-    public function index(Request $request, Product $Product, Paginator $paginator)
+    public function index(Request $request, Product $Product, PaginatorInterface $paginator)
     {
         $Config = $this->customerReviewConfigRepository->get();
         $ViewMax = $Config->getReviewMax();

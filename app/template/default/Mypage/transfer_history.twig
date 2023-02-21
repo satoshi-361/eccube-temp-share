@@ -13,6 +13,33 @@ file that was distributed with this source code.
 {% set mypageno = 'transfer' %}
 
 {% set body_class = 'mypage' %}
+{% set baseInfoRepository = repository('\\Eccube\\Entity\\BaseInfo') %}
+{% set shopFee = baseInfoRepository.get().fee|number_format %}
+
+{% block stylesheet %}
+    <style>
+        .cs-transfer__history tbody {
+            font-size: 14px;
+        }
+        .cs-transfer__history thead .th-remarks {
+            padding-left: 50px;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .cs-transfer__history {
+                padding: 15px 0;
+                overflow-x: scroll;
+            }
+            .cs-transfer__history table {
+                width: 600px;
+                max-width: unset;
+            }
+            .cs-transfer__history thead .th-remarks {
+                padding-left: 20px;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block main %}
     <div class="ec-layoutRole__main">
@@ -25,7 +52,7 @@ file that was distributed with this source code.
         <div class="ec-mypageRole">
             <div class="d-flex cs-transfer__date">
                 <form method="get" action="{{ url('mypage_transfer_history') }}" novalidate>
-                    <div class="cs-balance"> 残高： <b>{{ balance|price }}</b> </div>
+                    <div class="cs-balance"> 合計 <b>{{ app.user.balance|price }}</b> </div>
                     <input type="month" name="transfer_date" value="{{ selectedMonth }}">
                     <button type="submit" class="ec-blockBtn--action">{{ '確認'|trans }}</button>
                 </form>
@@ -36,9 +63,9 @@ file that was distributed with this source code.
                         <tr>
                             <th>売上日時</th>
                             <th>記事</th>
-                            <th>提携</th>
-                            <th>販売</th>
-                            <th>備考</th>
+                            <th>報酬額</th>
+                            <th>計算</th>
+                            <th class="th-remarks">備考</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,9 +80,9 @@ file that was distributed with this source code.
                             </td>
                             <td>
                                 {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - 18.6 ) / 100 )|price }}
+                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - shopFee ) / 100 )|price }}
                                 {% else %}
-                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - 18.6 ) / 100 )|price }}
+                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
                                 {% endif %}
                             </td>
                             <td>
@@ -76,7 +103,7 @@ file that was distributed with this source code.
                                     </p>
                                 {% endif %}
                                     <p>
-                                        <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * 0.186)|price }} </span>
+                                        <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
                                         <span class="minus"> - </span>
                                         <span class="label">（手数料）</span>
                                     </p>

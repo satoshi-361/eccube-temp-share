@@ -60,6 +60,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\RouterInterface;
 use Customize\Entity\TransferHistory;
 use Eccube\Entity\Master\OrderItemType;
+use Customize\Entity\Master\ProductStatusColor;
 
 class MypageController extends AbstractController
 {
@@ -328,13 +329,13 @@ class MypageController extends AbstractController
             $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_HIDE);
             $Product
                 ->addProductClass($ProductClass)
-                ->setStatus($ProductStatus);
+                ->setStatus($ProductStatus)
+                ->setLaunchDate(new \DateTime());
             $ProductClass
                 ->setVisible(true)
                 ->setStockUnlimited(true)
                 ->setProduct($Product);
             $ProductStock = new ProductStock();
-            $ProductStock->setStock(null);
             $ProductClass->setProductStock($ProductStock);
             $ProductStock->setProductClass($ProductClass);
         } else {
@@ -380,7 +381,7 @@ class MypageController extends AbstractController
         $form = $builder->getForm();
 
         if (!$has_class) {
-            $ProductClass->setStockUnlimited(true);
+            $ProductClass->setStockUnlimited($ProductClass->isStockUnlimited());
             $form['class']->setData($ProductClass);
         }
 
@@ -403,11 +404,19 @@ class MypageController extends AbstractController
         $Tags = $Product->getTags();
         $form['Tag']->setData($Tags);
 
+        $freeArea = null;
+        $descriptionDetail = null;
+
         if ('POST' === $request->getMethod()) {
+            $freeArea = $request->request->get('admin_product')['free_area'];
+            $descriptionDetail = $request->request->get('admin_product')['description_detail'];
+
             $form->handleRequest($request);
             if ($form->isValid()) {
                 log_info('商品登録開始', [$id]);
                 $Product = $form->getData();
+                $Product->setFreeArea($freeArea);
+                $Product->setDescriptionDetail($descriptionDetail);
 
                 if (!$has_class) {
                     $ProductClass = $form['class']->getData();
@@ -454,7 +463,10 @@ class MypageController extends AbstractController
                     $this->entityManager->remove($ProductCategory);
                 }
 
-                $Product->setStatus($form['Status']->getData());
+                $productStatusColorRepository = $this->getDoctrine()->getRepository(ProductStatusColor::class);
+                $ProductStatus = $form['Status']->getData();
+
+                $Product->setStatusColor($productStatusColorRepository->find($ProductStatus->getId()));
                 $Product->setCustomer($Customer);
                 $Customer->addBlog($Product);
 
@@ -514,6 +526,7 @@ class MypageController extends AbstractController
                     if ($ProductImage instanceof ProductImage) {
                         $Product->removeProductImage($ProductImage);
                         $this->entityManager->remove($ProductImage);
+                        $this->entityManager->flush();
 
                         // 他に同じ画像を参照する商品がなければ画像ファイルを削除
                         if (!$this->productImageRepository->findOneBy(['file_name' => $delete_image])) {
@@ -524,6 +537,8 @@ class MypageController extends AbstractController
                         $fs->remove($this->eccubeConfig['eccube_temp_image_dir'].'/'.$delete_image);
                     }
                 }
+
+                $this->entityManager->flush();
 
                 $sortNos = $request->get('sort_no_images');
                 if ($sortNos) {
@@ -564,8 +579,11 @@ class MypageController extends AbstractController
 
                 log_info('商品登録完了', [$id]);
 
-                $ProductStatus = $form['Status']->getData();
                 switch ( $ProductStatus->getId() ) {
+                    case ProductStatus::DISPLAY_SHOW:
+                        $this->addSuccess('admin.common.save_complete');
+                        break;
+
                     case ProductStatus::DISPLAY_HIDE:
                         $this->addSuccess('記事の申請ありがとうございます。審査を行いますので、しばらくお待ちください。');
                         break;
@@ -578,7 +596,7 @@ class MypageController extends AbstractController
                         $this->addSuccess('削除しました。');
                         $cacheUtil->clearDoctrineCache();
 
-                        return $this->redirectToRoute('mypage_blog_list');
+                        return $this->redirectToRoute('mypage_blog_new');
                 }
 
                 if ($returnLink = $form->get('return_link')->getData()) {
@@ -614,7 +632,7 @@ class MypageController extends AbstractController
         $ChoicedCategoryIds = array_map(function ($Category) {
             return $Category->getId();
         }, $form->get('Category')->getData());
-
+        
         return [
             'Product' => $Product,
             'Tags' => $Tags,
@@ -624,6 +642,8 @@ class MypageController extends AbstractController
             'id' => $id,
             'TopCategories' => $TopCategories,
             'ChoicedCategoryIds' => $ChoicedCategoryIds,
+            'free_area' => $freeArea,
+            'description_detail' => $descriptionDetail,
         ];
     }
     
@@ -666,13 +686,13 @@ class MypageController extends AbstractController
         $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
         $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);
 
-        $balance = 0;
-        if ( $transferHistory )
-            $balance = $transferHistory->getBalance();
+        // $balance = 0;
+        // if ( $transferHistory )
+        //     $balance = $transferHistory->getBalance();
 
         return [
             'orderItems' => $orderItems,
-            'balance' => $balance,
+            // 'balance' => $balance,
             'selectedMonth' => substr($date, 0, 7),
         ];
     }
@@ -940,5 +960,50 @@ class MypageController extends AbstractController
         $ProductCategory->setCategoryId($Category->getId());
 
         return $ProductCategory;
+    }
+
+    /**
+     * @Route("/mypage/blog/upload", name="mypage_blog_upload", methods={"POST"})
+     */
+    public function uploadBlogImage(Request $request)
+    {
+        try {
+            // File Route.
+            $fileRoute = $this->eccubeConfig['eccube_save_image_dir'];
+
+            reset ($_FILES);
+            $temp = current($_FILES);
+
+            if (is_uploaded_file($temp["tmp_name"])){
+
+                if (preg_match("/([^wsd\-_~,;:[]().])|([.]{2,})/", $temp["name"])) {
+                    throw new UnsupportedMediaTypeHttpException();
+                }
+
+                $extension = pathinfo($temp["name"], PATHINFO_EXTENSION);
+                $fileName  = date('mdHis').uniqid('_').'.'.$extension;
+                $fullNamePath = $fileRoute .'/'. $fileName;
+                
+                if (!in_array(strtolower($extension), array('gif', 'jpg', 'jpeg', 'png'))) {
+                    throw new UnsupportedMediaTypeHttpException();
+                }
+                move_uploaded_file($temp["tmp_name"], $fullNamePath);
+                
+                return $this->json([
+                    'uploaded' => 1,
+                    'filename' => $fileName,
+                    'location' => '/share/html/upload/save_image/' . $fileName,
+                ]);
+            } else {
+                throw new \Exception("ファイルアップロードに失敗しました");
+            }
+        } catch (\Exception $exception) {
+            return $this->json([
+                'uploaded' => 0,
+                'error' => array(
+                    'message' => $exception->getMessage(),
+                )
+            ]);
+        }
     }
 }

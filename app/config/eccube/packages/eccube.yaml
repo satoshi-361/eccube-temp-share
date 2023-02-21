@@ -123,6 +123,7 @@ parameters:
     eccube_article_no_approve_mail_template_id: 13 #記事否認メール
     eccube_transfer_success_mail_template_id: 14 #振込完了メール
     eccube_transfer_failed_mail_template_id: 15 #振込失敗メール
+    eccube_sold_out_mail_template_id: 16 #売り切れのメール
     # メールアドレスをRFC準拠でチェックするか true: チェックする、false: チェックしない
     eccube_rfc_email_check: false
     eccube_package_api_url: '%env(ECCUBE_PACKAGE_API_URL)%'

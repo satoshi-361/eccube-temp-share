@@ -101,9 +101,14 @@ class ChangeController extends AbstractController
                     $encoder->encodePassword($Customer->getPassword(), $Customer->getSalt())
                 );
             }
-            if ($Customer->getImage() != '') {
-                $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$Customer->getImage());
-                $file->move($this->eccubeConfig['eccube_save_image_dir']);
+
+            try {
+                if ($Customer->getImage() == '') {
+                    $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$Customer->getImage());
+                    $file->move($this->eccubeConfig['eccube_save_image_dir']);
+                }
+            } catch (\Exception $e) {
+                log_warning('エラーが発生しました。');
             }
 
             $this->entityManager->flush();

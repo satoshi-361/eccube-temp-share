@@ -382,13 +382,14 @@ class ProductController extends AbstractController
             $ProductStatus = $this->productStatusRepository->find(ProductStatus::DISPLAY_HIDE);
             $Product
                 ->addProductClass($ProductClass)
-                ->setStatus($ProductStatus);
+                ->setStatus($ProductStatus)
+                ->setLaunchDate(new \DateTime());
+
             $ProductClass
                 ->setVisible(true)
                 ->setStockUnlimited(true)
                 ->setProduct($Product);
             $ProductStock = new ProductStock();
-            $ProductStock->setStock(null);
             $ProductClass->setProductStock($ProductStock);
             $ProductStock->setProductClass($ProductClass);
         } else {
@@ -440,7 +441,7 @@ class ProductController extends AbstractController
         $form = $builder->getForm();
 
         if (!$has_class) {
-            $ProductClass->setStockUnlimited(true);
+            $ProductClass->setStockUnlimited($ProductClass->isStockUnlimited());
             $form['class']->setData($ProductClass);
         }
 
@@ -618,7 +619,7 @@ class ProductController extends AbstractController
                 }
 
                 $ProductStatus = $form['Status']->getData();
-                if ( $ProductStatus->getId() == ProductStatus::DISPLAY_SHOW && $OldProductStatus->getId() == ProductStatus::DISPLAY_HIDE ) {
+                if ( $ProductStatus->getId() == ProductStatus::DISPLAY_SHOW && $OldProductStatus->getId() != ProductStatus::DISPLAY_SHOW ) {
                     // 管理画面で記事公開に設定した場合「記事承認メール」を配信する
                     $this->mailService->sendArticleApproveMail($Product);
                 } 
@@ -1078,5 +1079,50 @@ class ProductController extends AbstractController
         }
 
         return $this->redirectToRoute('admin_product', ['resume' => Constant::ENABLED]);
+    }
+
+    /**
+     * @Route("/%eccube_admin_route%/product/blog/upload", name="admin_product_blog_upload", methods={"POST"})
+     */
+    public function uploadBlogImage(Request $request)
+    {
+        try {
+            // File Route.
+            $fileRoute = $this->eccubeConfig['eccube_save_image_dir'];
+
+            reset ($_FILES);
+            $temp = current($_FILES);
+
+            if (is_uploaded_file($temp["tmp_name"])){
+
+                if (preg_match("/([^wsd\-_~,;:[]().])|([.]{2,})/", $temp["name"])) {
+                    throw new UnsupportedMediaTypeHttpException();
+                }
+
+                $extension = pathinfo($temp["name"], PATHINFO_EXTENSION);
+                $fileName  = date('mdHis').uniqid('_').'.'.$extension;
+                $fullNamePath = $fileRoute .'/'. $fileName;
+                
+                if (!in_array(strtolower($extension), array('gif', 'jpg', 'jpeg', 'png'))) {
+                    throw new UnsupportedMediaTypeHttpException();
+                }
+                move_uploaded_file($temp["tmp_name"], $fullNamePath);
+                
+                return $this->json([
+                    'uploaded' => 1,
+                    'filename' => $fileName,
+                    'location' => '/share/html/upload/save_image/' . $fileName,
+                ]);
+            } else {
+                throw new \Exception("ファイルアップロードに失敗しました");
+            }
+        } catch (\Exception $exception) {
+            return $this->json([
+                'uploaded' => 0,
+                'error' => array(
+                    'message' => $exception->getMessage(),
+                )
+            ]);
+        }
     }
 }

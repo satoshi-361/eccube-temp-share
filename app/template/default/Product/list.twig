@@ -11,6 +11,21 @@ file that was distributed with this source code.
 {% extends 'default_frame.twig' %}
 
 {% set body_class = 'product_page' %}
+{% set CustomerReviewTotalRepository = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal') %}
+
+{% block stylesheet %}
+    <style>
+        .ec-shelfGrid a.blog {
+            color: black;
+        }
+        .review {
+            margin-left: 10px;
+        }
+        .review i {
+            color: #ffbc00;
+        }
+    </style>
+{% endblock %}
 
 {% block javascript %}
     <script>
@@ -164,14 +179,43 @@ file that was distributed with this source code.
                                             <span class="label">アフィリエイト：</span>
                                             <span class="value">{{ Product.affiliate_reward }}%</span>
                                         </div>
+                                        {% set review_list = CustomerReviewTotalRepository.getRecommend(Product.id) %}
+                                        {% set reviewer_total = 0 %}
+                                        {% set review_total_point = 0 %}
+                                        {% set count = 5 %}
+                                        {% for i in review_list %}
+                                            {% set reviewer_total = reviewer_total + i %}
+                                            {% set review_total_point = review_total_point + i * count %}
+                                            {% set count = count - 1 %}
+                                        {% endfor %}
+                                        {% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+                                        <div class="review">
+                                            <i class="fas fa-star reviewList star"></i>
+                                            <span>
+                                                {{ review_point|number_format(1, '.', ',') }}
+                                                ({{reviewer_total}}件)
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="d-flex align-center" style="padding: 8px 0">
                                         <div class="image profile">
                                             <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
                                         </div>
                                         <div style="padding-left: 15px">
-                                            <span class="">{{ Product.Customer.nick_name }}</span><br />
-                                            <span class="">{{ Product.create_date|date("Y年m月d日") }}発売</span>
+                                            <span class="editor-name">{{ Product.Customer.nick_name }}</span><br />
+                                            <span class="label launch-date">{{ Product.launch_date|date("Y年m月d日") }}発売</span>
+                                            {# STOCK #}
+                                            {% if Product.stock_find %}
+                                                <span class="label stock">
+                                                    {% if Product.stockunlimited_min %}
+                                                        {{ '部数制限なし'|trans }}
+                                                    {% else %}
+                                                        残り{{ Product.stock_min }}部
+                                                    {% endif %}
+                                                </span>
+                                            {% else %}
+                                                <span class="label stock sold-out">売り切れ中</span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="blog-category">

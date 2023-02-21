@@ -145,7 +145,7 @@ class Event implements EventSubscriberInterface
             'Shopping/login.twig' => 'onDefaultShoppingLoginTwig',
             'Shopping/index.twig' => 'onDefaultShoppingIndexTwig',
             'Shopping/confirm.twig' => 'onDefaultShoppingConfirmTwig',
-            'Cart/index.twig' => 'onDefaultCartIndexTwig',
+            // 'Cart/index.twig' => 'onDefaultCartIndexTwig',
             'Block/paypal_logo.twig' => 'onDefaultPayPalLogoTwig',
             EccubeEvents::FRONT_SHOPPING_SHIPPING_COMPLETE => 'onChangedShippingAddress',
         ];
@@ -183,9 +183,9 @@ class Event implements EventSubscriberInterface
             'parameters' => $parameters,
         ]);
 
-        // $event->addSnippet($snippet);
-        // $event->addAsset('@PayPalCheckout/default/head.twig');
-        // $event->setParameters(array_merge($event->getParameters(), $parameters));
+        $event->addSnippet($snippet);
+        $event->addAsset('@PayPalCheckout/default/head.twig');
+        $event->setParameters(array_merge($event->getParameters(), $parameters));
     }
 
     /**

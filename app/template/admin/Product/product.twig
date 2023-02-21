@@ -36,6 +36,13 @@ file that was distributed with this source code.
             background: #fff;
         }
 
+        span.label {
+            font-size: 12px;
+            font-weight: bold;
+            background: aliceblue;
+            padding: 3px;
+        }
+
         #admin_product_Status option[value="3"],
         #admin_product_Status option[value="4"] {
             display: none;
@@ -246,6 +253,35 @@ file that was distributed with this source code.
         $('#search-category').on('input', function () {
             searchWord($(this).val(), $('.category-li'));
         });
+
+        $('#admin_product_Status').val(1).change();
+    </script>
+    <script type="text/javascript" src="{{ asset('assets/tinymce/tinymce.min.js', 'user_data') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: '#admin_product_description_detail',
+            height: '600',
+            plugins : 'code image link',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("admin_product_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls : false
+        });
+        tinymce.init({
+            selector: '#wysiwyg-area',
+            height: '600',
+            plugins : 'code image link',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("admin_product_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls : false
+        });
     </script>
 {% endblock javascript %}
 
@@ -349,7 +385,7 @@ file that was distributed with this source code.
                                         <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
                                             <span>{{ 'admin.product.image'|trans }}</span>
                                             <i class="fa fa-question-circle fa-lg ml-1"></i>
-                                            <br>{{ 'admin.product.image_size'|trans }}
+                                            <br>{{ '推奨サイズ : 1280px×670px'|trans }}
                                         </div>
                                     </div>
                                     <div class="col mb-2">
@@ -420,6 +456,7 @@ file that was distributed with this source code.
                                                 <span class="badge badge-primary ml-1">
                                                     {{ 'admin.common.required'|trans }}
                                                 </span>
+                                                <span class="label">最低価格100円</span>
                                             </div>
                                         </div>
                                         <div class="col mb-2">
@@ -429,7 +466,7 @@ file that was distributed with this source code.
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row d-none">
+                                    <div class="row mb-4">
                                         <div class="col-3">
                                             <div class="d-inline-block">
                                                 <span>{{ 'admin.product.stock'|trans }}</span>
@@ -442,18 +479,6 @@ file that was distributed with this source code.
                                             <div>
                                                 {{ form_widget(form.class.stock) }}
                                                 {{ form_errors(form.class.stock) }}
-                                                {# TODO: form_layoutの調整 #}
-                                                {#<div class="form-check mb-2">#}
-                                                {#<input class="form-check-input"#}
-                                                {#id="{{ form.class.stock_unlimited.vars.id }}"#}
-                                                {#name="{{ form.class.stock_unlimited.vars.full_name }}"#}
-                                                {#type="checkbox"#}
-                                                {#value="{{ form.class.stock_unlimited.vars.value }}">#}
-                                                {#<label class="form-check-label"#}
-                                                {#for="{{ form.class.stock_unlimited.vars.id }}">#}
-                                                {#{{ 'admin.product.product.stock_unlimited'|trans }}#}
-                                                {#</label>#}
-                                                {#</div>#}
                                                 {{ form_widget(form.class.stock_unlimited) }}
                                             </div>
                                         </div>
@@ -472,6 +497,19 @@ file that was distributed with this source code.
                                         <div>
                                             {{ form_widget(form.affiliate_reward) }}
                                             {{ form_errors(form.affiliate_reward) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-3">
+                                        <div class="d-inline-block">
+                                            <span>{{ '記事投稿日'|trans }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col mb-2">
+                                        <div>
+                                            {{ form_widget(form.launch_date) }}
+                                            {{ form_errors(form.launch_date) }}
                                         </div>
                                     </div>
                                 </div>

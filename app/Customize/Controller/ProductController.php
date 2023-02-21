@@ -47,6 +47,7 @@ use Eccube\Entity\OrderItem;
 class ProductController extends AbstractController
 {
     const SESSION_AFFILIATE_CUSTOMER = 'affiliate_customer';
+    const SESSION_AFFILIATE_BLOG = 'affiliate_blog';
 
     /**
      * @var PurchaseFlow
@@ -309,21 +310,11 @@ class ProductController extends AbstractController
             $is_favorite = $this->customerFavoriteProductRepository->isFavorite($Customer, $Product);
         }
 
-        $Customer = $this->getUser();
-        $orderItemRepository = $this->getDoctrine()->getRepository(OrderItem::class);
-        $qb = $orderItemRepository->createQueryBuilder('oi')
-            ->innerJoin('oi.Product', 'p')
-            ->innerJoin('oi.Order', 'o')
-            ->where('p.id = :id')
-            ->andWhere('o.Customer = :Customer')
-            ->setParameter('id', $Product->getId())
-            ->setParameter('Customer', $Customer);
-
-        $blogPremiumEnabled = false;
         $isOwner = false;
+        $payerInfoIncorrect = false;
 
-        if ( count($qb->getQuery()->getResult()) ) {
-            $blogPremiumEnabled = true;
+        if ( $Customer && ( is_null($Customer->getPhoneNumber()) || is_null($Customer->getPref()) ) ) {
+            $payerInfoIncorrect = true;
         }
         
         $qb = $this->productRepository->createQueryBuilder('p')
@@ -344,8 +335,8 @@ class ProductController extends AbstractController
             'Product' => $Product,
             'is_favorite' => $is_favorite,
             'affiliate_param' => $affiliateParam,
-            'blog_premium_enabled' => $blogPremiumEnabled,
             'is_owner' => $isOwner,
+            'payer_info_incorrect' => $payerInfoIncorrect,
         ];
     }
 
@@ -578,10 +569,14 @@ class ProductController extends AbstractController
         $Customer = $customerRepository->findOneBy(['salt' => $salt]);
 
         if ( !$Customer ) {
+            $this->session->remove(self::SESSION_AFFILIATE_CUSTOMER);
+            $this->session->remove(self::SESSION_AFFILIATE_BLOG);
+            
             return $this->redirectToRoute('homepage');
         }
 
         $this->session->set(self::SESSION_AFFILIATE_CUSTOMER, $Customer->getId());
+        $this->session->set(self::SESSION_AFFILIATE_BLOG, $blogId);
         
         return $this->redirectToRoute('product_detail', ['id' => $blogId]);
     }

@@ -228,3 +228,6 @@ services:
 
     Customize\Service\MailService:
         decorates: Eccube\Service\MailService
+
+    Customize\Twig\Extension\EccubeExtension:
+        decorates: Eccube\Twig\Extension\EccubeExtension

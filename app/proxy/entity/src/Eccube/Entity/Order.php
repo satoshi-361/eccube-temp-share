@@ -41,7 +41,8 @@ use Eccube\Service\PurchaseFlow\ItemCollection;
      */
     class Order extends \Eccube\Entity\AbstractEntity implements PurchaseInterface, ItemHolderInterface
     {
-        use PointTrait, NameTrait, \Plugin\PayPalCheckout\Entity\OrderTrait;
+        use NameTrait, \Plugin\PayPalCheckout\Entity\OrderTrait;
+        use PointTrait;
 
         /**
          * 課税対象の明細を返す.

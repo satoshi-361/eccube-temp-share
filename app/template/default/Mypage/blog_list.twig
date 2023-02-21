@@ -47,6 +47,12 @@ file that was distributed with this source code.
             .ec-historyRole__contents table td {
                 min-width: 75px;
             }
+            .ec-historyRole__contents table th {
+                font-size: 14px;
+            }
+            .ec-historyRole__contents table td.date {
+                font-size: 13px;
+            }
         }
     </style>
 {% endblock %}
@@ -71,9 +77,10 @@ file that was distributed with this source code.
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.image__short'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.name'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.price'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'アフィリエイト報酬'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ '提携報酬'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ '在庫'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'admin.product.display_status__short'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.create_date'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ '投稿日'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.common.update_date'|trans }}</th>
                                 </tr>
                                 </thead>
@@ -99,13 +106,31 @@ file that was distributed with this source code.
                                             {{ Blog.affiliate_reward }}%
                                         </td>
                                         <td class="align-middle">
-                                            <span class="cs-blog__status" style="background-color: #fff; color: {{ Blog.StatusColor }}; border-color: {{ Blog.StatusColor }}">{{ Blog.status.name }}</span>
+                                            {# STOCK #}
+                                            {% if Blog.stock_find %}
+                                                {% if Blog.stockunlimited_min %}
+                                                    {{ '部数制限なし'|trans }}
+                                                {% else %}
+                                                    {{ Blog.stock_min }}部
+                                                {% endif %}
+                                            {% else %}
+                                                <span style="font-size: 13px; font-weight: bold; color: red">売り切れ中</span>
+                                            {% endif %}
                                         </td>
                                         <td class="align-middle">
-                                            {{ Blog.create_date|date_min }}
+                                            <span class="cs-blog__status" style="background-color: #fff; color: {{ Blog.StatusColor }}; border-color: {{ Blog.StatusColor }}">
+                                                {% if Blog.status.id == 5 %}
+                                                    否認
+                                                {% else %}
+                                                    {{ Blog.status.name }}
+                                                {% endif %}
+                                            </span>
                                         </td>
-                                        <td class="align-middle">
-                                            {{ Blog.update_date|date_min }}
+                                        <td class="align-middle date">
+                                            {{ Blog.launch_date|date('Y年m月d日') }}
+                                        </td>
+                                        <td class="align-middle date">
+                                            {{ Blog.update_date|date('Y年m月d日') }}
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -117,7 +142,7 @@ file that was distributed with this source code.
                     {% include "pager.twig" with {'pages': pagination.paginationData} %}
                 </div>
             {% else %}
-                <p class="ec-para-normal">{{ 'front.mypage.history_not_found'|trans }}</p>
+                <p class="ec-para-normal">{{ '投稿した記事はありません。'|trans }}</p>
             {% endif %}
         </div>
     </div>

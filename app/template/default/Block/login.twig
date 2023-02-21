@@ -12,7 +12,7 @@ file that was distributed with this source code.
 <div class="ec-headerNav">
     {% if is_granted('ROLE_USER') %}
         <div class="ec-headerNav__item">
-            <a href="{{ url('mypage') }}">
+            <a href="{{ url('mypage_blog_list') }}">
                 {# <i class="ec-headerNav__itemIcon fas fa-user fa-fw"></i> #}
                 <div class="image profile">
                     <img src="{{ asset(app.user.image|no_image_product, 'save_image') }}" />
