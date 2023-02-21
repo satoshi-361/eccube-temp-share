@@ -67,7 +67,7 @@ file that was distributed with this source code.
         </div>
         <div class="ec-mypageRole">
             {% if pagination.totalItemCount > 0 %}
-                <p class="ec-para-normal">{{ 'front.mypage.history_count'|trans({'%count%':pagination.totalItemCount}) }}</p>
+                <p class="ec-para-normal">{{ pagination.totalItemCount }}件の記事があります</p>
                     <div class="ec-historyRole">
                         <div class="ec-historyRole__contents">
                             <table class="table table-sm">

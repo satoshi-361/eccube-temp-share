@@ -17,7 +17,7 @@ file that was distributed with this source code.
 記事タイトル：{{ OrderItem.Product.name }}
 記事URL：{{ url('product_detail', { id: OrderItem.Product.id }) }}
 
-記事販売者：{{ OrderItem.Product.Customer.__toString }}
+記事販売者：{{ OrderItem.Product.Customer.nick_name }}
 
 販売日時：{{ Order.order_date|date_sec|date('Y年m月d日 H:i:s') }}
 

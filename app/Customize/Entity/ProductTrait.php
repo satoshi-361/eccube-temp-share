@@ -37,6 +37,7 @@ trait ProductTrait
 
     /**
      * @var \DateTime|null
+     * 投稿者が発売日時を設定できる。
      *
      * @ORM\Column(name="launch_date", type="datetimetz", nullable=true)
      * @Eccube\Annotation\FormAppend(
@@ -56,6 +57,14 @@ trait ProductTrait
      *     })
      */
     private $launch_date = null;
+
+    /**
+     * @var \DateTime|null
+     * 管理者が「公開」を承認した日時
+     *
+     * @ORM\Column(name="approved_date", type="datetimetz", nullable=true)
+     */
+    private $approved_date = null;
 
     /**
      * @var \Eccube\Entity\Customer
@@ -169,5 +178,29 @@ trait ProductTrait
     public function getLaunchDate()
     {
         return $this->launch_date;
+    }
+
+    /**
+     * Set approvedDate.
+     *
+     * @param \DateTime $approvedDate
+     *
+     * @return Product
+     */
+    public function setApprovedDate($approvedDate)
+    {
+        $this->approved_date = $approvedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get approved_date.
+     *
+     * @return \DateTime
+     */
+    public function getApprovedDate()
+    {
+        return $this->approved_date;
     }
 }

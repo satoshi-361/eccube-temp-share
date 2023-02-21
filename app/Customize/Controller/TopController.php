@@ -24,6 +24,8 @@ use Eccube\Entity\Product as Blog;
 use Plugin\TopBanner\Entity\RecommendProduct as TopBanner;
 use Plugin\Pickup4\Entity\RecommendProduct as PickupBlog;
 use Plugin\OrderBySale4\Service\RankService;
+use Plugin\Pickup4\Repository\RecommendProductRepository as PickupRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TopController extends AbstractController
 {
@@ -32,10 +34,17 @@ class TopController extends AbstractController
      */
     protected $rankService;
 
+    /**
+     * @var PickupRepository
+     */
+    protected $pickupRepository;
+
     public function __construct(
-        RankService $rankService
+        RankService $rankService,
+        PickupRepository $pickupRepository
     ) {
         $this->rankService = $rankService;
+        $this->pickupRepository = $pickupRepository;
     }
 
     /**
@@ -44,14 +53,40 @@ class TopController extends AbstractController
      */
     public function index()
     {
-        $pickupRepository = $this->getDoctrine()->getRepository(PickupBlog::class);
+        $limit = 3;
 
-        $Ranks = $this->rankService->getRanks();
-        $Pickups = $pickupRepository->getRecommendProduct();
+        $Ranks = $this->rankService->getRanks( $limit );
+        $Pickups = $this->pickupRepository->getRecommendProduct( $limit );
+
         return [
             'Ranks' => $Ranks,
             'Pickups' => $Pickups,
+            'page_no' => 0,
+            'limit' => $limit,
         ];
+    }
+
+    /**
+     * @Route("/top/blog_blocks", name="top_blog_blocks", methods={"GET", "POST"})
+     * 
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getBlogBlocks(Request $request)
+    {
+        $pageNo = $request->request->get('page_no');
+        $limit = $request->request->get('limit');
+
+        $Ranks = $this->rankService->getRanksByParameters( $pageNo * $limit, $limit );
+        $Pickups = $this->pickupRepository->getPickupsByParameters( $pageNo * $limit, $limit );
+
+        $response = [
+            'Ranks' => $Ranks,
+            'Pickups' => $Pickups,
+            'page_no' => $pageNo,
+            'limit' => $limit,
+        ];
+
+        return new JsonResponse($response);
     }
     
     /**
@@ -60,9 +95,9 @@ class TopController extends AbstractController
      */
     public function topSlider(Request $request)
     {
-        $pickupRepository = $this->getDoctrine()->getRepository(TopBanner::class);
+        $topBannerRepository = $this->getDoctrine()->getRepository(TopBanner::class);
 
-        $TopBanners = $pickupRepository->getRecommendProduct();
+        $TopBanners = $topBannerRepository->getRecommendProduct();
 
         return [
             'TopBanners' => $TopBanners,

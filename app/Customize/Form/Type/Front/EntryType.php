@@ -30,6 +30,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Eccube\Form\Type\Front\EntryType as BaseType;
+use Eccube\Form\Type\PostalType;
+use Eccube\Form\Type\AddressType;
+use Eccube\Form\Type\PhoneNumberType;
 
 class EntryType extends BaseType
 {
@@ -54,6 +57,18 @@ class EntryType extends BaseType
                 'required' => true,
             ])
             ->add('nick_name', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('postal_code', PostalType::class, [
+                'required' => true,
+            ])
+            ->add('address', AddressType::class, [
+                'required' => true,
+            ])
+            ->add('phone_number', PhoneNumberType::class, [
                 'required' => true,
                 'constraints' => [
                     new Assert\NotBlank(),

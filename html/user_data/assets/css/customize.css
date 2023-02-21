@@ -41,14 +41,16 @@ a:hover img {
     justify-content: center;
 }
 .ec-headerTitle .ec-headerTitle__title a {
-    margin-top: 10px;;
     display: flex;
     align-items: center;
-    font-size: 21px;
+    font-size: 19px;
+}
+.ec-headerTitle .ec-headerTitle__title span {
+    margin-top: 15px;
 }
 
 .ec-headerTitle__title .image {
-    width: 225px;
+    width: 250px;
     margin-right: 15px;
     display: flex;
     align-items: center;
@@ -292,6 +294,10 @@ a:hover img {
 }
 .ec-productRole .ec-productRole__utils .sold-out {
     background-color: darkgrey;
+}
+
+.ec-productRole .cs-productRole__detail img {
+    width: auto;
 }
 
 .ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
