@@ -375,39 +375,56 @@ file that was distributed with this source code.
                                                     <th class="border-top-0 pt-2 pb-2">{{ '記事'|trans }}</th>
                                                     <th class="border-top-0 pt-2 pb-2">{{ '提携'|trans }}</th>
                                                     <th class="border-top-0 pt-2 pb-2">{{ '販売'|trans }}</th>
-                                                    <th class="border-top-0 pt-2 pb-2 text-center">{{ '備考'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2 pl-5">{{ '備考'|trans }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                             {% for orderItem in orderItems %}
+                                                {% set Product = orderItem.Product %}
                                                 <tr>
                                                     <td class="align-middle">{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
-                                                    <td class="align-middle"><a class="" href="{{ url('admin_product_product_edit', { id: orderItem.Product.id }) }}"> {{ orderItem.Product.name }} </a></td>
+                                                    <td class="align-middle"><a class="" href="{{ url('admin_product_product_edit', { id: Product.id }) }}"> {{ Product.name }} </a></td>
                                                     <td class="align-middle">
-                                                        {% if orderItem.affiliater is defined and orderItem.affiliater == app.user.id %}
-                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                                        {% if orderItem.affiliater is not empty and orderItem.affiliater == Customer.id %}
+                                                            {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle">
-                                                        {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                                            {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - shopFee ) / 100 )|price }}
-                                                        {% else %}
+                                                        {% if Product.Customer.id == Customer.id %}
+                                                            {% if orderItem.affiliater is not empty and orderItem.affiliater != Customer.id %}
+                                                                {{ ( Product.getPrice02IncTaxMax * ( 100 - Product.affiliate_reward - shopFee ) / 100 )|price }}
+                                                            {% else %}
+                                                                {{ ( Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
+                                                            {% endif %}
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle" style="width: 25%">
-                                                        {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                                                <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
-                                                                <span class="plus"> + </span> <br />
-                                                                <span class="label price"> {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} </span>
-                                                                <span class="minus"> - </span>
-                                                                <span class="label">（提携）</span><br />
+                                                        {% if Product.Customer.id == Customer.id %}
+                                                            {% if orderItem.affiliater is not empty and orderItem.affiliater != Customer.id %}
+                                                                    <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                                                    <span class="plus"> + </span> <br />
+                                                                    <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
+                                                                    <span class="minus"> - </span>
+                                                                    <span class="label">（提携）</span><br />
+                                                            {% else %}
+                                                                    <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                                                    <span class="plus"> + </span><br />
+                                                            {% endif %}
+                                                                    <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
+                                                                    <span class="minus"> - </span>
+                                                                    <span class="label">（手数料）</span><br />
                                                         {% else %}
-                                                                <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
-                                                                <span class="plus"> + </span>
+                                                            <span>販売者：　　
+                                                                {% if Product.Customer is not empty %}
+                                                                    <a href="{{ url('admin_customer_edit', { id: Product.Customer.id }) }}"> {{ Product.Customer.__toString }} </a>
+                                                                {% else %}
+                                                                    管理者
+                                                                {% endif %}
+                                                            </span><br/>
+                                                            <span>購⼊者：　　
+                                                                    <a href="{{ url('admin_customer_edit', { id: orderItem.Order.Customer.id }) }}"> {{ orderItem.Order.Customer.__toString }} </a>
+                                                            </span>
                                                         {% endif %}
-                                                                <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
-                                                                <span class="minus"> - </span>
-                                                                <span class="label">（手数料）</span><br />
                                                     </td>
                                                 </tr>
                                             {% endfor %}

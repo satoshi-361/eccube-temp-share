@@ -312,11 +312,6 @@ class ProductController extends AbstractController
         }
 
         $isOwner = false;
-        $payerInfoIncorrect = false;
-
-        if ( $Customer && ( is_null($Customer->getPhoneNumber()) || is_null($Customer->getPref()) ) ) {
-            $payerInfoIncorrect = true;
-        }
         
         $qb = $this->productRepository->createQueryBuilder('p')
             ->where('p.id = :id')
@@ -337,7 +332,6 @@ class ProductController extends AbstractController
             'is_favorite' => $is_favorite,
             'affiliate_param' => $affiliateParam,
             'is_owner' => $isOwner,
-            'payer_info_incorrect' => $payerInfoIncorrect,
         ];
     }
 

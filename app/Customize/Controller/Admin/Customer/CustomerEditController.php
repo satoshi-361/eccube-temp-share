@@ -99,10 +99,12 @@ class CustomerEditController extends AbstractController
             ->leftJoin('oi.Order', 'o')
             ->where('oi.OrderItemType = :OrderItemType')
             ->andWhere('p.Customer = :Customer')
+            ->orWhere('oi.affiliater = :customer_id')
             ->andWhere('o.order_date >= :start_date')
             ->andWhere('o.order_date <= :end_date')
             ->setParameter('OrderItemType', $OrderItemType)
             ->setParameter('Customer', $Customer)
+            ->setParameter('customer_id', $Customer->getId())
             ->setParameter('start_date', $startDate)
             ->setParameter('end_date', $endDate);
 

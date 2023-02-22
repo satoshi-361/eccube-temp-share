@@ -70,43 +70,59 @@ file that was distributed with this source code.
                     </thead>
                     <tbody>
                         {% for orderItem in orderItems %}
+                        {% set Product = orderItem.Product %}
                         <tr>
                             <td>{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
-                            <td><a class="" href="{{ url('product_detail', { id: orderItem.Product.id }) }}"> {{ orderItem.Product.name }} </a></td>
+                            <td><a class="" href="{{ url('product_detail', { id: Product.id }) }}"> {{ Product.name }} </a></td>
                             <td>
-                                {% if orderItem.affiliater is defined and orderItem.affiliater == app.user.id %}
-                                    {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                {% if orderItem.affiliater is not empty and orderItem.affiliater == app.user.id %}
+                                    {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - orderItem.Product.affiliate_reward - shopFee ) / 100 )|price }}
-                                {% else %}
-                                    {{ ( orderItem.Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
+                                {% if Product.Customer.id == app.user.id %}
+                                    {% if orderItem.affiliater is not empty and orderItem.affiliater != app.user.id %}
+                                        {{ ( Product.getPrice02IncTaxMax * ( 100 - Product.affiliate_reward - shopFee ) / 100 )|price }}
+                                    {% else %}
+                                        {{ ( Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td>
-                                {% if orderItem.affiliater is defined and orderItem.affiliater != app.user.id %}
-                                    <p>
-                                        <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
-                                        <span class="plus"> + </span> 
-                                    </p>
-                                    <p> 
-                                        <span class="label price"> {{ ( orderItem.Product.getPrice02IncTaxMax * orderItem.Product.affiliate_reward / 100 )|price }} </span>
-                                        <span class="minus"> - </span>
-                                        <span class="label">（提携）</span>
-                                    </p>
-                                {% else %}
-                                    <p>
-                                        <span class="label price"> {{ orderItem.Product.getPrice02IncTaxMax|price }} </span>
-                                        <span class="plus"> + </span>
-                                    </p>
-                                {% endif %}
-                                    <p>
-                                        <span class="label price"> {{ (orderItem.Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
-                                        <span class="minus"> - </span>
-                                        <span class="label">（手数料）</span>
-                                    </p>
+                                {% if Product.Customer.id == app.user.id %}
+                                    {% if orderItem.affiliater is not empty and orderItem.affiliater != app.user.id %}
+                                        <p>
+                                            <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                            <span class="plus"> + </span> 
+                                        </p>
+                                        <p> 
+                                            <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
+                                            <span class="minus"> - </span>
+                                            <span class="label">（提携）</span>
+                                        </p>
+                                    {% else %}
+                                        <p>
+                                            <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                            <span class="plus"> + </span>
+                                        </p>
+                                    {% endif %}
+                                        <p>
+                                            <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
+                                            <span class="minus"> - </span>
+                                            <span class="label">（手数料）</span>
+                                        </p>
+                                    {% else %}
+                                        <span>販売者：　　
+                                            {% if Product.Customer is not empty %}
+                                                {{ Product.Customer.nick_name }}
+                                            {% else %}
+                                                管理者
+                                            {% endif %}
+                                        </span><br/>
+                                        <span style="margin-top: 5px; display: inline-block;">購⼊者：　　
+                                                {{ orderItem.Order.Customer.nick_name }}
+                                        </span>
+                                    {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

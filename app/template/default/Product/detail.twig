@@ -322,14 +322,12 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="ec-productRole__btn">
-                                <button type="submit" class="ec-blockBtn--action add-cart{% if payer_info_incorrect %} tooltip {% endif %}"
-                                    {% if is_owner or blog_premium_enabled or payer_info_incorrect %} disabled {% endif %}
+                                <button type="submit" class="ec-blockBtn--action add-cart{% if  is_granted('ROLE_USER') == false %} tooltip {% endif %}"
+                                    {% if is_owner or blog_premium_enabled or  is_granted('ROLE_USER') == false %} disabled {% endif %}
                                 >
-                                    <span class="tooltip-content">電話番号、住所を入力してください。</span>
+                                    <span class="tooltip-content">ログインまたは会員新規登録してください。</span>
                                     {% if blog_premium_enabled %}
                                         すでに購入しました。
-                                    {% elseif payer_info_incorrect %}
-                                        購入者情報が正しくありません。
                                     {% else %}
                                         {{ Product.getPrice02IncTaxMax|price }}
                                     {% endif %}
@@ -422,14 +420,12 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="ec-productRole__btn">
-                                <button type="submit" class="ec-blockBtn--action add-cart{% if payer_info_incorrect %} tooltip {% endif %}"
-                                    {% if is_owner or blog_premium_enabled or payer_info_incorrect %} disabled {% endif %}
+                                <button type="submit" class="ec-blockBtn--action add-cart{% if  is_granted('ROLE_USER') == false %} tooltip {% endif %}"
+                                    {% if is_owner or blog_premium_enabled or  is_granted('ROLE_USER') == false %} disabled {% endif %}
                                 >
-                                    <span class="tooltip-content">電話番号、住所を入力してください。</span>
+                                    <span class="tooltip-content">ログインまたは会員新規登録してください。</span>
                                     {% if blog_premium_enabled %}
                                         すでに購入しました。
-                                    {% elseif payer_info_incorrect %}
-                                        購入者情報が正しくありません。
                                     {% else %}
                                         {{ Product.getPrice02IncTaxMax|price }}
                                     {% endif %}

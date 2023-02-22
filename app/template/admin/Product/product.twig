@@ -51,6 +51,18 @@ file that was distributed with this source code.
         .c-primaryCol .tox .tox-promotion-link {
             display: none;
         }
+
+        .image {
+            width: 50px;
+        }
+        .image img {
+            width: 100%;
+            margin-top: 8px;
+            margin-left: 20px;
+        }
+        .image:hover img {
+            opacity: 0.8;
+        }
     </style>
 {% endblock stylesheet %}
 
@@ -737,7 +749,7 @@ file that was distributed with this source code.
                         <div class="collapse show ec-cardCollapse" id="update">
                             <div class="card-body">
                                 <div class="row mb-2">
-                                    <div class="col">
+                                    <div class="col-4">
                                         <i class="fa fa-flag mr-1"></i>
                                         <span>{{ 'admin.common.create_date'|trans }}</span>
                                     </div>
@@ -746,7 +758,7 @@ file that was distributed with this source code.
                                     </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <div class="col">
+                                    <div class="col-4">
                                         <i class="fa fa-refresh mr-1"></i>
                                         <span>{{ 'admin.common.update_date'|trans }}</span>
                                     </div>
@@ -755,12 +767,21 @@ file that was distributed with this source code.
                                     </div>
                                 </div>
                                 <div class="row mb-2">
-                                    <div class="col">
+                                    <div class="col-4">
                                         <i class="fa fa-user mr-1"></i>
-                                        <span>{{ 'admin.common.last_updater'|trans }}</span>
+                                        <span>{{ '投稿者'|trans }}</span>
                                     </div>
                                     <div class="col">
-                                        <span>：{{ Product.Creator ? Product.Creator.name }}</span>
+                                        <span>：
+                                        {% if Product.Customer is not empty %}
+                                            <a href="{{ url('admin_customer_edit', { id: Product.Customer.id }) }}">
+                                                {{ Product.Customer.__toString }}
+                                                <div class="image"><img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}" /></div>
+                                            </a>
+                                        {% else %}
+                                            管理者
+                                        {% endif %}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

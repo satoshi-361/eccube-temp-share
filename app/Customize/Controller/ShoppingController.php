@@ -436,7 +436,7 @@ class ShoppingController extends AbstractShoppingController
 
             foreach ( $Order->getMergedProductOrderItems() as $OrderItem ) {
                 // 記事が売り切れた場合に、販売者に売り切れのメールをお届けします。
-                if ( $OrderItem->getProduct()->getStockFind() ) {
+                if ( $OrderItem->getProduct()->getStockFind() == false ) {
                     $this->mailService->sendSoldOutMail($OrderItem->getProduct());
                 }
 

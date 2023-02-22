@@ -1,0 +1,266 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'front_page' %}
+{% set CustomerReviewTotalRepository = repository('Plugin\\CustomerReview4\\Entity\\CustomerReviewTotal') %}
+
+{% block stylesheet %}
+    <style>
+        .review {
+            margin-left: 10px;
+        }
+        .review i {
+            color: #ffbc00;
+        }
+
+        @media only screen and ( max-width: 767px ) {
+            .menu-bar {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            .menu-bar .btn {
+                width: calc(50% - 13px);
+                margin-bottom: 10px;
+                padding: 10px 12px;
+                display: inline-block;
+                background: linear-gradient(to left, #faebd7 50%, #f7e0c1 50%) right;
+                background-size: 200%;
+                transition: 0.3s ease-out;
+                font-family: inherit;
+                font-size: 16px;
+                color: black;
+                font-weight: bold;
+            }
+            .menu-bar .btn:nth-child(odd) {
+                margin-right: 10px;
+            }
+            .menu-bar .btn:hover {
+                background-position: left;
+            }
+            .menu-bar .btn.active {
+                background: #f7e0c1;
+                color: red;
+                box-shadow: 0 0 15px #ddd;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        var page_no = {{ page_no }};
+        var limit = {{ limit }};
+        var fetch_url = "{{ path('top_sp_pickup_block') }}";
+        var flag_scroll_fetch = true;
+
+        var proto_blog = `
+            <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="blog">
+                <div class="image photo">
+                    <img src="/share/html/upload/save_image/\'__blog_image__\'">
+                </div>
+                <p class="title">\'__blog_name__\'</p>
+                <div class="badges">
+                    <div class="d-flex">
+                        <div class="price">￥\'__price__\'</div>
+                        <div class="d-flex affiliate align-center">
+                            <span class="label">アフィリエイト：</span>
+                            <span class="value">\'__affiliate__\'</span>
+                            <div class="review">
+                                <i class="fas fa-star reviewList star"></i>
+                                <span>
+                                    \'__review_point__\' (\'__reviewer_total__\'件)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-center" style="padding: 8px 0">
+                        <div class="image profile">
+                            <img src="/share/html/upload/save_image/\'__editor_image__\'">
+                        </div>
+                        <div style="padding-left: 15px">
+                            <span class="editor-name">\'__nick_name__\'</span><br>
+                            <span class="label launch-date">\'__launch_date__\'発売</span>
+                            <span class="label stock \'__sold_out__\'">
+                                \'__stock__\'
+                            </span>
+                        </div>
+                    </div>
+                    <div class="blog-category">
+                        \'__categories__\'
+                    </div>
+                </div>
+            </a>`;
+
+        var convertBlogProperties = function( Blog ) {
+            let mapped = {
+                '__id__': Blog.id,
+                '__blog_image__': Blog.image,
+                '__blog_name__': Blog.name,
+                '__price__': Blog.price,
+                '__affiliate__': Blog.affiliate,
+                '__editor_image__': Blog.editor_image,
+                '__nick_name__': Blog.nick_name,
+                '__launch_date__': Blog.launch_date,
+                '__review_point__': Blog.review_point,
+                '__reviewer_total__': Blog.reviewer_total,
+            };
+
+            switch (Blog.stock) {
+                case null:
+                    mapped.__stock__ = '部数制限なし';
+                    mapped.__sold_out__ = '';
+                    break;
+                    
+                case 0:
+                    mapped.__stock__ = '売り切れ中';
+                    mapped.__sold_out__ = 'sold-out';
+                    break;
+            
+                default:
+                    mapped.__stock__ = '残り' + Blog.stock + '部';
+                    mapped.__sold_out__ = '';
+                    break;
+            }
+
+            let categories = '';
+            for ( let i in Blog.categories ) {
+                categories += '<span class="label">'+ Blog.categories[i] +'</span>';
+            }
+            mapped.__categories__ = categories;
+
+            Blog = proto_blog.replace(/__id__|__blog_image__|__blog_name__|__price__|__affiliate__|__editor_image__|__nick_name__|__launch_date__|__review_point__|__reviewer_total__|__stock__|__sold_out__|__categories__/gi, function(matched){
+                return mapped[matched];
+            });
+
+            Blog = Blog.replace(/'/g, "");
+
+            return Blog;
+        }
+
+        var fetchBlogs = function() {
+            $.post(fetch_url, {
+                page_no: page_no + 1,
+                limit: limit,
+            }, function( response, state ) {
+                if ( response.Blogs.length ) {
+                    let Blogs = response.Blogs;
+                    for ( let key in Blogs ) {
+                        $('.cs-blogCotent .cs-blogBlock').append( convertBlogProperties(Blogs[key]) );
+                    }
+                }
+
+                page_no += 1;
+                if ( !response.Blogs.length ) {
+                    flag_scroll_fetch = false;
+                }
+            });
+        }
+
+        $(function() {
+            $(window).on('scroll', function() {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && flag_scroll_fetch && page_no >= 0) {
+                    fetchBlogs();
+                }
+            });
+
+            $('.menu-bar .btn').on('click', function() {
+                $(this).parent().find('.active').removeClass('active');
+                $(this).addClass('active');
+
+                $('.cs-blogCotent .benchmark').text($(this).text());
+                $('.cs-blogCotent .cs-blogBlock').empty();
+
+                fetch_url = $(this).attr('fetch-url');
+                page_no = -1;
+                flag_scroll_fetch = true;
+                fetchBlogs();
+            });
+        });
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <div class="menu-bar">
+        <button class="btn btn-rank" fetch-url="{{ path('top_sp_rank_block') }}"> ランキング </button>
+        <button class="btn btn-pickup active" fetch-url="{{ path('top_sp_pickup_block') }}"> ピックアップ </button>
+        <button class="btn btn-new" fetch-url="{{ path('top_sp_news_block') }}"> 新着記事 </button>
+        <button class="btn btn-recommend" fetch-url="{{ path('top_sp_recommend_block') }}"> おすすめ記事 </button>
+    </div>
+    <div class="cs-contentRole">
+        <div class="cs-blogCotent">
+            <p class="benchmark">ピックアップ</p>
+            <div class="cs-blogBlock">
+                {% for Pickup in Pickups %}
+                    {% set Blog = Pickup.Product %}
+                    <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="blog">
+                        <div class="image photo">
+                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                        </div>
+                        <p class="title">{{ Blog.name }}</p>
+                        <div class="badges">
+                            <div class="d-flex">
+                                <div class="price">{{ Blog.getPrice02IncTaxMax|price }}</div>
+                                <div class="d-flex affiliate align-center">
+                                    <span class="label">アフィリエイト：</span>
+                                    <span class="value">{{ Blog.affiliate_reward }}%</span>
+                                </div>
+                                {% set review_list = CustomerReviewTotalRepository.getRecommend(Blog.id) %}
+                                {% set reviewer_total = 0 %}
+                                {% set review_total_point = 0 %}
+                                {% set count = 5 %}
+                                {% for i in review_list %}
+                                    {% set reviewer_total = reviewer_total + i %}
+                                    {% set review_total_point = review_total_point + i * count %}
+                                    {% set count = count - 1 %}
+                                {% endfor %}
+                                {% set review_point = reviewer_total == 0 ? 0  : (review_total_point / reviewer_total) %}
+                                <div class="review">
+                                    <i class="fas fa-star reviewList star"></i>
+                                    <span>
+                                        {{ review_point|number_format(1, '.', ',') }}
+                                        ({{reviewer_total}}件)
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-center" style="padding: 8px 0">
+                                <div class="image profile">
+                                    <img src="{{ asset(Blog.Customer.image|no_image_product, "save_image") }}">
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <span class="editor-name">{{ Blog.Customer.nick_name }}</span><br />
+                                    <span class="label launch-date">{{ Blog.launch_date|date("Y年m月d日") }}発売</span>
+                                    {# STOCK #}
+                                    {% if Blog.stock_find %}
+                                        <span class="label stock">
+                                            {% if Blog.stockunlimited_min %}
+                                                {{ '部数制限なし'|trans }}
+                                            {% else %}
+                                                残り{{ Blog.stock_min }}部
+                                            {% endif %}
+                                        </span>
+                                    {% else %}
+                                        <span class="label stock sold-out">売り切れ中</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="blog-category">
+                                {% for blogCategory in Blog.ProductCategories|reverse %}
+                                    <span class="label">{{ blogCategory.Category.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
