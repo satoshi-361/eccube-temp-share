@@ -667,4 +667,15 @@ a:hover img {
     .ec-headerNaviRole .ec-headerNaviRole__right {
         width: 300px;
     }
+    .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
+        width: 120px;
+    }
+    .ec-productRole .ec-productRole__utils .affiliate {
+        width: 190px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .ec-productRole .ec-productRole__utils .stock {
+        margin-top: 10px;
+    }
 }
