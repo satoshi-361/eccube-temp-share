@@ -94,35 +94,37 @@ file that was distributed with this source code.
                                         <p>
                                             <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
                                             <span class="plus"> + </span> 
+                                            <span class="label comment">（記事販売額）</span>
                                         </p>
                                         <p> 
                                             <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
                                             <span class="minus"> - </span>
-                                            <span class="label">（提携）</span>
+                                            <span class="label comment">（アフィリエイト）</span>
                                         </p>
                                     {% else %}
                                         <p>
                                             <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
                                             <span class="plus"> + </span>
+                                            <span class="label comment">（記事販売額）</span>
                                         </p>
                                     {% endif %}
                                         <p>
                                             <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
                                             <span class="minus"> - </span>
-                                            <span class="label">（手数料）</span>
+                                            <span class="label comment">（手数料）</span>
                                         </p>
-                                    {% else %}
-                                        <span>販売者：　　
-                                            {% if Product.Customer is not empty %}
-                                                {{ Product.Customer.nick_name }}
-                                            {% else %}
-                                                管理者
-                                            {% endif %}
-                                        </span><br/>
-                                        <span style="margin-top: 5px; display: inline-block;">購⼊者：　　
-                                                {{ orderItem.Order.Customer.nick_name }}
-                                        </span>
-                                    {% endif %}
+                                {% else %}
+                                    <span>販売者：　　
+                                        {% if Product.Customer is not empty %}
+                                            {{ Product.Customer.nick_name }}
+                                        {% else %}
+                                            管理者
+                                        {% endif %}
+                                    </span><br/>
+                                    <span style="margin-top: 5px; display: inline-block;">購⼊者：　　
+                                            {{ orderItem.Order.Customer.nick_name }}
+                                    </span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

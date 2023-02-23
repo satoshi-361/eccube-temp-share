@@ -56,7 +56,6 @@ file that was distributed with this source code.
 
     <script>
         $(function() {
-
             // datetimepicker と競合するため HTML5 のカレンダ入力を無効に
             $('input[type="date"]').attr('type','text');
 
@@ -98,6 +97,12 @@ file that was distributed with this source code.
             // datetimepicker で value が消えてしまうので更新
             $('input.datetimepicker-input').each(function() {
                 $(this).val($(this).data('value'));
+            });
+
+            $('#bulkCheckout').on('click', function() {
+                $.get('{{ url("admin_customer_checkout") }}', function( response, state ) {
+                    console.log(response);
+                })
             });
         });
 
@@ -323,6 +328,10 @@ file that was distributed with this source code.
                             <div class="col-6"></div>
 
                             <div class="col-5 text-right">
+                                <button type="button" class="btn btn-ec-regular mr-2" id="bulkCheckout">
+                                    <i class="fa fa-money mr-1 text-secondary"></i>
+                                    <span>一括決済</span>
+                                </button>
                                 {#Dropdown page count#}
                                 <div class="d-inline-block mr-2">
                                     <select class="custom-select" onchange="location = this.value;">

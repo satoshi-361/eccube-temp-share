@@ -32,10 +32,10 @@ file that was distributed with this source code.
                             <div class="ec-historyRole__header">
                                 <div class="ec-historyListHeader">
                                     <p class="ec-historyListHeader__date">{{ Order.order_date|date_sec }}</p>
-                                    <dl class="ec-definitions">
+                                    {# <dl class="ec-definitions">
                                         <dt>{{ 'front.mypage.order_no'|trans }}</dt>
                                         <dd>{{ Order.order_no }}</dd>
-                                    </dl>
+                                    </dl> #}
                                     {% if (BaseInfo.option_mypage_order_status_display) %}
                                         <dl class="ec-definitions">
                                             <dt>{{ 'front.mypage.order_status'|trans }}</dt>

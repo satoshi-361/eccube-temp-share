@@ -120,6 +120,7 @@ class MailService extends BaseService
         $MailHistory->setMailSubject($message->getSubject())
             ->setMailBody($message->getBody())
             ->setOrder($Order)
+            ->setType(\Eccube\Entity\MailHistory::TYPE_PURCHASE)
             ->setSendDate(new \DateTime());
 
         // HTML用メールの設定
@@ -197,6 +198,7 @@ class MailService extends BaseService
         $MailHistory->setMailSubject($message->getSubject())
             ->setMailBody($message->getBody())
             ->setOrder($Order)
+            ->setType(\Eccube\Entity\MailHistory::TYPE_AFFILIATE)
             ->setSendDate(new \DateTime());
 
         // HTML用メールの設定
@@ -264,6 +266,7 @@ class MailService extends BaseService
         $MailHistory->setMailSubject($message->getSubject())
             ->setMailBody($message->getBody())
             ->setOrder($Order)
+            ->setType(\Eccube\Entity\MailHistory::TYPE_SALE)
             ->setSendDate(new \DateTime());
 
         // HTML用メールの設定

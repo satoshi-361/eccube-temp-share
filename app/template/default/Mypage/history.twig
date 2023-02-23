@@ -137,7 +137,7 @@ file that was distributed with this source code.
                     <div class="ec-rectHeading">
                         <h2>{{ 'front.mypage.mail_list'|trans }}</h2>
                     </div>
-                    {% for MailHistory in Order.MailHistories %}
+                    {% for MailHistory in Order.MailHistories if MailHistory.type == 1 %}
                         <div class="ec-orderMail">
                             <div class="ec-orderMail__time">{{ MailHistory.send_date|date_sec }}</div>
                             <div class="ec-orderMail__link"><a>{{ MailHistory.mail_subject }}</a></div>

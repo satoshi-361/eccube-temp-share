@@ -15,7 +15,7 @@ namespace Eccube\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-if (!class_exists('\Eccube\Entity\MailHistory')) {
+
     /**
      * MailHistory
      *
@@ -27,6 +27,8 @@ if (!class_exists('\Eccube\Entity\MailHistory')) {
      */
     class MailHistory extends AbstractEntity
     {
+    use \Customize\Entity\MailHistoryTrait;
+
         const TYPE_PURCHASE = 1;
         const TYPE_AFFILIATE = 2;
         const TYPE_SALE = 3;
@@ -250,4 +252,3 @@ if (!class_exists('\Eccube\Entity\MailHistory')) {
             return $this->Creator;
         }
     }
-}

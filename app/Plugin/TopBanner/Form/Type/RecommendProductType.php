@@ -70,10 +70,9 @@ class RecommendProductType extends AbstractType
             ])
             ->add('comment', TextareaType::class, [
                 'label' => 'plugin_top_banner.admin.edit.comment',
-                'required' => true,
+                'required' => false,
                 'trim' => true,
                 'constraints' => [
-                    new Assert\NotBlank(),
                     new Assert\Length([
                         'max' => $this->eccubeConfig['plugin_top_banner.text_area_len'],
                     ]),

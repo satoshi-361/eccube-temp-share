@@ -81,6 +81,7 @@ class CustomerEditController extends AbstractController
 
         // 売上履歴一覧.
         $OrderItemType = OrderItemType::PRODUCT;
+        $orderItems = null;
 
         if ( $request->request->has('transfer-date') ) {
             $date = $request->request->get('transfer-date') . '-01' ;
@@ -93,22 +94,24 @@ class CustomerEditController extends AbstractController
             $endDate = new \DateTime($date);
         }
 
-        $orderItemRepository = $this->getDoctrine()->getRepository(OrderItem::class);
-        $qb = $orderItemRepository->createQueryBuilder('oi')
-            ->leftJoin('oi.Product', 'p')
-            ->leftJoin('oi.Order', 'o')
-            ->where('oi.OrderItemType = :OrderItemType')
-            ->andWhere('p.Customer = :Customer')
-            ->orWhere('oi.affiliater = :customer_id')
-            ->andWhere('o.order_date >= :start_date')
-            ->andWhere('o.order_date <= :end_date')
-            ->setParameter('OrderItemType', $OrderItemType)
-            ->setParameter('Customer', $Customer)
-            ->setParameter('customer_id', $Customer->getId())
-            ->setParameter('start_date', $startDate)
-            ->setParameter('end_date', $endDate);
-
-        $orderItems = $qb->getQuery()->getResult();
+        if ( $id ) {
+            $orderItemRepository = $this->getDoctrine()->getRepository(OrderItem::class);
+            $qb = $orderItemRepository->createQueryBuilder('oi')
+                ->leftJoin('oi.Product', 'p')
+                ->leftJoin('oi.Order', 'o')
+                ->where('oi.OrderItemType = :OrderItemType')
+                ->andWhere('p.Customer = :Customer')
+                ->orWhere('oi.affiliater = :customer_id')
+                ->andWhere('o.order_date >= :start_date')
+                ->andWhere('o.order_date <= :end_date')
+                ->setParameter('OrderItemType', $OrderItemType)
+                ->setParameter('Customer', $Customer)
+                ->setParameter('customer_id', $Customer->getId())
+                ->setParameter('start_date', $startDate)
+                ->setParameter('end_date', $endDate);
+    
+            $orderItems = $qb->getQuery()->getResult();
+        }
 
         $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
         $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);

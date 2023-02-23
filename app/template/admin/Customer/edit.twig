@@ -38,6 +38,9 @@ file that was distributed with this source code.
             width: 150px;
             margin-right: 10px
         }
+        span.label.comment {
+            width: unset;
+        }
         span.label {
             width: 70px;
             margin-right: 10px;
@@ -373,7 +376,7 @@ file that was distributed with this source code.
                                                 <tr>
                                                     <th class="border-top-0 pt-2 pb-2">{{ '売上日時'|trans }}</th>
                                                     <th class="border-top-0 pt-2 pb-2">{{ '記事'|trans }}</th>
-                                                    <th class="border-top-0 pt-2 pb-2">{{ '提携'|trans }}</th>
+                                                    <th class="border-top-0 pt-2 pb-2">{{ 'アフィリエイト'|trans }}</th>
                                                     <th class="border-top-0 pt-2 pb-2">{{ '販売'|trans }}</th>
                                                     <th class="border-top-0 pt-2 pb-2 pl-5">{{ '備考'|trans }}</th>
                                                 </tr>
@@ -402,17 +405,19 @@ file that was distributed with this source code.
                                                         {% if Product.Customer.id == Customer.id %}
                                                             {% if orderItem.affiliater is not empty and orderItem.affiliater != Customer.id %}
                                                                     <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
-                                                                    <span class="plus"> + </span> <br />
+                                                                    <span class="plus"> + </span>
+                                                                    <span class="label comment">（記事販売額）</span> <br />
                                                                     <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
                                                                     <span class="minus"> - </span>
-                                                                    <span class="label">（提携）</span><br />
+                                                                    <span class="label comment">（アフィリエイト）</span><br />
                                                             {% else %}
                                                                     <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
-                                                                    <span class="plus"> + </span><br />
+                                                                    <span class="plus"> + </span>
+                                                                    <span class="label comment">（記事販売額）</span> <br />
                                                             {% endif %}
                                                                     <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
                                                                     <span class="minus"> - </span>
-                                                                    <span class="label">（手数料）</span><br />
+                                                                    <span class="label comment">（手数料）</span><br />
                                                         {% else %}
                                                             <span>販売者：　　
                                                                 {% if Product.Customer is not empty %}

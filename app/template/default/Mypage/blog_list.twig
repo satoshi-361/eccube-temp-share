@@ -50,6 +50,12 @@ file that was distributed with this source code.
             .ec-historyRole__contents table th {
                 font-size: 14px;
             }
+            .ec-historyRole__contents table td.blog-id {
+                min-width: 40px;
+            }
+            .ec-historyRole__contents table td.blog-name {
+                min-width: 150px;
+            }
             .ec-historyRole__contents table td.date {
                 font-size: 13px;
             }
@@ -77,7 +83,7 @@ file that was distributed with this source code.
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.image__short'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.name'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.price'|trans }}</th>
-                                    <th class="border-top-0 pt-2 pb-2">{{ '提携報酬'|trans }}</th>
+                                    <th class="border-top-0 pt-2 pb-2">{{ 'ｱﾌｨﾘｴｲﾄ'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ '在庫'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2 text-nowrap">{{ 'admin.product.display_status__short'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ '投稿日'|trans }}</th>
@@ -87,14 +93,14 @@ file that was distributed with this source code.
                                 <tbody>
                                 {% for Blog in pagination %}
                                     <tr id="ex-product-{{ Blog.id }}">
-                                        <td class="align-middle">{{ Blog.id }}</td>
+                                        <td class="align-middle blog-id">{{ Blog.id }}</td>
                                         {# TODO: 画像のサイズをベタ指定しているので、styleguide側を直す #}
                                         <td class="align-middle">
                                             <a href="{{ url('mypage_blog_edit', { id : Blog.id }) }}" class="blog-image">
                                                 <img src="{{ asset(Blog.mainFileName|no_image_product, 'save_image') }}">
                                             </a>
                                         </td>
-                                        <td class="align-middle"><a
+                                        <td class="align-middle blog-name"><a
                                                     href="{{ url('mypage_blog_edit', { id : Blog.id }) }}">{{ Blog.name }}</a>
                                         </td>
                                         <td class="align-middle">

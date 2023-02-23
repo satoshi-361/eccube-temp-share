@@ -622,13 +622,15 @@ file that was distributed with this source code.
                             </div>
                         </div>
                         <div style="margin-top: 30px;">
-                            {% if Product.Status.id == 1 and Product.stock_find == false %}
+                            {# {% if Product.Status.id == 1 and Product.stock_find == false %}
                                 <button class="ec-blockBtn--action mb-3" name="status" value="1">{{ '在庫更新'|trans }}</button>
                             {% else %}
                                 <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
                                         
                                 <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
-                            {% endif %}
+                            {% endif %} #}
+                            <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
+                            <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
                             <button class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '削除'|trans }}</button>
                         </div>
                     </div>

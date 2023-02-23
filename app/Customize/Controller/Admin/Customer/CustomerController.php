@@ -37,6 +37,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+// require __DIR__  . '/vendor/autoload.php';
+
+use PayPal\Api\Payout;
+use PayPal\Api\PayoutSenderBatchHeader;
+use PayPal\Api\PayoutItem;
+
 class CustomerController extends AbstractController
 {
     /**
@@ -340,5 +346,46 @@ class CustomerController extends AbstractController
         log_info('会員CSVファイル名', [$filename]);
 
         return $response;
+    }
+
+    /**
+     * 会員CSVの出力.
+     *
+     * @Route("/%eccube_admin_route%/customer/checkout", name="admin_customer_checkout", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     *
+     * @return StreamedResponse
+     */
+    public function bulkCheckout(Request $request)
+    {
+        $payouts = new Payout();
+
+        $senderBatchHeader = new PayoutSenderBatchHeader();
+
+        $senderBatchHeader->setSenderBatchId(uniqid())
+            ->setEmailSubject('ペイパルで振り込みます。');
+
+        $senderItem1 = new PayoutItem();
+        $senderItem1->setRecipientType('Email')
+            ->setNote('ありがとうございます。')
+            ->setReceiver('chicyo8196@yahoo.co.jp')
+            ->setSenderItemId('customer1' . uniqid())
+            ->setAmount(new \PayPal\Api\Currency("{
+                'value':3000,
+                'currency':'JPY',
+            }"));
+
+        $payouts->setSenderBatchHeader($senderBatchHeader)
+            ->addItem($senderItem1);
+
+        $request = clone $payouts;
+
+        try {
+            $output = $payouts->create(null);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+        dd('eee');
     }
 }
