@@ -1,0 +1,106 @@
+{% set config = repository('Plugin\\CMBlogPro\\Entity\\Config').get() %}
+{% set blogs = repository('Plugin\\CMBlogPro\\Entity\\Blog').getList() %}
+
+{% block javascript %}{% endblock %}
+
+{% block stylesheet %}
+<style>
+/* style by mark */
+
+.cm_blog_plugin .list_blog .ec-topicpath__item {
+    display: initial;
+}
+
+.cm_blog_plugin .list_blog .ec-topicpath__item a:hover {
+    text-decoration: underline;
+}
+
+.cm_blog_plugin .item_blog_image {
+    width: 100% !important;
+    height: 248px;
+    object-fit: cover;
+}
+
+.cm_blog_plugin .list_blog .list_category_link{
+    color: #337ab7;
+    padding: 0 0.5rem;
+}
+
+.cm_blog_plugin .blog_category li:last-child{
+    border: none;
+}
+
+.cm_blog_plugin .blog_category{
+    margin: 0;
+    padding: 0;
+}
+.cm_blog_plugin .blog_category li{
+    display: initial;
+    border-right: 1px solid #ddd;
+}
+.cm_blog_plugin .figure__main_image{
+    margin: 0;
+}
+.cm_blog_plugin .list_blog h3{
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.4;  
+    word-break: break-word;
+}
+
+@media screen and (max-width: 768px){
+.cm_blog_plugin .item_blog_image {
+    width: 100% !important;
+    height: 35vw;
+    object-fit: cover;
+    }
+.cm_blog_plugin .cm_blog_plugin{
+    padding: 10vw 0 !important;
+    }  
+}
+</style>
+{% endblock %}
+
+{% if blogs is defined and blogs|length > 0 %}
+<div class="ec-categoryRole cm_blog_plugin">
+
+    <div class="ec-role">
+        <div class="ec-secHeading">
+            <span class="ec-secHeading__en">{{config.getTitleEn}}</span>
+            <span class="ec-secHeading__line"></span>
+            <span class="ec-secHeading__ja">{{config.getTitleJp}}</span>
+        </div>
+        <div class="ec-shelfRole" style="padding-top: 20px">
+            <ul class="ec-shelfGrid list_blog">
+                {% for blog in blogs %}
+                    <li class="ec-shelfGrid__item">
+                        <a href="{{ url('cm_blog_pro_page_detail', {'id': blog.slug ? blog.slug : blog.id}) }}">
+                            <figure class="figure__main_image">
+                            {% if blog.getMainListImage %}
+                                <img src="{{ asset(blog.getMainListImage|no_image_product, 'save_image') }}" class='item_blog_image'></img>
+                                {% else %}
+                                <img src="{{ asset(''|no_image_product, 'save_image') }}" class='item_blog_image'></img>
+                            {% endif %}
+                            </figure>
+                        </a>
+                        <h3>
+                            <a href="{{ url('cm_blog_pro_page_detail', {'id': blog.slug ? blog.slug : blog.id}) }}">
+                                {{ blog.getTitle|length > 40 ? blog.getTitle|striptags|replace({('&nbsp;'):' '})|slice(0, 40)|raw ~ '...' : blog.getTitle|raw }}
+                            </a>
+                        </h3>  
+                        <ul class="blog_category">
+                            {% for category in blog.getBlogCategories %}
+                                <li class="{{category.getCategory.class|raw}}">
+                                    <a href="{{ url('cm_blog_pro_page_list', {categories: [category.getCategory().getId()]}) }}" class="list_category_link">
+                                    {{ category.getCategory.getName|length > 15 ? category.getCategory.getName|striptags|replace({('&nbsp;'):' '})|slice(0, 15)|raw ~ '...' : category.getCategory.getName|raw }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}

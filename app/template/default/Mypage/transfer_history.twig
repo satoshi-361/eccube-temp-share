@@ -31,11 +31,18 @@ file that was distributed with this source code.
                 overflow-x: scroll;
             }
             .cs-transfer__history table {
-                width: 600px;
+                width: 750px;
                 max-width: unset;
             }
             .cs-transfer__history thead .th-remarks {
                 padding-left: 20px;
+            }
+            .cs-transfer__history table td.blog-name {
+                width: 300px;
+            }
+            .cs-transfer__history table td.reward,
+            .cs-transfer__history table td.profit {
+                width: 75px;
             }
         }
     </style>
@@ -73,13 +80,13 @@ file that was distributed with this source code.
                         {% set Product = orderItem.Product %}
                         <tr>
                             <td>{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
-                            <td><a class="" href="{{ url('product_detail', { id: Product.id }) }}"> {{ Product.name }} </a></td>
-                            <td>
+                            <td class="blog-name"><a class="" href="{{ url('product_detail', { id: Product.id }) }}"> {{ Product.name }} </a></td>
+                            <td class="reward">
                                 {% if orderItem.affiliater is not empty and orderItem.affiliater == app.user.id %}
                                     {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="profit">
                                 {% if Product.Customer.id == app.user.id %}
                                     {% if orderItem.affiliater is not empty and orderItem.affiliater != app.user.id %}
                                         {{ ( Product.getPrice02IncTaxMax * ( 100 - Product.affiliate_reward - shopFee ) / 100 )|price }}
@@ -114,14 +121,14 @@ file that was distributed with this source code.
                                             <span class="label comment">（手数料）</span>
                                         </p>
                                 {% else %}
-                                    <span>販売者：　　
+                                    <span class="label">販売者：　　
                                         {% if Product.Customer is not empty %}
                                             {{ Product.Customer.nick_name }}
                                         {% else %}
                                             管理者
                                         {% endif %}
                                     </span><br/>
-                                    <span style="margin-top: 5px; display: inline-block;">購⼊者：　　
+                                    <span style="margin-top: 5px; display: inline-block;" class="label">購⼊者：　　
                                             {{ orderItem.Order.Customer.nick_name }}
                                     </span>
                                 {% endif %}

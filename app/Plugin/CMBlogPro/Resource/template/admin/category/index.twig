@@ -1,0 +1,131 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['plugin_CMBlog', 'cm_blog_admin_cat'] %}
+
+{% block title %}{{'plg.CMBlogPro.blog_name'|trans}}{% endblock %}
+{% block sub_title %}{{'plg.CMBlogPro.category.category'|trans}}一覧{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<style type="text/css">
+    .columnName {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script type="text/javascript" src="{{ asset('CMBlogPro/assets/js/common.js', 'plugin') }}"></script>
+{% endblock javascript %}
+
+{% block main %}
+
+    <form role="form" method="get" action="{{ url('cm_blog_admin_cat') }}">
+
+        {{ form_widget(form._token) }}
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>検索</span></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.category.category_id__short' | trans}}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.id, {'value': searchData ? searchData.id : null }) }}
+                                    {{ form_errors(form.id) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.category.category_name' | trans}}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.name, {'value': searchData ? searchData.name : null}) }}
+                                    {{ form_errors(form.name) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c-outsideBlock__contents mb-5">
+                        <button type="submit" class="btn btn-ec-conversion px-5">{{ 'admin.common.search'|trans }}</button>
+                        <a class="btn btn-ec-conversion px-5" href="{{ url('cm_blog_admin_cat') }}">クリア</a>
+                        {% if pagination %}
+                            <span class="font-weight-bold ml-2">{{ 'admin.common.search_result'|trans({"%count%":pagination.totalItemCount})|raw }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4 d-block">
+                    {% if pagination and pagination.totalItemCount %}
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="border-top-0 pt-2 pb-3 pl-3 text-nowrap">{{ 'plg.CMBlogPro.category.category_id__short' | trans}}</th>
+                                    <th class="border-top-0 pt-2 pb-3">{{ 'plg.CMBlogPro.category.category_name' | trans}}</th>
+                                    <th class="border-top-0 pt-2 pb-3">編集</th>
+                                    <th class="border-top-0 pt-2 pb-3 pr-3">削除</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for cat in pagination %}
+                                    <tr>
+                                        <td class="align-middle pl-3">{{ cat.id }}</td>
+                                        <td class="align-middle columnName">{{ cat.name }}</td>
+                                        <td class="align-middle">
+                                            <a href="{{ url('cm_blog_admin_cat_edit', {id: cat.id}) }}">編集</a>
+                                        </td>
+                                        <td class="align-middle pr-3">
+                                            <a class="btn btn-ec-actionIcon{% if cat.hasBlogCategories %} disabled{% endif %}"
+                                                href="{{ url('cm_blog_admin_cat_delete', {id: cat.id}) }}"
+                                                onclick="confDelete()">
+                                                    <i class="fa fa-close fa-lg text-secondary"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if pagination.totalItemCount > 0 %}
+                                <div class="row justify-content-md-center mb-4 pb-4">
+                                    {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'cm_blog_admin_cat' } %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% elseif has_errors %}
+                        <div class="card rounded border-0">
+                            <div class="card-body p-4">
+                                <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_invalid_condition'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card rounded border-0">
+                            <div class="card-body p-4">
+                                <div class="text-center text-muted mb-4 h5">{{ 'admin.common.search_no_result'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.common.search_try_change_condition'|trans }}</div>
+                                <div class="text-center text-muted">{{ 'admin.common.search_try_advanced_search'|trans }}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}

@@ -1,8 +1,59 @@
-<div class="ec-shelfRole cs-side">
+{% block javascript %}
+    <script>
+        $(function() {
+            let news_page_no = {{ page_no }};
+            let news_limit = {{ limit }};
+            let news_flag_scroll_fetch = true;
+            let news_flag_loop_successed = true;
+
+            let proto_blog = `
+                <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="cs-side-blog">
+                    <img src="/share/html/upload/save_image/\'__blog_image__\'">
+                </a>
+            `;
+            $(window).on('scroll', function() {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && news_flag_scroll_fetch && news_flag_loop_successed) {
+                    news_flag_loop_successed = false;
+
+                    $.post('{{ path("top_sp_news_block") }}', {
+                        page_no: news_page_no + 1,
+                        limit: news_limit,
+                    }, function( response, state ) {
+                        if ( response.Blogs.length ) {
+                            let Blogs = response.Blogs;
+
+                            for ( let key in Blogs ) {
+                                Blog = Blogs[key];
+                                let mapped = {
+                                    '__id__': Blog.id,
+                                    '__blog_image__': Blog.image,
+                                };
+                                Blog = proto_blog.replace(/__id__|__blog_image__/gi, function(matched){
+                                    return mapped[matched];
+                                });
+                                Blog = Blog.replace(/'/g, "");
+
+                                $('.cs-side.news').append( Blog );
+                            }
+                        }
+
+                        news_page_no += 1;
+                        news_flag_loop_successed = true;
+                        if ( !response.Blogs.length ) {
+                            news_flag_scroll_fetch = false;
+                        }
+                    });
+                }
+            })
+        });
+    </script>
+{% endblock javascript %}
+
+<div class="ec-shelfRole cs-side news">
     <p class="title">新着記事</p>
     {% for Blog in NewBlogs %}
         <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="cs-side-blog">
-            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+            <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" loading="lazy">
         </a>
     {% endfor %}
 </div>

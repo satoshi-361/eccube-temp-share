@@ -89,6 +89,12 @@
                 object-fit: cover;
             }
         }
+
+        @media only screen and (max-width: 450px) {
+            .slick-slider img {
+                height: 220px;
+            }
+        }
     </style>
 {% endblock %}
 
@@ -112,7 +118,7 @@
                 {% set Blog = TopBanner.Product %}
                 <div class="item slick-slide">
                     <a href="{{ url('product_detail', {'id': Blog.id}) }}">
-                        <img src="{{ asset(Blog.main_list_image|no_image_product, 'save_image') }}" alt="{{ Blog.name }}" loading="lazy">
+                        <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" alt="{{ Blog.name }}" loading="lazy">
                     </a>
                 </div>
             {% endfor %}

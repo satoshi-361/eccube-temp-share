@@ -99,10 +99,10 @@ file that was distributed with this source code.
                 $(this).val($(this).data('value'));
             });
 
-            $('#bulkCheckout').on('click', function() {
-                $.get('{{ url("admin_customer_checkout") }}', function( response, state ) {
-                    console.log(response);
-                })
+            $('#bulkCheckout').on('click', function( event ) {
+                event.preventDefault();
+
+                $('#checkout_form').submit();
             });
         });
 
@@ -361,6 +361,7 @@ file that was distributed with this source code.
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.name'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.phone_number'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.mail_address'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-3">{{ '残高'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-3">&nbsp;</th>
                                         <th class="border-top-0 pt-2 pb-3 pr-3">&nbsp;</th>
                                     </tr>
@@ -377,6 +378,7 @@ file that was distributed with this source code.
                                             <td class="align-middle"><a href="{{ url('admin_customer_edit', { 'id': Customer.id}) }}">{{ Customer.name01 }}&nbsp;{{ Customer.name02 }}</a></td>
                                             <td class="align-middle">{{ Customer.phone_number }}</td>
                                             <td class="align-middle">{{ Customer.email }}</td>
+                                            <td class="align-middle">{{ Customer.balance|price }}</td>
                                             <td class="align-middle"></td>
                                             <td class="align-middle pr-3">
                                                 <div class="text-right">
@@ -472,4 +474,5 @@ file that was distributed with this source code.
             </div>
         </div>
     </form>
+    <form name="checkout_form" id="checkout_form" method="get" action="{{ url('admin_customer_checkout') }}"></form>
 {% endblock %}

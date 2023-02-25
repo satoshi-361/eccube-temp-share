@@ -5,4 +5,5 @@ services:
             - '@Eccube\Repository\ProductRepository'
             - '@Plugin\OrderBySale4\Repository\ConfigRepository'
             - '@Eccube\Repository\BaseInfoRepository'
+            - '@Customize\Service\BlogHelper'
 

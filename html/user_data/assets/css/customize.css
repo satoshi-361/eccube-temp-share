@@ -77,7 +77,7 @@ a:hover img {
 
 .cs-side-blog img {
     width: 100%;
-    /* height: 160px; */
+    height: 140px;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -150,12 +150,15 @@ a:hover img {
 }
 
 .blog .title {
+    margin-bottom: 5px;
+    height: 72px;
     padding: 8px;
     font-size: 19px;
     font-weight: 600;
     line-height: 30px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    overflow: hidden;
 }
 
 .blog .editor-name {
@@ -298,6 +301,7 @@ a:hover img {
 
 .ec-productRole .cs-productRole__detail img {
     width: auto;
+    height: auto;
 }
 
 .ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
@@ -500,6 +504,25 @@ a:hover img {
     width: 350px;
 }
 
+.loading-icon {
+    height: 64px;
+    text-align: center;
+}
+.loading-icon img {
+    height: 100%;
+    width: auto;
+}
+
+.ec-blockTopBtn {
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 15px #ddd;
+}
+
+.ec-blockTopBtn img {
+    width: 100%;
+}
+
 @media only screen and (min-width: 768px) {
     .cs-contentRole {
         padding: 0 30px;
@@ -548,6 +571,10 @@ a:hover img {
         color: black;
         font-weight: bold;
     }
+    .ec-blockTopBtn {
+        width: 50px;
+        height: 50px;
+    }
 }
 
 @media only screen and (max-width: 767px) {
@@ -571,6 +598,20 @@ a:hover img {
     .ec-headerTitle .ec-headerTitle__title a {
         flex-wrap: wrap;
         justify-content: center;
+    }
+
+    .ec-productRole .ec-productRole__title h2 {
+        font-size: 24px;
+    }
+
+    .ec-productRole .ec-productRole__utils .editor-name {
+        font-size: 12px;
+    }
+    .ec-productRole .ec-productRole__utils .launch-date {
+        font-size: 11px;
+    }
+    .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
+
     }
 
     .ec-headerTitle__title .image {
@@ -640,7 +681,7 @@ a:hover img {
         border-radius: 3px;
     }
     .cs-transfer__history tbody tr td:last-child {
-        width: 130px;
+        width: 150px;
     }
     .cs-transfer__history span.label {
         padding: 0;
@@ -656,6 +697,15 @@ a:hover img {
         display: none;
     }
 
+    .ec-blockTopBtn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .have_curtain .ec-overlayRole {
+        z-index: 1;
+    }
+
     /** start top sp page */
     /** end top sp page */
 }
@@ -668,7 +718,17 @@ a:hover img {
         width: 300px;
     }
     .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
-        width: 120px;
+        width: 130px;
+        height: 40px;
+        line-height: 20px;    
+        padding: 10px 5px;
+        font-size: 12px;
+    }
+    .ec-productRole .image.top {
+        margin-top: 10px;
+    }
+    .ec-productRole .image.top img {
+        height: auto;
     }
     .ec-productRole .ec-productRole__utils .affiliate {
         width: 190px;

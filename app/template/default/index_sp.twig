@@ -51,21 +51,78 @@ file that was distributed with this source code.
                 color: red;
                 box-shadow: 0 0 15px #ddd;
             }
+
+            .cs-sideShow {
+                border-radius: 3px;
+                padding: 10px;
+                position: fixed;
+                top: 50%;
+                left: 100%;
+                z-index: 1;
+                background-color: #333;
+                transform: translate(-100%, -50%);
+                color: white;
+                letter-spacing: 3px;
+                box-shadow: 0 0 15px #ddd;
+            }
+
+            .cs-advertiseRole {
+                overflow-y: scroll;
+                background: white;
+                width: 260px;
+                height: 100vh;
+                transform: translateX(300px);
+                position: fixed;
+                top: 0;
+                right: 0;
+                z-index: 1;
+                transition: z-index 0ms 1ms;
+            }
+
+            .cs-advertiseRole.is_active {
+                display: block;
+                transform: translateX(0);
+                transition: all .3s;
+                z-index: 100000;
+            }
+            .cs-advertiseRoleClose {
+                width: 37px;
+                border-radius: 3px;
+                padding: 10px;
+                display: none;
+                cursor: pointer;
+                position: fixed;
+                top: 50%;
+                left: calc(100% - 260px);
+                z-index: 1000;
+                background-color: #333;
+                transform: translate(-100%, -50%);
+                color: white;
+                letter-spacing: 3px;
+                box-shadow: 0 0 15px #ddd;
+            }
+            .cs-advertiseRoleClose.is_active {
+                /* display: inline-block; */
+                transition: all .3s;
+            }
         }
     </style>
 {% endblock %}
 
 {% block javascript %}
     <script>
+        $('.loading-icon').hide();
+
         var page_no = {{ page_no }};
         var limit = {{ limit }};
         var fetch_url = "{{ path('top_sp_pickup_block') }}";
         var flag_scroll_fetch = true;
+        var flag_loop_successed = true;
 
         var proto_blog = `
             <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="blog">
                 <div class="image photo">
-                    <img src="/share/html/upload/save_image/\'__blog_image__\'">
+                    <img src="/share/html/upload/save_image/\'__blog_image__\'" loading="lazy">
                 </div>
                 <p class="title">\'__blog_name__\'</p>
                 <div class="badges">
@@ -151,6 +208,8 @@ file that was distributed with this source code.
                 page_no: page_no + 1,
                 limit: limit,
             }, function( response, state ) {
+                $('.loading-icon').hide();
+
                 if ( response.Blogs.length ) {
                     let Blogs = response.Blogs;
                     for ( let key in Blogs ) {
@@ -159,6 +218,7 @@ file that was distributed with this source code.
                 }
 
                 page_no += 1;
+                flag_loop_successed = true;
                 if ( !response.Blogs.length ) {
                     flag_scroll_fetch = false;
                 }
@@ -167,7 +227,10 @@ file that was distributed with this source code.
 
         $(function() {
             $(window).on('scroll', function() {
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && flag_scroll_fetch && page_no >= 0) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && flag_scroll_fetch && flag_loop_successed && page_no >= 0) {                    
+                    $('.loading-icon').show();
+                    flag_loop_successed = false;
+
                     fetchBlogs();
                 }
             });
@@ -183,6 +246,41 @@ file that was distributed with this source code.
                 page_no = -1;
                 flag_scroll_fetch = true;
                 fetchBlogs();
+            });
+
+            
+            $('.cs-sideShow').on('click', function() {
+                $('.ec-layoutRole').toggleClass('is_active');
+                $('.cs-advertiseRole').toggleClass('is_active');
+                $('.cs-advertiseRoleClose').toggleClass('is_active');
+
+                if ( !$('body').hasClass('have_curtain') ) {
+                    $('body').toggleClass('have_curtain');
+                }
+                $('.ec-drawerRole').removeClass('is_active');
+            });
+
+            $('.ec-overlayRole').on('click', function() {
+                $('body').removeClass('have_curtain');
+                $('.ec-layoutRole').removeClass('is_active');
+                $('.cs-advertiseRole').removeClass('is_active');
+                $('.cs-advertiseRoleClose').removeClass('is_active');
+            });
+
+            $('.cs-advertiseRoleClose').on('click', function() {
+                $('body').removeClass('have_curtain');
+                $('.ec-layoutRole').removeClass('is_active');
+                $('.cs-advertiseRole').removeClass('is_active');
+                $('.cs-advertiseRoleClose').removeClass('is_active');
+            });
+
+            $('.ec-headerNavSP').on('click', function() {
+                $('.cs-advertiseRole').removeClass('is_active');
+                $('.cs-advertiseRoleClose').removeClass('is_active');
+
+                if ( !$('body').hasClass('have_curtain') ) {
+                    $('body').toggleClass('have_curtain');
+                }
             });
         });
     </script>
@@ -203,7 +301,7 @@ file that was distributed with this source code.
                     {% set Blog = Pickup.Product %}
                     <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="blog">
                         <div class="image photo">
-                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}" loading="lazy">
                         </div>
                         <p class="title">{{ Blog.name }}</p>
                         <div class="badges">
@@ -262,5 +360,13 @@ file that was distributed with this source code.
                 {% endfor %}
             </div>
         </div>
+        <div class="loading-icon">
+            <img src="{{ asset('assets/img/top/loading.gif') }}" alt="loading"/>
+        </div>
+    </div>
+    <div class="cs-sideShow">お知らせ</div>
+    <div class="cs-advertiseRoleClose">お知らせ</div>
+    <div class="cs-advertiseRole">
+        {{ render(path('cm_blog_pro_top_page_list')) }}
     </div>
 {% endblock %}

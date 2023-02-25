@@ -30,6 +30,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 use Plugin\CustomerReview4\Entity\CustomerReviewTotal;
 
+use Customize\Service\BlogHelper;
+
 class TopController extends AbstractController
 {
     /**
@@ -46,6 +48,11 @@ class TopController extends AbstractController
      * @var RecommendRepository
      */
     protected $recommendRepository;
+    
+    /**
+     * @var BlogHelper
+     */
+    protected $blogHelper;
 
     /**
      * @var MobileDetector
@@ -56,12 +63,14 @@ class TopController extends AbstractController
         RankService $rankService,
         MobileDetector $mobileDetector,
         PickupRepository $pickupRepository,
-        RecommendRepository $recommendRepository
+        RecommendRepository $recommendRepository,
+        BlogHelper $blogHelper
     ) {
         $this->rankService = $rankService;
         $this->mobileDetector = $mobileDetector;
         $this->pickupRepository = $pickupRepository;
         $this->recommendRepository = $recommendRepository;
+        $this->blogHelper = $blogHelper;
     }
 
     /**
@@ -142,12 +151,15 @@ class TopController extends AbstractController
             ->andWhere('b.launch_date <= :today')
             ->setParameter('today', new \DateTime())
             ->orderBy('b.approved_date', 'DESC')
-            ->setMaxResults(10)
+            ->setFirstResult(0)
+            ->setMaxResults(4)
             ->getQuery()
             ->getResult();
 
         return [
             'NewBlogs' => $NewBlogs,
+            'page_no' => 0,
+            'limit' => 4,
         ];
     }
 
@@ -234,7 +246,8 @@ class TopController extends AbstractController
 
             $resultItem = [
                 'id' => $Product->getId(),
-                'image' => $Product->getMainFileName()->getFileName(),
+                // 'image' => $Product->getMainFileName()->getFileName(),
+                'image' => $this->blogHelper->getBlogImage($Product, 'middle')->__toString(),
                 'name' => $Product->getName(),
                 'price' => $Product->getPrice02IncTaxMax(),
                 'affiliate' => $Product->getAffiliateReward(),

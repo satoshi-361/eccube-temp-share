@@ -20,6 +20,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Plugin\CustomerReview4\Entity\CustomerReviewTotal;
 use Plugin\CustomerReview4\Repository\CustomerReviewTotalRepository;
+use Customize\Service\BlogHelper;
 
 /**
  * RecommendProductRepository.
@@ -33,17 +34,24 @@ class RecommendProductRepository extends AbstractRepository
      * @var CustomerReviewTotalRepository
      */
     protected $customerReviewTotalRepository;
+    
+    /**
+     * @var BlogHelper
+     */
+    protected $blogHelper;
 
     /**
      * CouponRepository constructor.
      *
      * @param RegistryInterface $registry
      * @param CustomerReviewTotalRepository $customerReviewTotalRepository
+     * @param BlogHelper $blogHelper
      */
-    public function __construct(RegistryInterface $registry, CustomerReviewTotalRepository $customerReviewTotalRepository)
+    public function __construct(RegistryInterface $registry, CustomerReviewTotalRepository $customerReviewTotalRepository, BlogHelper $blogHelper)
     {
         parent::__construct($registry, RecommendProduct::class);
         $this->customerReviewTotalRepository = $customerReviewTotalRepository;
+        $this->blogHelper = $blogHelper;
     }
 
     /**
@@ -142,7 +150,8 @@ class RecommendProductRepository extends AbstractRepository
 
             $resultItem = [
                 'id' => $Product->getId(),
-                'image' => $Product->getMainFileName()->getFileName(),
+                // 'image' => $Product->getMainFileName()->getFileName(),
+                'image' => $this->blogHelper->getBlogImage($Product, 'middle')->__toString(),
                 'name' => $Product->getName(),
                 'price' => $Product->getPrice02IncTaxMax(),
                 'affiliate' => $Product->getAffiliateReward(),

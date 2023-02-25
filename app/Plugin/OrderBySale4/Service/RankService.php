@@ -24,6 +24,7 @@ use Plugin\OrderBySale4\Repository\ConfigRepository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Plugin\CustomerReview4\Entity\CustomerReviewTotal;
+use Customize\Service\BlogHelper;
 
 class RankService
 {
@@ -43,6 +44,11 @@ class RankService
      * @var BaseInfoRepository
      */
     private $baseInfoRepository;
+    
+    /**
+     * @var BlogHelper
+     */
+    protected $blogHelper;
 
     /**
      * ProductController constructor.
@@ -51,12 +57,14 @@ class RankService
         EntityManagerInterface $em,
         ProductRepository $productRepository,
         ConfigRepository $configRepository,
-        BaseInfoRepository $baseInfoRepository
+        BaseInfoRepository $baseInfoRepository,
+        BlogHelper $blogHelper
     ) {
         $this->entityManager = $em;
         $this->productRepository = $productRepository;
         $this->configRepository = $configRepository;
         $this->baseInfoRepository = $baseInfoRepository;
+        $this->blogHelper = $blogHelper;
     }
 
     public function getRanks( $limit = 5 )
@@ -236,7 +244,8 @@ class RankService
 
             $resultItem = [
                 'id' => $Product->getId(),
-                'image' => $Product->getMainFileName()->getFileName(),
+                // 'image' => $Product->getMainFileName()->getFileName(),
+                'image' => $this->blogHelper->getBlogImage($Product, 'middle')->__toString(),
                 'name' => $Product->getName(),
                 'price' => $Product->getPrice02IncTaxMax(),
                 'affiliate' => $Product->getAffiliateReward(),

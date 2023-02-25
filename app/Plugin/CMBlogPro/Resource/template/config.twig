@@ -1,0 +1,94 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['store', 'plugin', 'plugin_list'] %}
+
+{% block title %}Core Mobile ブログ{% endblock %}
+{% block sub_title %}プラグイン一覧{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}{% endblock stylesheet %}
+
+{% block javascript %}{% endblock javascript %}
+
+{% block main %}
+    <form role="form" method="post" action="{{ url('cm_blog_pro_admin_config') }}">
+
+        {{ form_widget(form._token) }}
+
+        <div class="c-contentsArea__cols">
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>設定</span></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>ブロックに表示する記事数</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.display_block) }}
+                                    {{ form_errors(form.display_block) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>ページ一覧に表示する記事数</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.display_page) }}
+                                    {{ form_errors(form.display_page) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{'plg.CMBlogPro.admin.config.title_en' | trans}}</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.title_en) }}
+                                    {{ form_errors(form.title_en) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{'plg.CMBlogPro.admin.config.title_jp' | trans}}</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.title_jp) }}
+                                    {{ form_errors(form.title_jp) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('admin_store_plugin') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>プラグイン一覧</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">登録</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

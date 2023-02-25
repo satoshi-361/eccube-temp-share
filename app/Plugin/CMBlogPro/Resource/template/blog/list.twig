@@ -1,0 +1,170 @@
+{% extends 'default_frame.twig' %}
+
+{% block javascript %}{% endblock %}
+
+{% block stylesheet %}
+<style>
+.pluginCMBblog .item_blog_image {
+    width: 100% !important;
+    height: 248px;
+    object-fit: cover;
+}
+.pluginCMBblog .figure__main_image{
+    margin: 0;
+}
+.pluginCMBblog .ec-topicpath .ec-topicpath__item{
+    display: initial !important;
+}
+
+.pluginCMBblog .list_blog_cat li {
+    display: initial !important;
+    letter-spacing: 0.2rem;
+    border-right: 1px solid #ddd;
+    font-size: 16px;
+}
+.pluginCMBblog .list_category_link{
+    padding: 0 0.5rem;
+}
+
+.pluginCMBblog .list_blog .list_category_link{
+    color: #337ab7;
+    padding: 0 0.5rem;
+}
+
+.pluginCMBblog .blog_category li:last-child{
+    border: none;
+}
+
+.pluginCMBblog .blog_category{
+    margin: 0;
+    padding: 0;
+}
+.pluginCMBblog .blog_category li{
+    display: initial;
+    border-right: 1px solid #ddd;
+}
+
+.pluginCMBblog .list_blog_cat li:last-child {
+    border-right: none;
+}
+
+.pluginCMBblog .blog_title_h3{
+    font-size: 16px !important;
+    line-height: 1.4;  
+    margin-top: 10px;
+    word-break: break-word;
+}
+.w-100 {
+    width: 100%
+}
+.side-bar > div {
+    width: 90%;
+    margin:40px auto;
+}
+h5.tag-header {
+  padding: 1rem 2rem;
+  border-left: 4px solid #000;
+}
+.month-archive a {
+    text-decoration: underline;
+    display: block;
+    padding: 3px 27px;
+}
+.archive-link-div {
+    max-height: 600px;
+    overflow-y: scroll;
+}
+.archive-link-div::-webkit-scrollbar {
+    display: none;
+}
+@media screen and (max-width: 768px){
+.pluginCMBblog .item_blog_image {
+    width: 100% !important;
+    height: 40vw;
+    object-fit: cover;
+    }
+    .side-bar > div {
+        width: 100%
+    }
+}
+@media only screen and (min-width: 768px) {
+
+    .side-bar {
+        width: 280px;
+        background-color: #f6f6f6;
+    }
+    .ec-role {
+        display: flex;
+        justify-content: flex-start
+    }
+    .mt-65 {
+        margin-top: 65px!important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block main %}
+    <div class="ec-role pluginCMBblog">
+        <div class="w-100">
+            <div class="ec-searchnavRole__topicpath">
+                <ol class="ec-topicpath list_blog_cat">
+                    <li class="ec-topicpath__item">
+                        <a href="{{ url('cm_blog_pro_page_list') }}">{{ '全て'|trans }}</a>
+                    </li>
+                    {% for category in categories %}
+                
+                    <li class="{{category.class}}">
+                        <a href="{{ url('cm_blog_pro_page_list', {categories: [category.getId()]}) }}" class="list_category_link">
+                            {{ category.getName|raw }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+    
+            {% if pagination.totalItemCount > 0 %}
+                <div class="ec-shelfRole" style="padding-top: 20px">
+                    <ul class="ec-shelfGrid list_blog">
+                        {% for blog in pagination %}
+                        <li class="ec-shelfGrid__item">
+                            <a href="{{ url('cm_blog_pro_page_detail', {'id': blog.slug ? blog.slug : blog.id}) }}">
+                                <figure class="figure__main_image">
+                                {% if blog.getMainListImage %}
+                                    <img src="{{ asset(blog.getMainListImage|no_image_product, 'save_image') }}" class='item_blog_image'></img>
+                                    {% else %}
+                                    <img src="{{ asset(''|no_image_product, 'save_image') }}" class='item_blog_image'></img>
+                                {% endif %}
+                                </figure>
+                            </a>
+                            <h3 class="blog_title_h3">{{ blog.getTitle|length > 45 ? blog.getTitle|striptags|replace({('&nbsp;'):' '})|slice(0, 45)|raw ~ '...' : blog.getTitle|raw }}</h3>  
+                            <ul class="blog_category">
+                                    {% for category in blog.getBlogCategories %}
+                                        <li class="{{category.getCategory.class}}">
+                                            <a href="{{ url('cm_blog_pro_page_list', {categories: [category.getCategory().getId()]}) }}" class="list_category_link">
+                                            {{ category.getCategory.getName|length > 15 ? category.getCategory.getName|striptags|replace({('&nbsp;'):' '})|slice(0, 15)|raw ~ '...' : category.getCategory.getName|raw }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}        
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="ec-pagerRole">
+                    {% include "pager.twig" with {'pages': pagination.paginationData, 'routes' : 'cm_blog_pro_page_list'} %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="side-bar">
+            <div class="mt-65 month-archive">
+                <h5 class="tag-header">{{ 'plg.CMBlogPro.blog.month_archive'|trans }}</h5>
+                <div class="archive-link-div">
+                    {% for key, month in monthArr %}
+                        <a href="{{ url('cm_blog_pro_page_list', {date: key}) }}">{{ month }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div> 
+{% endblock %}

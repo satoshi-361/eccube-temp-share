@@ -57,6 +57,7 @@ class EccubeExtension extends BaseExtension
             new TwigFunction('php_*', [$this, 'getPhpFunctions'], ['pre_escape' => 'html', 'is_safe' => ['html']]),
             new TwigFunction('currency_symbol', [$this, 'getCurrencySymbol']),
             new TwigFunction('is_blog_purchased', [$this, 'isBlogPurchased']),
+            new TwigFunction('blog_image', [$this, 'getBlogImage']),
         ];
     }
 
@@ -86,5 +87,30 @@ class EccubeExtension extends BaseExtension
         }
 
         return false;
+    }
+
+    /**
+     * ブログ画像取得
+     *
+     * @param \Eccube\Entity\Product $Blog
+     * @param $type large | middle | small
+     *
+     * @return boolean
+     */
+    public function getBlogImage($Blog, $type)
+    {
+        switch ( $type ) {
+            case 'large':
+                if ( $Blog->getProductImage()->count() == 1 ) {
+                    return $Blog->getProductImage()->first();
+                }
+                return $Blog->getProductImage()->get(1);
+
+            case 'middle':
+                return $Blog->getProductImage()->last();
+
+            case 'small':
+                return $Blog->getProductImage()->first();
+        }
     }
 }

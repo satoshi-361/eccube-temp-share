@@ -1,0 +1,559 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) EC-CUBE CO.,LTD. All Rights Reserved.
+
+http://www.ec-cube.co.jp/
+
+For the full copyright and license information, please view the LICENSE
+file that was distributed with this source code.
+#}
+{% extends 'default_frame.twig' %}
+
+{% set body_class = 'mypage' %}
+
+{% set mypageno = 'blog' %}
+
+{% form_theme form 'Form/form_div_layout.twig' %}
+
+{% block stylesheet %}
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <style>
+        .d-none {
+            display: none;
+        }
+        .ec-editBlogRole {
+            display: flex;
+            padding: 20px;
+            background: #f5f5f5;
+            /* background: #eff0f4; */
+        }
+        .ec-editBlogRole .ec-grid__left {
+            width: calc(100% - 230px);
+            margin-right: 10px;
+            border-radius: 5px;
+            padding: 10px 20px;
+            background: white;
+        }
+        .ec-editBlogRole .ec-grid__right {
+            width: 230px;
+            margin-left: 10px;
+            border-radius: 5px;
+            padding: 10px 12px;
+            background: white;
+        }
+
+        .ec-editBlogRole .ec-borderedDefs {
+            border-top: unset;
+        }
+        .ec-editBlogRole .list-unstyled {
+            margin-bottom: 0;
+        }
+
+        .p-3 {
+            padding: 1rem !important;
+        }
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+        .rounded {
+            border-radius: 0.25rem !important;
+        }
+        .border {
+            border: 1px solid #dee2e6 !important
+        }
+
+        .cs-dflex {
+            display: flex;
+        }
+        .cs-dflex.datetime {
+            font-size: 14px;
+        }
+        .cs-dflex.datetime .cs-datetime-title {
+            width: 80px;
+        }
+        .cs-dflex.datetime cs-datetime {
+            width: calc(100% - 75px);
+        }
+
+        p.header {
+            margin-bottom: 10px;
+            padding-left: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        .ec-borderedDefs dl {
+            padding: 15px 0 15px;
+        }
+
+        #upload-zone {
+            border: 1px dashed #ccc;
+            border-radius: 0.25rem;
+            padding: 3rem;
+        }
+
+        #upload-zone .filepond--root {
+            font-size: 15px;
+        }
+
+        #upload-zone .mx-3 {
+            margin-right: 1rem !important;
+            margin-left: 1rem !important;
+        }
+
+        .btn-ec-regular {
+            color: #212529;
+            background-color: #FFFFFF;
+            border-color: #595959;
+            color: #595959;
+            cursor: pointer;
+        }
+
+        #admin_product_affiliate_reward {
+            width: 160px;
+        }
+
+        .datetime {
+            max-width: 160px;
+        }
+
+        .label {
+            color: #525263;
+            background: aliceblue;
+        }
+
+        .ec-editBlogRole .tox .tox-promotion-link {
+            display: none;
+        }
+
+        @media only screen and (min-width: 768px) {
+            .ec-borderedDefs dt {
+                padding: 0 10px 0;
+            }
+            .ec-borderedDefs dd {
+                padding-left: 10px;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .ec-editBlogRole {
+                padding: 10px;
+                flex-direction: column;
+            }
+            .ec-editBlogRole .ec-grid__left {
+                width: 100%;
+                margin-right: 0;
+            }
+            .ec-editBlogRole .ec-grid__right {
+                width: 100%;
+                margin-top: 20px;
+                margin-left: 0;
+            }
+        }
+    </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $.fn.tooltip = bootstrapTooltip;
+        $(function() {
+            {% if has_class == false %}
+            if ($("#{{ form.class.stock_unlimited.vars.id }}").prop("checked")) {
+                $("#{{ form.class.stock.vars.id }}").attr("disabled", "disabled").val('');
+            } else {
+                $("#{{ form.class.stock.vars.id }}").removeAttr("disabled");
+            }
+            $("#{{ form.class.stock_unlimited.vars.id }}").on("click change", function() {
+                if ($(this).prop("checked")) {
+                    $("#{{ form.class.stock.vars.id }}").attr("disabled", "disabled").val('');
+                } else {
+                    $("#{{ form.class.stock.vars.id }}").removeAttr("disabled");
+                }
+            });
+            {% endif %}
+            var max_file_count = 1;
+
+            // ファイルアップロード
+            // see https://pqina.nl/filepond/
+            var inputFileElement = document.querySelector('input[type=file]');
+            FilePond.registerPlugin(FilePondPluginImagePreview);
+            FilePond.setOptions({
+                server: {
+                    process: {
+                        url: '{{ path('mypage_image_process') }}',
+                        headers: {
+                            'ECCUBE-CSRF-TOKEN': $('meta[name="eccube-csrf-token"]').attr('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    },
+                    load: {
+                        url: '{{ path('mypage_image_load') }}?source=',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    },
+                    revert: {
+                        url: '{{ path('mypage_image_revert') }}',
+                        headers: {
+                            'ECCUBE-CSRF-TOKEN': $('meta[name="eccube-csrf-token"]').attr('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }
+                }
+            });
+            var pond = FilePond.create(inputFileElement, {
+                allowFileTypeValidation: true,
+                acceptedFileTypes: [
+                    'image/gif',
+                    'image/png',
+                    'image/jpeg'
+                ],
+                allowFileSizeValidation: true,
+                maxFileSize: 10000000,
+                maxFiles: 10,
+                allowBrowse: true,
+                allowDrop: true,
+                allowReorder: true,
+                labelIdle: '<i class="fa fa-cloud-upload fa-3x text-ec-lightGray mx-3 align-middle" aria-hidden="true" style="font-size: 40px"></i>{{ 'admin.common.drag_and_drop_image_description'|trans }}<span class="filepond--label-action">{{ 'admin.common.file_select'|trans }}</span>',
+                styleItemPanelAspectRatio: 0.5625,
+                // 保存されている画像のロード
+                files: [
+                    {% for image in form.images %}
+                    {
+                        source: '{{ image.vars.value }}',
+                        options: {
+                            type: 'local'
+                        }
+                    },
+                    {% endfor %}
+                    // 追加してすぐの画像のロード. バリデーションエラーの場合など.
+                    {% for add_image in form.add_images %}
+                    {
+                        source: '{{ add_image.vars.value }}',
+                        options: {
+                            type: 'local'
+                        }
+                    },
+                    {% endfor %}
+                ]
+            });
+            // 画像が追加されたら add_images にファイル名を追加する
+            var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
+            pond.on('processfile', function(error, file) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    $('#upload-zone').append(
+                        $(proto_add.replace(/__name__/g, file.id))
+                            .val(file.serverId)
+                            .addClass('add_images')
+                    );
+                }
+            });
+            // 画像が削除されたら delete_images にファイル名を追加する
+            var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
+            pond.on('removefile', function(error, file) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    // file.serverId にはアップロードしたファイル名が格納される.
+                    if (file.serverId) {
+                        $('#upload-zone').append(
+                            $(proto_del.replace(/__name__/g, file.id))
+                                .val(file.serverId)
+                                .addClass('del_images')
+                        );
+                    }
+                    // 追加してすぐ削除した画像があれば削除する
+                    $('#upload-zone').find('#admin_product_add_images_' + file.id).remove(); // 追加してすぐ削除した画像
+                    $('#upload-zone').find('.add_images[value="' + file.filename + '"]').remove(); // 追加後, バリデーションエラーが発生した後に削除した画像
+                }
+            });
+            // バリデーションエラーが出た場合に画像を保持するための hidden を追加しておく
+            var proto_image = '{{ form_widget(form.images.vars.prototype) }}';
+            {% for image in form.images %}
+                $('#upload-zone').append(
+                    $(proto_image.replace(/__name__/g, '{{ loop.index0 }}'))
+                        .val('{{ image.vars.value }}')
+                        .addClass('images')
+                );
+            {% endfor %}
+            {% for add_image in form.add_images %}
+                $('#upload-zone').append(
+                    $('{{ form_widget(add_image) }}')
+                        .val('{{ add_image.vars.value }}')
+                        .addClass('add_images')
+                );
+            {% endfor %}
+            {% for delete_image in form.delete_images %}
+                $('#upload-zone').append(
+                    $('{{ form_widget(delete_image) }}').addClass('del_images')
+                );
+            {% endfor %}
+
+            $('button[name="status"]').on('click', function(){
+                $('#admin_product_Status').val($(this).attr('value')).change();
+                $('#form1').submit();
+            });
+        });
+
+        // searchWordの実行
+        $('#search-category').on('input', function () {
+            searchWord($(this).val(), $('.category-li'));
+        });
+    </script>
+    <script type="text/javascript" src="{{ asset('assets/tinymce/tinymce.min.js', 'user_data') }}"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: '#admin_product_description_detail',
+            height: '600',
+            plugins : 'code image link',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("mypage_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls: false,
+            hidden_input: false
+        });
+        tinymce.init({
+            selector: '#wysiwyg-area',
+            height: '600',
+            plugins : 'code image link ',
+            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            language: 'ja',
+            language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
+            images_upload_url: '{{ url("mypage_blog_upload") }}',
+            automatic_uploads: true,
+            branding: false,
+            relative_urls: false,
+            hidden_input: false
+        });
+
+        $(function (){
+            {% if description_detail is not empty %}
+                var content = '{{ description_detail }}';
+                content = content.replace(/&lt;/g, '<');
+                content = content.replace(/&gt;/g, '>');
+                $('#admin_product_description_detail').val(content);
+            {% endif %}
+
+            {% if free_area is not empty %}
+                content = '{{ free_area }}';
+                content = content.replace(/&lt;/g, '<');
+                content = content.replace(/&gt;/g, '>');
+                $('#wysiwyg-area').val(content);
+            {% endif %}
+        })
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+    <div class="ec-layoutRole__main">
+        <div class="ec-mypageRole">
+            {{ include('Mypage/alert.twig') }}
+            <div class="ec-pageHeader">
+                <h1>{{ 'front.mypage.title'|trans }}/{{ '記事登録'|trans }}</h1>
+            </div>
+            {% include 'Mypage/navi.twig' %}
+        </div>
+        <div class="ec-mypageRole">
+            <form role="form" name="form1" id="form1" method="post"
+                action="
+                    {% if app.request.attributes.has('id') %}
+                        {{ url(app.request.attributes.get('_route'), { id: app.request.attributes.get('id') }) }}
+                    {% else %}
+                        {{ url(app.request.attributes.get('_route')) }}
+                    {% endif %}
+                "
+                novalidate enctype="multipart/form-data">
+                {{ form_widget(form._token) }}
+                <div class="ec-editBlogRole">
+                    <div class="ec-grid__left">
+                        <div class="ec-borderedDefs">
+                            <dl>
+                                <dt>
+                                    {{ form_label(form.name, 'admin.product.name', { 'label_attr': { 'class': 'ec-label' }}) }}
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.name) ? ' error' }}">
+                                        {{ form_widget(form.name) }}
+                                        {{ form_errors(form.name) }}
+                                    </div>
+                                    <div class="d-none">
+                                        {{ form_widget(form.class.sale_type) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
+                                        <span>{{ 'admin.product.image'|trans }}</span>
+                                        <br>{{ '推奨サイズ : 1280px×670px'|trans }}
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <p id="message"></p>
+                                    <div id="upload-zone" class="rounded">
+                                        {{ form_widget(form.product_image, { attr : { style : 'display:none;' } }) }}
+                                        {{ form_errors(form.product_image) }}
+                                    </div><!-- /#upload-zone -->
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top"
+                                        title="{{ 'セールスレター'|trans }}">
+                                        <span>{{ 'セールスレター'|trans }}</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.description_detail) ? ' error' }}">
+                                        {{ form_widget(form.description_detail, { attr : { rows : "12" } }) }}
+                                        {{ form_errors(form.description_detail) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <span class="ec-label">{{ 'マニュアル'|trans }}</span>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.free_area) ? ' error' }}">
+                                        {{ form_widget(form.free_area, {id: 'wysiwyg-area', attr : { rows : "12" } }) }}
+                                        {{ form_errors(form.free_area) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'admin.product.sale_price'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                        <span class="label">最低価格100円</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.class.price02) ? ' error' }}">
+                                        <input type="text" id="admin_product_class_price02" name="admin_product[class][price02]" required="required" value="{{ form.class.price02.vars.value }}">
+                                    </div>
+                                    <div class="d-none">
+                                        {{ form_widget(form.Status) }}
+                                        {{ form_errors(form.Status) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'admin.product.stock'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.class.stock) ? ' error' }}">
+                                        {{ form_widget(form.class.stock) }}
+                                        {{ form_errors(form.class.stock) }}
+                                    </div>
+                                    {{ form_widget(form.class.stock_unlimited) }}
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ 'アフィリエイト報酬'|trans }}</span>
+                                        <span class="ec-required">必須</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-select{{ has_errors(form.affiliate_reward) ? ' error' }}">
+                                        {{ form_widget(form.affiliate_reward) }}
+                                        {{ form_errors(form.affiliate_reward) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>
+                                    <div class="d-inline-block ec-label">
+                                        <span>{{ '記事投稿日'|trans }}</span>
+                                    </div>
+                                </dt>
+                                <dd>
+                                    <div class="ec-input{{ has_errors(form.launch_date) ? ' error' }} datetime">
+                                        {{ form_widget(form.launch_date) }}
+                                        {{ form_errors(form.launch_date) }}
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="ec-grid__right ec-label">
+                        <div>
+                            <p class="header">カテゴリ</p>
+                            {% macro tree(ChoicedIds, Category, form) %}
+                                {% import _self as selfMacro %}
+                                <li class="c-directoryTree--registerItem category-li">
+                                    <input type="checkbox" id="admin_product_category_{{ Category.id }}" name="admin_product[Category][]" value="{{ Category.id }}" {% if Category.id in ChoicedIds %}checked{% endif %}>
+                                    <label for="admin_product_category_{{ Category.id }}">{{ Category.name }}</label>
+                                    <ul class="list-unstyled">
+                                        {% for child,ChildCategory in Category.children %}
+                                            {{ selfMacro.tree(ChoicedIds, ChildCategory, form) }}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endmacro %}
+                            <div class="c-directoryTree--register rounded mb-3 ec-check{{ has_errors(form.Category) ? ' error' }}">
+                                {% import _self as renderMacro %}
+                                {% for TopCategory in TopCategories %}
+                                    <ul class="list-unstyled">
+                                        {{ renderMacro.tree(ChoicedCategoryIds, TopCategory, form.Category) }}
+                                    </ul>
+                                {% endfor %}
+                                {{ form_errors(form.Category) }}
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px;">
+                            <p class="header">登録日・更新日</p>
+                            <div class="cs-dflex datetime mb-3">
+                                <div class="cs-datetime-title">
+                                    <i class="fa fa-flag mr-1"></i>
+                                    <span>{{ 'admin.common.create_date'|trans }}：</span>
+                                </div>
+                                <div class="cs-datetime">
+                                    <span>{{ Product.create_date|date_min }}</span>
+                                </div>
+                            </div>
+                            <div class="cs-dflex datetime mb-3">
+                                <div class="cs-datetime-title">
+                                    <i class="fa fa-refresh mr-1"></i>
+                                    <span>{{ 'admin.common.update_date'|trans }}：</span>
+                                </div>
+                                <div class="cs-datetime">
+                                    <span>{{ Product.update_date|date_min }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 30px;">
+                            {# {% if Product.Status.id == 1 and Product.stock_find == false %}
+                                <button class="ec-blockBtn--action mb-3" name="status" value="1">{{ '在庫更新'|trans }}</button>
+                            {% else %}
+                                <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
+                                        
+                                <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
+                            {% endif %} #}
+                            <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
+                            <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
+                            <button class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '削除'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

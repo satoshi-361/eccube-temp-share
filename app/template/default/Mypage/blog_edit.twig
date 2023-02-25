@@ -200,6 +200,7 @@ file that was distributed with this source code.
             .ec-editBlogRole .ec-grid__left {
                 width: 100%;
                 margin-right: 0;
+                padding: 10px;
             }
             .ec-editBlogRole .ec-grid__right {
                 width: 100%;
@@ -211,11 +212,15 @@ file that was distributed with this source code.
 {% endblock stylesheet %}
 
 {% block javascript %}
-    <script src="{{ asset('assets/js/vendor/fileupload/vendor/jquery.ui.widget.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/fileupload/jquery.iframe-transport.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-process.js', 'admin') }}"></script>
-    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-validate.js', 'admin') }}"></script>
+    <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+    <script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+    
+    <script src="{{ asset('assets/js/fileupload/vendor/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('assets/js/fileupload/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('assets/js/fileupload/jquery.fileupload.js') }}"></script>
+    <script src="{{ asset('assets/js/fileupload/jquery.fileupload-process.js') }}"></script>
+    <script src="{{ asset('assets/js/fileupload/jquery.fileupload-image.js') }}"></script>
+    <script src="{{ asset('assets/js/fileupload/jquery.fileupload-validate.js') }}"></script>
     <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script>
@@ -254,7 +259,7 @@ file that was distributed with this source code.
                 '</div>';
             var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
             var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
-            {% for image in form.images %}
+            {% for key, image in form.images if key == 0 %}
             var $img = $(proto_img.replace(/__path__/g, '{{ asset(image.vars.value, 'save_image') }}'));
             var $widget = $('{{ form_widget(image) }}');
             $widget.val('{{ image.vars.value }}');
@@ -304,12 +309,46 @@ file that was distributed with this source code.
                 count_del++;
             });
             var count_add = {{ form.add_images|length|default(0) }};
+            $.blueimp.fileupload.prototype.processActions.duplicateImage = function (data, options) {
+                if (data.canvas) {
+                    data.files.push(data.files[data.index]);
+                }
+                return data;
+            };
             $('#{{ form.product_image.vars.id }}').fileupload({
                 url: "{{ url('mypage_blog_image_add') }}",
                 type: "post",
                 sequentialUploads: true,
                 dataType: 'json',
                 dropZone: $('#upload-zone'),
+                disableImageResize: false,
+                processQueue: [
+                    {
+                        action: 'loadImage',
+                        fileTypes: /^image\/(gif|jpeg|png)$/,
+                        maxFileSize: 20000000 // 20MB
+                    },
+                    {
+                        action: 'resizeImage',
+                        maxWidth: 1600,
+                        maxHeight: 900
+                    },
+                    {action: 'saveImage'},
+                    {action: 'duplicateImage'},
+                    {
+                        action: 'resizeImage',
+                        maxWidth: 1280,
+                        maxHeight: 720
+                    },
+                    {action: 'saveImage'},
+                    {action: 'duplicateImage'},
+                    {
+                        action: 'resizeImage',
+                        maxWidth: 800,
+                        maxHeight: 450
+                    },
+                    {action: 'saveImage'}
+                ],
                 change: function(e, data) {
                     if ( (data.files.length + count_add - count_del) > max_file_count){
                         data.files = [];
@@ -323,6 +362,7 @@ file that was distributed with this source code.
                     }
                 },
                 done: function(e, data) {
+                    var iterater = 0;
                     $('.progress').hide();
                     $.each(data.result.files, function(index, file) {
                         var path = '{{ asset('', 'temp_image') }}' + file;
@@ -330,8 +370,12 @@ file that was distributed with this source code.
                         var $new_img = $(proto_add.replace(/__name__/g, count_add));
                         $new_img.val(file);
                         $child = $img.append($new_img);
+                        if (0 != iterater) {
+                            $child.css('display', 'none');
+                        }
                         $('#thumb').append($child);
                         count_add++;
+                        iterater++;
                     });
                     hideThumbnail();
                     updateSortNo();

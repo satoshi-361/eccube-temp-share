@@ -1,0 +1,231 @@
+{% extends 'default_frame.twig' %}
+
+{% block javascript %}{% endblock %}
+
+{% block stylesheet %}
+<style>
+.pluginCMBblog .post_meta {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 95%;
+    margin: 0 auto;
+}
+.pluginCMBblog .blog_category{
+    margin: 0;
+    padding: 0;
+}
+.pluginCMBblog .blog_category{
+    display: initial;
+}
+.pluginCMBblog .blog_category li{
+    display: initial;
+    border-right: 1px solid #ddd;
+}
+
+.pluginCMBblog .blog_category li:last-child {
+    border-right: none;
+}
+
+.pluginCMBblog .post_meta .post_meta_list{
+    padding-right: 2rem;
+}
+
+.pluginCMBblog .list_category_link{
+    color: #337ab7;
+    padding: 0 0.5rem;
+}
+.pluginCMBblog .main_image_blog{
+    padding: 3rem 0;
+}
+
+.pluginCMBblog .post_meta_list.time{
+    width: 15rem;
+    display: inline-table;
+}
+.pluginCMBblog .tag_dl{
+    display: flex;
+}
+
+.pluginCMBblog .blog_detail .blog_Title{
+    word-break: break-word;
+    margin-bottom: 20px;
+}
+.pluginCMBblog .cm_blog_main_image img{
+    max-width: 100%;
+    width: auto;
+}
+ul.tag-ul {
+    padding-left:8px;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+ul.tag-ul > li {
+    margin: 0.4em;
+    padding: 0 0.8em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+ul.tag-ul > li > a:hover {
+    text-decoration: none;
+}
+h3.tag-header {
+  padding: 1rem 2rem;
+  border-left: 4px solid #000;
+}
+.w-100 {
+    width: 100%
+}
+.side-bar > div {
+    width: 90%;
+    margin:40px auto;
+}
+h5.tag-header {
+  padding: 1rem 2rem;
+  border-left: 4px solid #000;
+}
+.month-archive a {
+    text-decoration: underline;
+    display: block;
+    padding: 3px 27px;
+}
+.ec-productRole__description > p img {
+    width: calc(var(--width));
+    height: auto;
+    margin-bottom: 15px;
+}
+.archive-link-div {
+    max-height: 600px;
+    overflow-y: scroll;
+}
+.archive-link-div::-webkit-scrollbar {
+    display: none;
+}
+@media screen and (max-width: 768px){
+    .pluginCMBblog .post_meta {
+        display: block;
+    }
+    
+    .pluginCMBblog .post_meta_list.time{
+        width: 100%;
+    }
+    .side-bar > div {
+        width: 100%
+    }
+}
+@media only screen and (min-width: 768px) {
+    .ec-shelfGrid .ec-shelfGrid__item-image {
+        height: 150px;
+    }
+    h3.tag-header {
+        margin: 63px 16px 20px;
+    }
+    .side-bar {
+        width: 280px;
+        background-color: #f6f6f6;
+    }
+    .ec-role {
+        display: flex;
+        justify-content: flex-start
+    }
+    .mt-65 {
+        margin-top: 65px!important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div class="ec-role blog_detail pluginCMBblog">
+    <div class="w-100">
+        <div class="ec-pageHeader">
+            <h1 class="blog_Title">{{ blog.title }}</h1>
+        </div>
+        <ul class="post_meta ">
+            <li class="post_meta_list time"><i class="fas fa-calendar-alt"></i>&nbsp;{{blog.release_date|date('Y-m-d')}}</li>
+            <li class="post_meta_list">
+                <dl class="tag_dl">
+                    <dt><i class="fas fa-tags"></i></dt>
+                    <dd>
+                        <ul class="blog_category">
+                            {% for category in blog.getBlogCategories %}
+                            <li class="{{category.getCategory.class}}">
+                                <a href="{{ url('cm_blog_pro_page_list', {categories: [category.getCategory().getId()]}) }}" class="list_category_link">
+                                {{ category.getCategory.getName|raw }}
+                                </a>
+                            </li>
+                            {% endfor %}        
+                        </ul> 
+                    </dd>
+                </dl>
+            </li>
+        </ul>
+        <div class="ec-off1Grid">
+            <div class="ec-off1Grid__cell">
+                <div class="cm_blog_main_image">
+                    {% if blog.getMainListImage %}
+                    <img src="{{ asset(blog.getMainListImage|no_image_product, 'save_image') }}" class="main_image_blog"></img>
+                    {% else %}
+                    <img class='item_blog_image'></img>
+                    {% endif %}
+                </div>
+                    <div class="ec-grid2__cell">
+                    <div class="ec-productRole__profile">
+                        <div class="ec-productRole__description">{{ blog.body|raw }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if tags|length > 0 %}
+            <h3 class="tag-header">{{ 'plg.CMBlogPro.blog.tag'|trans }}</h3>
+            <ul class="tag-ul">
+                {% for tag in tags %}
+                    <li>
+                        <a href="{{ url('cm_blog_pro_page_list', {tag: tag|trim }) }}">{{ tag |trim }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h3 class="tag-header">{{ 'plg.CMBlogPro.blog.related_product'|trans }}</h3>
+        <div class="ec-shelfRole">
+            <ul class="ec-shelfGrid">
+                {% for product in blog.getBlogProduct %}
+                    <li class="ec-shelfGrid__item">
+                        <a href="{{ url('product_detail', {'id': product.getProduct.id}) }}">
+                            <p class="ec-shelfGrid__item-image">
+                                <img src="{{ asset(product.getProduct.main_list_image|no_image_product, 'save_image') }}">
+                            </p>
+                            <p>{{ product.getProduct.name }}</p>
+                            <p class="price02-default">
+                                {% if product.getProduct.hasProductClass %}
+                                    {% if product.getProduct.getPrice02Min == product.getProduct.getPrice02Max %}
+                                        {{ product.getProduct.getPrice02IncTaxMin|price }}
+                                    {% else %}
+                                        {{ product.getProduct.getPrice02IncTaxMin|price }} ～ {{ product.getProduct.getPrice02IncTaxMax|price }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ product.getProduct.getPrice02IncTaxMin|price }}
+                                {% endif %}
+                            </p>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="side-bar">
+        <div class="mt-65 month-archive">
+            <h5 class="tag-header">{{ 'plg.CMBlogPro.blog.month_archive'|trans }}</h5>
+            <div class="archive-link-div">
+                {% for key, month in monthArr %}
+                    <a href="{{ url('cm_blog_pro_page_list', {date: key}) }}">{{ month }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

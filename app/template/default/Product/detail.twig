@@ -117,6 +117,15 @@ file that was distributed with this source code.
         button.tooltip:hover span.tooltip-content {
             opacity: 1;
         }
+
+        @media only screen and (max-width: 767px) {
+            button span.tooltip-content {
+                width: 300px;
+                left: 0;
+                right:  calc(-50% - 10px);
+                transform: translateX(-50%);
+            }
+        }
     </style>
 {% endblock %}
 
@@ -283,7 +292,7 @@ file that was distributed with this source code.
 {% block main %}
     <div class="ec-productRole">
         <div class="image top">
-            <img src="{{ asset(Product.mainFileName|no_image_product, "save_image") }}">
+            <img src="{{ asset(blog_image(Product, 'large'), "save_image") }}">
         </div>
         <div class="ec-productRole__contents">
             <div class="ec-productRole__title">

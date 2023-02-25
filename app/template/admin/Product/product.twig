@@ -110,7 +110,7 @@ file that was distributed with this source code.
                 '</div>';
             var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
             var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
-            {% for image in form.images %}
+            {% for key, image in form.images if key == 0 %}
             var $img = $(proto_img.replace(/__path__/g, '{{ asset(image.vars.value, 'save_image') }}'));
             var $widget = $('{{ form_widget(image) }}');
             $widget.val('{{ image.vars.value }}');

@@ -1,0 +1,672 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['plugin_CMBlog', 'cm_blog_admin_blog_create'] %}
+
+{% block title %}{{'plg.CMBlogPro.blog_name'|trans}}{% endblock %}
+{% block sub_title %}{{'plg.CMBlogPro.blog_name'|trans}}編集{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+<style type="text/css">
+    ul.prod-list {
+        display: none;
+        flex-wrap: wrap;
+        padding: 0;
+        height: auto;
+    }
+    ul.prod-list > li {
+        line-height: 110%;
+        margin: 0.4em;
+        padding: 0.6em;
+        max-width: 13em;
+    }
+    ul.prod-list > li > label {
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 10em;
+        margin-bottom: 0;
+        margin-left: 3px;
+    }
+    .mb {
+        margin-bottom: 0.5rem;
+    }
+    .title-image {
+        max-width: 100%;
+        max-height: 300px;
+    }
+    .tag-text-font {
+        font-size: 0.8em;
+    }
+    ul.prod-list {
+        max-height: 200px;
+        overflow-y: auto;
+        min-height: 30px;
+    }
+    .tag-text {
+        font-size: 0.8em;
+        color: red;
+    }
+    
+    .mce-content-body img {
+        width: 100%;
+        height: auto;
+    }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script type="text/javascript" src="{{ asset('CMBlogPro/assets/tinymce/tinymce.min.js', 'plugin') }}"></script>
+<script type="text/javascript">
+    tinymce.init({
+        selector: '#CMBlogPro_admin_blog_body',
+        height: '400',
+		plugins : 'code image link',
+		toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+        language: 'ja',
+        language_url: '{{ asset("CMBlogPro/assets/tinymce/langs/ja.js", "plugin") }}',
+        images_upload_url: '{{ url("cm_blog_admin_blog_upload") }}',
+        automatic_uploads: true,
+        branding: false,
+        relative_urls : false
+    });
+</script>
+    <script src="{{ asset('assets/js/vendor/fileupload/vendor/jquery.ui.widget.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.iframe-transport.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-process.js', 'admin') }}"></script>
+    <script src="{{ asset('assets/js/vendor/fileupload/jquery.fileupload-validate.js', 'admin') }}"></script>
+    <script>var bootstrapTooltip = $.fn.tooltip.noConflict();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $.fn.tooltip = bootstrapTooltip;
+        $(document).on('drop dragover', function(e) {
+            e.preventDefault();
+        });
+        $(function() {
+            // Todo: fix drag&drop style
+            $("#thumb").sortable({
+                cursor: 'move',
+                opacity: 0.7,
+                placeholder: 'ui-state-highlight',
+                update: function(event, ui) {
+                    updateSortNo();
+                }
+            });
+
+            var proto_img = '<div class="c-form__fileUploadThumbnail" style="background-image:url(\'__path__\');">' +
+                '<a class="delete-image"><i class="fa fa-times" aria-hidden="true"></i></a>' +
+                '</div>';
+            var proto_add = '{{ form_widget(form.add_images.vars.prototype) }}';
+            var proto_del = '{{ form_widget(form.delete_images.vars.prototype) }}';
+            {% for image in form.images %}
+            
+            //var $img = $(proto_img.replace(/__path__/g, '{{ asset('cm_blog/images/' ~ image.vars.value, 'user_data') }}'));
+            var $img = $(proto_img.replace(/__path__/g, '{{ asset(image.vars.value, 'save_image') }}'));
+
+            var $widget = $('{{ form_widget(image) }}');
+            $widget.val('{{ image.vars.value }}');
+            $("#thumb").append($img.append($widget));
+            {% endfor %}
+            {% for add_image in form.add_images %}
+            var $img = $(proto_img.replace(/__path__/g, '{{ asset(add_image.vars.value, 'temp_image') }}'));
+            var $widget = $('{{ form_widget(add_image) }}');
+            $widget.val('{{ add_image.vars.value }}');
+            $("#thumb").append($img.append($widget));
+            {% endfor %}
+            {% for delete_image in form.delete_images %}
+            $("#thumb").append('{{ form_widget(delete_image) }}');
+            {% endfor %}
+            var hideThumbnail = function() {
+                if ($("#thumb div").length > 0) {
+                    $("#icon_no_image").css("display", "none");
+                    $('#message').html("{{ 'admin.common.drag_and_drop_description'|trans }}");
+                } else {
+                    $("#icon_no_image").css("display", "");
+                    $('#message').empty();
+                }
+            };
+            // Todo: fix update sort by drag&drop
+            var updateSortNo = function() {
+                $("#thumb div").each(function(index) {
+                    $(this).find(".sort_no_images").remove();
+                    filename = $(this).find("input[type='hidden']").val();
+                    $sortNo = $('<input type="hidden" class="sort_no_images" name="sort_no_images[]" />');
+                    $sortNo.val(filename + '//' + parseInt(index + 1));
+                    $(this).append($sortNo);
+                });
+            };
+            hideThumbnail();
+            updateSortNo();
+
+            var max = 1;
+            var file_count = {{ form.images|length|default(0) }};
+
+            // Delete of images
+            var count_del = 0;
+            $("#thumb").on("click", '.delete-image', function() {
+                var $new_delete_image = $(proto_del.replace(/__name__/g, count_del));
+                var thumbnail = $(this).parents('div.c-form__fileUploadThumbnail');
+                var src = $(thumbnail).find('input').val();
+                $new_delete_image.val(src);
+                $("#thumb").append($new_delete_image);
+                $(thumbnail).remove();
+                hideThumbnail();
+                updateSortNo();
+                count_del++;
+                file_count--;
+            });
+            var count_add = {{ form.add_images|length|default(0) }};
+           
+
+            $('#{{ form.product_image.vars.id }}').fileupload({
+                url: "{{ url('cm_blog_admin_blog_image_add') }}?count="+count_add,
+                type: "post",
+                sequentialUploads: true,
+                dataType: 'json',
+                dropZone: $('#upload-zone'),
+                change: function(e, data) {
+                    if ( (data.files.length +file_count) > max){
+                        data.files = [];
+                        alert("１つの画像しか登録できません。");
+                    }
+                },
+                drop: function(e, data) {
+                    if ( (data.files.length +file_count) > max){
+                        data.files = [];
+                        alert("１つの画像しか登録できません。");
+                    }
+                },
+                done: function(e, data) {
+                    $('.progress').hide();
+                    $.each(data.result.files, function(index, file) {
+                        var path = '{{ asset('', 'temp_image') }}' + file;
+                        var $img = $(proto_img.replace(/__path__/g, path));
+                        var $new_img = $(proto_add.replace(/__name__/g, count_add));
+                        $new_img.val(file);
+                        $child = $img.append($new_img);
+                        $('#thumb').append($child);
+                        count_add++;
+                        file_count++;
+                    });
+                    hideThumbnail();
+                    updateSortNo();
+                },
+                fail: function(e, data) {
+                    alert("{{ 'admin.common.upload_error'|trans }}");
+                },
+                always: function(e, data) {
+                    $('.progress').hide();
+                    $('.progress .progress-bar').width('0%');
+                },
+                start: function(e, data) {
+                    $('.progress').show();
+                },
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+                maxFileSize: 10000000,
+                maxNumberOfFiles: 1,
+                progressall: function(e, data) {
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+                    $('.progress .progress-bar').css(
+                        'width',
+                        progress + '%'
+                    );
+                },
+                processalways: function(e, data) {
+                    if (data.files.error) {
+                        alert("{{ 'admin.common.upload_error'|trans }}");
+                    }
+                }
+            });
+            // 画像アップロード
+            $('#file_upload').on('click', function() {
+                $('#{{ form.product_image.vars.id }}').click();
+            });
+
+            var confirmFormChange = function(form, target, modal) {
+                var returnLink = form.find('input[type="hidden"][name*="return_link"]'),
+                    saveBtn = modal.find('a[data-action="save"]'),
+                    cancelBtn = modal.find('a[data-action="cancel"]');
+                modal.on('hidden.bs.modal', function() {
+                    returnLink.val('');
+                });
+                saveBtn.on('click', function() {
+                    returnLink.val($(this).data('return-link'));
+                    form.submit();
+                });
+                target.on('click', function() {
+                    modal.find('.modal-body .screen-name').text($(this).attr('title'));
+                    modal.modal('show');
+                    saveBtn.data('return-link', $(this).attr('href'));
+                    cancelBtn.attr('href', $(this).attr('href'));
+                    return false;
+                });
+            };
+            confirmFormChange($('#form1'), $('a[data-action="confirm"]'), $('#confirmFormChangeModal'))
+        });
+
+        // searchWordの実行
+        $('#search-category').on('input', function () {
+            searchWord($(this).val(), $('.category-li'));
+        });
+
+        $('.prod-list li').each(function(){
+
+            if($(this).find("input[type='checkbox']:checked").length > 0) {
+                
+                $('.prod-list').css('display', 'flex');
+            } else {
+
+                $(this).css('display', 'none');
+            }
+        });
+
+        // searchWordの実行
+        $('#search-product').on('input', function () {
+
+            searchWord($(this).val(), $('.product-li'));
+
+            //検索結果のデータがあるかチェック
+            $('.prod-list li').each(function(){
+                if($(this).css('display') !== 'none') {
+                    $('.prod-list').css('display', 'flex');
+                }
+            });
+
+            if($(this).val() == '') {
+                $('.prod-list').css('display', 'none');
+            }
+        });
+    </script>
+{% endblock javascript %}
+
+{% block main %}
+
+    <!-- 移動確認モーダル-->
+    <div class="modal fade" id="confirmFormChangeModal" tabindex="-1" role="dialog"
+         aria-labelledby="confirmFormChangeModal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'admin.common.move_to_confirm_title'|trans }}</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="screen-name"></p>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-ec-conversion" data-action="save" href="javascript:void(0)">
+                        {{ 'admin.common.move_to_confirm_save_and_move'|trans }}
+                    </a>
+                    <a class="btn btn-ec-sub" data-action="cancel" href="javascript:void(0)">
+                        {{ 'admin.common.move_to_confirm_move_only'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form role="form" name="form1" id="form1" method="post" action="" novalidate enctype="multipart/form-data">
+
+        {{ form_widget(form._token) }}
+        {{ form_widget(form.return_link) }}
+
+        <div class="c-contentsArea__cols">
+            
+            <div class="c-contentsArea__primaryCol">
+                <div class="c-primaryCol">
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header"><span>ブログ</span></div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.blog_id__short'|trans }}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    <p>{{ Blog.id }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.title'|trans }}</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.title) }}
+                                    {{ form_errors(form.title) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.slug'|trans }}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.slug) }}
+                                    {{ form_errors(form.slug) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.release_date'|trans }}</span>
+                                    <span class="badge badge-primary ml-1">必須</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.release_date) }}
+                                    {{ form_errors(form.release_date) }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
+                                        <span>{{ 'plg.CMBlogPro.blog.image__short'|trans }}</span>
+                                        <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                        <br>{{ 'admin.product.image_size'|trans }}
+                                    </div>
+                                </div>
+                                <div class="col mb-2">
+                                    <div class="progress" style="display: none;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div id="thumb" class="c-form__fileUploadThumbnails clearfix"></div>
+                                    <p id="message"></p>
+                                    <div id="upload-zone" class="media py-5 border-ec-dashed mb-2 rounded">
+                                        <div class="media-body">
+                                            <i class="fa fa-cloud-upload fa-3x text-ec-lightGray mx-3 align-middle" aria-hidden="true"></i>
+                                            {{ 'admin.common.drag_and_drop_image_description'|trans }}
+                                            {{ form_widget(form.product_image, { attr : { accept : 'image/*', style : 'display:none;' } }) }}
+                                            {{ form_errors(form.product_image) }}
+                                            <a class="btn btn-ec-regular mr-2" onclick="$('#CMBlogPro_admin_blog_product_image').click()">
+                                                {{ 'admin.common.file_select'|trans }}
+                                            </a>
+                                        </div><!-- /.media-body -->
+                                    </div><!-- /.media -->
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>記事</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.body) }}
+                                    {{ form_errors(form.body) }}
+                                </div>
+                            </div>
+                            {# <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.related_product'|trans }}</span>
+                                </div>
+                                <div class="col mb">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <i class="fa fa-search"></i>
+                                            </span>
+                                        </div>
+                                        <input id="search-product" class="form-control" type="search"
+                                        placeholder="{{ 'plg.CMBlogPro.blog.search_product'|trans }}"
+                                        aria-label="Search">
+                                    </div>
+                                </div>
+                            </div> #}
+                            <div class="row product-list-block">
+                                <div class="col-3">
+                                </div>
+                                {% macro relatedProd(RelatedIds, Product, form) %}
+                                    {% import _self as selfMacro %}
+                                    <li class="c-directoryTree--registerItem product-li">
+                                        <input type="checkbox" id="CMBlogPro_admin_blog_product_{{ Product.id }}" name="CMBlogPro_admin_blog[Product][]" value="{{ Product.id }}" {% if Product.id in RelatedIds %}checked{% endif %}>
+                                        <label for="CMBlogPro_admin_blog_product_{{ Product.id }}">{{ Product.name }}</label>
+                                    </li>
+                                {% endmacro %}
+                                <div class="col mb-2">
+                                    {% import _self as renderMacro %}
+                                     <ul class="list-unstyled form-control prod-list">
+                                    {% for Product in Products %}
+                                        {{ renderMacro.relatedProd(RelatedProductIds, Product, form.Product) }}
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3">
+                                    <span>{{ 'plg.CMBlogPro.blog.tag'|trans }}</span>
+                                </div>
+                                <div class="col mb-2">
+                                    {{ form_widget(form.tag) }}
+                                    <span class="tag-text">半角カンマ区切りで入力してください</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card rounded border-0 mb-4">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.content.page_meta'|trans }}">
+                                        <span class="card-title">{{ 'admin.content.page_meta__card_title'|trans }}</span>
+                                        <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#pageMeta" aria-expanded="false" aria-controls="pageMeta">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="pageMeta">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.content.page_meta_author'|trans }}</span>
+                                    </div>
+                                    <div class="col mb-2">
+                                        {{ form_widget(form.author) }}
+                                        {{ form_errors(form.author) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.content.page_meta_description'|trans }}</span>
+                                    </div>
+                                    <div class="col mb-2">
+                                        {{ form_widget(form.description) }}
+                                        {{ form_errors(form.description) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.content.page_meta_keyword'|trans }}</span>
+                                    </div>
+                                    <div class="col mb-2">
+                                        {{ form_widget(form.keyword) }}
+                                        {{ form_errors(form.keyword) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <span>{{ 'admin.content.page_meta_robot'|trans }}</span>
+                                    </div>
+                                    <div class="col mb-2">
+                                        {{ form_widget(form.robot) }}
+                                        {{ form_errors(form.robot) }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3">
+                                        <div class="d-inline-block" data-tooltip="true" data-placement="top" title="{{ 'tooltip.content.page_meta_tags'|trans }}">
+                                            <span>{{ 'admin.content.page_meta_metatag'|trans }}</span>
+                                            <i class="fa fa-question-circle fa-lg ml-1"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col mb-2">
+                                        {{ form_widget(form.metatag, { attr : { placeholder : 'admin.content.page_meta_metatag_placeholder'|trans, rows : '10' }}) }}
+                                        {{ form_errors(form.metatag) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Category and creation info-->
+            <div class="c-contentsArea__secondaryCol">
+                <div class="c-secondaryCol">
+                    <div class="card rounded border-0 mb-4"> <!-- Category -->
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="d-inline-block">
+                                        <span class="card-title">{{ 'admin.product.category__product_card_title'|trans }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#category" aria-expanded="false"
+                                       aria-controls="category">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="category">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1">
+                                                            <i class="fa fa-search"></i>
+                                                    </span>
+                                                </div>
+                                                <input id="search-category" class="form-control" type="search"
+                                                       placeholder="{{ 'admin.product.search_category'|trans }}"
+                                                       aria-label="Search">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% macro tree(ChoicedIds, Category, form) %}
+                                    {% import _self as selfMacro %}
+                                    <li class="c-directoryTree--registerItem category-li">
+                                        <input type="checkbox" id="CMBlogPro_admin_blog_category_{{ Category.id }}" name="CMBlogPro_admin_blog[Category][]" value="{{ Category.id }}" {% if Category.id in ChoicedIds %}checked{% endif %}>
+                                        <label for="CMBlogPro_admin_blog_category_{{ Category.id }}">{{ Category.name }}</label>
+                                    </li>
+                                {% endmacro %}
+
+                                <div class="c-directoryTree--register rounded border mb-3 p-3">
+                                    {% import _self as renderMacro %}
+                                    {% for TopCategory in TopCategories %}
+                                        <ul class="list-unstyled">
+                                            {{ renderMacro.tree(ChoicedCategoryIds, TopCategory, form.Category) }}
+                                        </ul>
+                                    {% endfor %}
+                                    {{ form_errors(form.Category) }}
+                                </div>
+                                <div class="d-block text-center">
+                                    <a class="btn btn-block btn-ec-regular"
+                                       data-action="confirm"
+                                       href="{{ path('cm_blog_admin_cat') }}"
+                                       title="{{ 'admin.common.move_to_confirm_message'|trans({
+                                           '%name%' : 'admin.product.category_management'|trans}) }}">{{ 'admin.product.move_to_category'|trans }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card rounded border-0 mb-4"> <!-- Update dates -->
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-8">
+                                    <span class="card-title">{{ 'admin.product.create_date__card_title'|trans }}</span>
+                                </div>
+                                <div class="col-4 text-right">
+                                    <a data-toggle="collapse" href="#update" aria-expanded="false"
+                                       aria-controls="update">
+                                        <i class="fa fa-angle-up fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse show ec-cardCollapse" id="update">
+                            <div class="card-body">
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <i class="fa fa-flag mr-1"></i>
+                                        <span>{{ 'admin.common.create_date'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <span>：{{ Blog.create_date|date_min }}</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <i class="fa fa-refresh mr-1"></i>
+                                        <span>{{ 'admin.common.update_date'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <span>：{{ Blog.update_date|date_min }}</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                        <i class="fa fa-user mr-1"></i>
+                                        <span>{{ 'admin.common.last_updater'|trans }}</span>
+                                    </div>
+                                    <div class="col">
+                                        <span>：{{ Blog.Creator ? Blog.Creator.name }}</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col">
+                                    {#} {% if form.is_for_restaurant.vars.value == 1 %}
+                                    {{ form_widget(form.is_for_restaurant, { attr : {'checked': 1 } }) }}
+                                    {% else %} #}
+                                    {{ form_widget(form.is_for_restaurant) }}
+                                    {{ form_errors(form.is_for_restaurant) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="c-conversionArea">
+            <div class="c-conversionArea__container">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-6">
+                        <div class="c-conversionArea__leftBlockItem">
+                            <a class="c-baseLink"
+                               href="{{ url('cm_blog_admin_blog') }}">
+                                <i class="fa fa-backward" aria-hidden="true"></i>
+                                <span>ブログ一覧</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row align-items-center justify-content-end">
+                            <div class="col-auto">
+                                {{ form_widget(form.status) }}
+                                {{ form_errors(form.status) }}
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-ec-conversion px-5"
+                                        type="submit">登録</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

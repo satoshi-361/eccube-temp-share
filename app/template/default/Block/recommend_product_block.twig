@@ -12,8 +12,9 @@
 <div class="ec-shelfRole cs-side">
     <p class="title">おすすめ記事</p>
     {% for RecommendProduct in recommend_products %}
-        <a href="{{ url('product_detail', {'id': RecommendProduct.Product.id}) }}" class="cs-side-blog">
-            <img src="{{ asset(RecommendProduct.Product.mainFileName|no_image_product, "save_image") }}">
+        {% set Blog = RecommendProduct.Product %}
+        <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="cs-side-blog">
+            <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" alt="{{ Blog.name }}" loading="lazy">
         </a>
     {% endfor %}
 </div>

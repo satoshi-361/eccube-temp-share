@@ -81,9 +81,9 @@ if (!class_exists(TransferHistory::class, false)) {
          * @var string
          * 振込失敗時のエラーメッセージ
          * 
-         * @ORM\Column(name="message", type="string", length=255)
+         * @ORM\Column(name="message", type="string", length=255, nullable=true)
          */
-        private $message;
+        private $message = null;
 
         /**
          * @var \DateTime

@@ -1,0 +1,50 @@
+#====================================================================================
+# Plug in specific messages
+#====================================================================================
+
+
+plg.CMBlogPro.blog_name: 簡単ブログPro
+
+plg.CMBlogPro.category.category_id__short: ID
+plg.CMBlogPro.category.category: カテゴリ
+plg.CMBlogPro.category.select_all_categories: 全てのカテゴリ
+plg.CMBlogPro.category.category_name: カテゴリ名
+plg.CMBlogPro.category.category_class_name: クラス名
+
+# ラベル/メッセージ
+plg.CMBlogPro.blog.blog_id__short: ID
+plg.CMBlogPro.blog.image__short: 画像
+plg.CMBlogPro.blog.title: タイトル
+plg.CMBlogPro.blog.category.category: カテゴリ
+plg.CMBlogPro.blog.display_status: 公開ステータス
+plg.CMBlogPro.blog.display_status__short: 公開状態
+plg.CMBlogPro.blog.release_date: 公開日付
+plg.CMBlogPro.blog.related_product: 関連商品
+plg.CMBlogPro.blog.tag: タグ
+plg.CMBlogPro.blog.month_archive: 月別アーカイブ
+plg.CMBlogPro.blog.search_product: 商品検索
+plg.CMBlogPro.blog.slug: URL スラッグ
+
+#====================================================================================
+# 管理画面
+#====================================================================================
+
+plg.CMBlogPro.admin.blog.multi_search_label: 記事タイトル名・記事ID
+plg.CMBlogPro.admin.blog.copy__confirm_title: 記事を複製します
+plg.CMBlogPro.admin.blog.copy__confirm_message: 記事を複製してよろしいですか？
+plg.CMBlogPro.admin.blog.image_limit: １つの画像しか登録できません。
+
+plg.CMBlogPro.admin.blog.blog_page: ブログ一覧ページ
+
+plg.CMBlogPro.admin.config.title_en: ブログ名（英語）
+plg.CMBlogPro.admin.config.title_jp: ブログ名（日本語）
+
+# flashメッセージ
+plg.CMBlogPro.admin.blog.bulk_change_status_complete: '%status%: %count%件が正常に適用されました'
+plg.CMBlogPro.admin.blog.copy_complete: 記事を複製しました
+plg.CMBlogPro.admin.blog.copy_error: 記事の複製に失敗しました
+plg.CMBlogPro.admin.blog.reset_complete: 記事規格を初期化しました
+
+plg.CMBlogPro.admin.blog.release_date__start: 公開日付 (開始)
+plg.CMBlogPro.admin.blog.release_date__end: 公開日付 (終了)
+plg.CMBlogPro.admin.blog.multi_search_label2: 情報を入力して一覧の絞り込み検索ができます。より詳細な条件を指定するには詳細検索を開いてください。

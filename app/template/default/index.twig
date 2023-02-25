@@ -26,13 +26,15 @@ file that was distributed with this source code.
 
 {% block javascript %}
     <script>
+        $('.loading-icon').hide();
+
         var page_no = {{ page_no }};
         var limit = {{ limit }};
 
         var proto_blog = `
             <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="blog">
                 <div class="image photo">
-                    <img src="/share/html/upload/save_image/\'__blog_image__\'">
+                    <img src="/share/html/upload/save_image/\'__blog_image__\'" loading="lazy">
                 </div>
                 <p class="title">\'__blog_name__\'</p>
                 <div class="badges">
@@ -115,12 +117,19 @@ file that was distributed with this source code.
 
         $(function() {
             let flag_scroll_fetch = true;
+            let flag_loop_successed = true;
+
             $(window).on('scroll', function() {
-                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && flag_scroll_fetch) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && flag_scroll_fetch && flag_loop_successed) {
+                    $('.loading-icon').show();
+                    flag_loop_successed = false;
+
                     $.post('{{ path("top_blog_blocks") }}', {
                         page_no: page_no + 1,
                         limit: limit,
                     }, function( response, state ) {
+                        $('.loading-icon').hide();
+
                         if ( response.Ranks.length ) {
                             let Ranks = response.Ranks;
                             for ( let key in Ranks ) {
@@ -135,6 +144,7 @@ file that was distributed with this source code.
                         }
 
                         page_no += 1;
+                        flag_loop_successed = true;
                         if ( !response.Ranks.length && !response.Pickups.length ) {
                             flag_scroll_fetch = false;
                         }
@@ -164,7 +174,7 @@ file that was distributed with this source code.
                         </div>
                         {% endif %}
                         <div class="image photo">
-                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                            <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" loading="lazy">
                         </div>
                         <p class="title">{{ Blog.name }}</p>
                         <div class="badges">
@@ -230,7 +240,7 @@ file that was distributed with this source code.
                     {% set Blog = Pickup.Product %}
                     <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="blog">
                         <div class="image photo">
-                            <img src="{{ asset(Blog.mainFileName|no_image_product, "save_image") }}">
+                            <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" loading="lazy">
                         </div>
                         <p class="title">{{ Blog.name }}</p>
                         <div class="badges">
@@ -289,5 +299,8 @@ file that was distributed with this source code.
                 {% endfor %}
             </div>
         </div>
+    </div>
+    <div class="loading-icon">
+        <img src="{{ asset('assets/img/top/loading.gif') }}" alt="loading"/>
     </div>
 {% endblock %}

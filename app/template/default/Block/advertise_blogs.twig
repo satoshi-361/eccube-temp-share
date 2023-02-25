@@ -1,0 +1,21 @@
+{#
+ * This file is part of the Recommend Product plugin
+ *
+ * Copyright (C) EC-CUBE CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+#}
+
+<!-- ▼item_list▼ -->
+{% if advertises|length %}
+<div class="ec-shelfRole cs-side">
+    <p class="title">お知らせ</p>
+    {% for Blog in advertises %}
+        <a href="{{ url('cm_blog_pro_page_detail', {'id': Blog.slug ? Blog.slug : Blog.id}) }}" class="cs-side-blog">
+            <img src="{{ asset(Blog.getMainListImage|no_image_product, "save_image") }}" alt="{{ Blog.title }}" loading="lazy">
+        </a>
+    {% endfor %}
+</div>
+{% endif %}
+<!-- ▲item_list▲ -->

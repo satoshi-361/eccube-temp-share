@@ -38,10 +38,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 // require __DIR__  . '/vendor/autoload.php';
+// require $_SERVER['DOCUMENT_ROOT'] . '/share/vendor/autoload.php';
 
-use PayPal\Api\Payout;
-use PayPal\Api\PayoutSenderBatchHeader;
-use PayPal\Api\PayoutItem;
+use Customize\Service\PaypalTransferHelper;
 
 class CustomerController extends AbstractController
 {
@@ -75,13 +74,19 @@ class CustomerController extends AbstractController
      */
     protected $customerRepository;
 
+    /**
+     * @var PaypalTransferHelper
+     */
+    protected $paypalTransferHelper;
+
     public function __construct(
         PageMaxRepository $pageMaxRepository,
         CustomerRepository $customerRepository,
         SexRepository $sexRepository,
         PrefRepository $prefRepository,
         MailService $mailService,
-        CsvExportService $csvExportService
+        CsvExportService $csvExportService,
+        PaypalTransferHelper $paypalTransferHelper
     ) {
         $this->pageMaxRepository = $pageMaxRepository;
         $this->customerRepository = $customerRepository;
@@ -89,6 +94,7 @@ class CustomerController extends AbstractController
         $this->prefRepository = $prefRepository;
         $this->mailService = $mailService;
         $this->csvExportService = $csvExportService;
+        $this->paypalTransferHelper = $paypalTransferHelper;
     }
 
     /**
@@ -359,33 +365,9 @@ class CustomerController extends AbstractController
      */
     public function bulkCheckout(Request $request)
     {
-        $payouts = new Payout();
+        $this->paypalTransferHelper->startPaypalPayout();
 
-        $senderBatchHeader = new PayoutSenderBatchHeader();
-
-        $senderBatchHeader->setSenderBatchId(uniqid())
-            ->setEmailSubject('ペイパルで振り込みます。');
-
-        $senderItem1 = new PayoutItem();
-        $senderItem1->setRecipientType('Email')
-            ->setNote('ありがとうございます。')
-            ->setReceiver('chicyo8196@yahoo.co.jp')
-            ->setSenderItemId('customer1' . uniqid())
-            ->setAmount(new \PayPal\Api\Currency("{
-                'value':3000,
-                'currency':'JPY',
-            }"));
-
-        $payouts->setSenderBatchHeader($senderBatchHeader)
-            ->addItem($senderItem1);
-
-        $request = clone $payouts;
-
-        try {
-            $output = $payouts->create(null);
-        } catch (Exception $ex) {
-            dd($ex);
-        }
-        dd('eee');
+        $this->addSuccess( '送金完了しました。', 'admin' );
+        return $this->redirectToRoute('admin_customer');
     }
 }
