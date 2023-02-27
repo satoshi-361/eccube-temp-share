@@ -90,7 +90,7 @@
                                         <div class="col-auto"><strong>&nbsp;&nbsp;</strong></div>
                                         <div class="col-2"><strong>{{ 'plugin_top_banner.admin.index.col2'|trans }}</strong></div>
                                         <div class="col-2"><strong>{{ 'plugin_top_banner.admin.index.col3'|trans }}</strong></div>
-                                        <div class="col-auto"><strong>{{ 'plugin_top_banner.admin.index.col4'|trans }}</strong></div>
+                                        {# <div class="col-auto"><strong>{{ 'plugin_top_banner.admin.index.col4'|trans }}</strong></div> #}
                                         <div class="col"><strong></strong></div>
                                     </div>
                                 </li>
@@ -104,7 +104,7 @@
                                                     <img src="{{ asset(RecommendProduct.Product.mainFileName|no_image_product, 'save_image') }}" style="max-width: 100px;"/>
                                                 </a>
                                             </div>
-                                            <div class="col-2 d-flex align-items-center">
+                                            <div class="col-6 d-flex align-items-center">
                                                 <a href="{{ url('plugin_top_banner_edit', { id : RecommendProduct.id }) }}" >
                                                     {{ RecommendProduct.Product.name }}
                                                     <br>
@@ -113,7 +113,7 @@
                                                     {% endif %}
                                                 </a>
                                             </div>
-                                            <div class="col-6 d-flex align-items-center">{{ RecommendProduct.comment|raw|nl2br }}</div>
+                                            {# <div class="col-6 d-flex align-items-center">{{ RecommendProduct.comment|raw|nl2br }}</div> #}
 
                                             <div class="col text-right d-flex align-items-center">
                                                 <a href="{{ url('plugin_top_banner_edit', { id : RecommendProduct.id }) }}"

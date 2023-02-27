@@ -10,7 +10,6 @@
 <!-- ▼item_list▼ -->
 {% if advertises|length %}
 <div class="ec-shelfRole cs-side">
-    <p class="title">お知らせ</p>
     {% for Blog in advertises %}
         <a href="{{ url('cm_blog_pro_page_detail', {'id': Blog.slug ? Blog.slug : Blog.id}) }}" class="cs-side-blog">
             <img src="{{ asset(Blog.getMainListImage|no_image_product, "save_image") }}" alt="{{ Blog.title }}" loading="lazy">

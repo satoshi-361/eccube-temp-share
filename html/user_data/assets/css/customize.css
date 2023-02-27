@@ -77,7 +77,7 @@ a:hover img {
 
 .cs-side-blog img {
     width: 100%;
-    height: 140px;
+    /* height: 140px; */
     object-fit: cover;
     border-radius: 4px;
 }
@@ -575,9 +575,23 @@ a:hover img {
         width: 50px;
         height: 50px;
     }
+
+    .pc-only {
+        display: block;
+    }
+    .sp-only {
+        display: none;
+    }
 }
 
 @media only screen and (max-width: 767px) {
+    .pc-only {
+        display: none;
+    }
+    .sp-only {
+        display: block;
+    }
+
     .ec-headerNavSP {    
         box-shadow: 0 0 15px #ddd;
     }
@@ -605,10 +619,10 @@ a:hover img {
     }
 
     .ec-productRole .ec-productRole__utils .editor-name {
-        font-size: 12px;
+        font-size: 13px;
     }
     .ec-productRole .ec-productRole__utils .launch-date {
-        font-size: 11px;
+        font-size: 12px;
     }
     .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
 
@@ -708,6 +722,26 @@ a:hover img {
 
     /** start top sp page */
     /** end top sp page */
+
+    /** start review list page */
+
+    .ec-imageGrid.review-productLayout {
+        width: 100%;
+        display: block;
+    }
+    .ec-imageGrid.review-productLayout .ec-imageGrid__img {
+        width: 150px;
+        display: block;
+    }
+    .ec-imageGrid.review-productLayout .ec-imageGrid__content {
+        display: block;
+    }
+    .ec-imageGrid.review-productLayout .review-layoutRole.list {
+        display: block;
+    }
+
+    /** end review list page */
+
 }
 
 @media only screen and (max-width: 450px) {
@@ -719,9 +753,9 @@ a:hover img {
     }
     .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
         width: 130px;
-        height: 40px;
+        height: 30px;
         line-height: 20px;    
-        padding: 10px 5px;
+        padding: 5px;
         font-size: 12px;
     }
     .ec-productRole .image.top {
@@ -731,11 +765,38 @@ a:hover img {
         height: auto;
     }
     .ec-productRole .ec-productRole__utils .affiliate {
-        width: 190px;
+        width: 155px;
         display: flex;
         flex-wrap: wrap;
     }
+    .ec-productRole .ec-productRole__utils .label {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+    .ec-productRole .ec-productRole__utils .reviewList {
+        font-size: 14px;
+    }
     .ec-productRole .ec-productRole__utils .stock {
-        margin-top: 10px;
+        margin-top: 5px;
+    }
+    .affiliate-panel .title {
+        font-size: 15px;
+    }
+    .affiliate-panel .social-icons .icon {
+        width: 22px;
+    }
+    .affiliate-panel .affiliate-url input {
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    .affiliate-panel .affiliate-url .copy-btn {
+        width: 30px;
+        padding: 3px;
+        top: 0;
+        right: 0;
+    }
+    .affiliate-panel .affiliate-url .copied {
+        padding: 7px;
+        font-size: 13px;
     }
 }

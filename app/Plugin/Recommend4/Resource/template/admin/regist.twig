@@ -119,14 +119,14 @@
                                 </div>
                             </div>
                             {# コメント #}
-                            <div class="row">
+                            {# <div class="row">
                                 <div class="col-3">{{ form_label(form.comment) }}</div>
                                 <div class="col mb-2">
                                     {{ form_widget(form.comment, { attr : { rows : "8"} }) }}
                                     {{ form_errors(form.comment) }}
                                     <p class="text-muted" style="text-align: right">{{ 'plugin_recommend.admin.edit.comment.help'|trans({'%number%' : eccube_config['plugin_recommend.text_area_len']}) }}</p>
                                 </div>
-                            </div>
+                            </div> #}
                         </div>
 
                     </div>

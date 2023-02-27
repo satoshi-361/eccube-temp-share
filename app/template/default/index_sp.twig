@@ -54,16 +54,17 @@ file that was distributed with this source code.
 
             .cs-sideShow {
                 border-radius: 3px;
-                padding: 10px;
+                padding: 12px;
                 position: fixed;
-                top: 50%;
+                top: 160px;
                 left: 100%;
                 z-index: 1;
                 background-color: #333;
                 transform: translate(-100%, -50%);
                 color: white;
+                font-size: 16px;
                 letter-spacing: 3px;
-                box-shadow: 0 0 15px #ddd;
+                box-shadow: 0 0 15px #aaa;
             }
 
             .cs-advertiseRole {
@@ -177,7 +178,7 @@ file that was distributed with this source code.
                     mapped.__sold_out__ = '';
                     break;
                     
-                case 0:
+                case '0':
                     mapped.__stock__ = '売り切れ中';
                     mapped.__sold_out__ = 'sold-out';
                     break;

@@ -50,7 +50,7 @@ security:
                 check_path: mypage_login
                 login_path: mypage_login
                 csrf_token_generator: security.csrf.token_manager
-                default_target_path: homepage
+                default_target_path: mypage_login
                 username_parameter: 'login_email'
                 password_parameter: 'login_pass'
                 use_forward: false
