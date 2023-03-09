@@ -188,7 +188,7 @@ class BlogController extends AbstractController
                 return $this->json([
                     'uploaded' => 1,
                     'filename' => $fileName,
-                    'location' => '/share/html/upload/save_image/' . $fileName,
+                    'location' => '/html/upload/save_image/' . $fileName,
                 ]);
             } else {
                 throw new \Exception("ファイルアップロードに失敗しました");

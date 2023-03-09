@@ -32,9 +32,9 @@ file that was distributed with this source code.
         var limit = {{ limit }};
 
         var proto_blog = `
-            <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="blog">
+            <a href="{{ url('homepage') }}blogs/detail/\'__id__\'" class="blog">
                 <div class="image photo">
-                    <img src="/share/html/upload/save_image/\'__blog_image__\'" loading="lazy">
+                    <img src="/html/upload/save_image/\'__blog_image__\'" loading="lazy">
                 </div>
                 <p class="title">\'__blog_name__\'</p>
                 <div class="badges">
@@ -53,7 +53,7 @@ file that was distributed with this source code.
                     </div>
                     <div class="d-flex align-center" style="padding: 8px 0">
                         <div class="image profile">
-                            <img src="/share/html/upload/save_image/\'__editor_image__\'">
+                            <img src="/html/upload/save_image/\'__editor_image__\'">
                         </div>
                         <div style="padding-left: 15px">
                             <span class="editor-name">\'__nick_name__\'</span><br>

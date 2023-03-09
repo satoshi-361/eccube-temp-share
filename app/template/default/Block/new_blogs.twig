@@ -7,8 +7,8 @@
             let news_flag_loop_successed = true;
 
             let proto_blog = `
-                <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="cs-side-blog">
-                    <img src="/share/html/upload/save_image/\'__blog_image__\'">
+                <a href="{{ url('homepage') }}blogs/detail/\'__id__\'" class="cs-side-blog">
+                    <img src="/html/upload/save_image/\'__blog_image__\'">
                 </a>
             `;
             $(window).on('scroll', function() {

@@ -63,6 +63,9 @@ class PaypalTransferHelper
         $this->paypalConfig = $paypalConfigRepository->get();
     }
 
+    /**
+     * 毎月10日に送金するため、今月1～10日の報酬額は除いて送金する必要があります。
+     */
     public function startPaypalPayout() {
         $transferHistoryRepository = $this->entityManager->getRepository(TransferHistory::class);
         $ActiveCustomerStatus = $this->entityManager->getRepository(CustomerStatus::class)->find(2);
@@ -83,7 +86,13 @@ class PaypalTransferHelper
 
         $Customers = $this->customerRepository->findBy(['Status' => $ActiveCustomerStatus]);
         foreach ( $Customers as $Customer ) {
-            if ( $Customer->getBalance() == 0 ) continue;
+            // 今月の報酬額を集計して送金額から除外します。
+            $startDate = new \DateTime(date('Y-m-01 00:00:00'));
+            $endDate = new \DateTime(date('Y-m-09 23:59:59'));
+            $aggregatedMoney = $transferHistoryRepository->aggregateMoneyByPeriod( $Customer, $startDate, $endDate );
+
+            $transferableMoney = $Customer->getBalance() - $aggregatedMoney;
+            if ( $transferableMoney == 0 ) continue;
             
             if ( !$Customer->getPaypalEmail() ) {
                 $this->mailService->sendPaypalMailNotRegistered( $Customer );
@@ -97,7 +106,7 @@ class PaypalTransferHelper
                 ->setReceiver($Customer->getPaypalEmail())
                 ->setSenderItemId('customer' . uniqid())
                 ->setAmount(new \PayPal\Api\Currency('{
-                    "value":"' . $Customer->getBalance() .'",
+                    "value":"' . $transferableMoney .'",
                     "currency":"JPY"
                 }'));
 
@@ -107,19 +116,19 @@ class PaypalTransferHelper
             $request = clone $payouts;
             $paypalTransferHistory = new TransferHistory();
             $paypalTransferHistory->setCustomerId($Customer->getId());
-            $paypalTransferHistory->setTransferable($Customer->getBalance());
+            $paypalTransferHistory->setTransferable($transferableMoney);
             
             try {
                 $output = $payouts->createSynchronous($apiContext);
             } catch (\PayPal\Exception\PayPalConnectionException $ex) {
                 $paypalTransferHistory->setTransfered(0);
-                $paypalTransferHistory->setBalance($Customer->getBalance());
+                $paypalTransferHistory->setBalance($transferableMoney);
                 $paypalTransferHistory->setTransferedStatus(false);
                 $paypalTransferHistory->setTransferedDate( new \DateTime() );
                 $paypalTransferHistory->setMessage($ex->getCode());
 
                 $this->mailService->sendTransferFailedMail( $Customer, [
-                    'month' => $paypalTransferHistory->getTransferedDate()->format('m'),
+                    'month' =>  date('m', strtotime( $paypalTransferHistory->getTransferedDate()->format('Y-m-d') . '-1 month' )),
                     'transfer_money' => $paypalTransferHistory->getTransfered()
                 ]);
 
@@ -127,17 +136,17 @@ class PaypalTransferHelper
                 continue;
             }
 
-            $paypalTransferHistory->setTransfered($Customer->getBalance());
+            $paypalTransferHistory->setTransfered($transferableMoney);
             $paypalTransferHistory->setBalance(0);
             $paypalTransferHistory->setTransferedDate( new \DateTime() );
             $paypalTransferHistory->setTransferedStatus(true);
 
             $this->mailService->sendTransferSuccessMail( $Customer, [
-                'month' => $paypalTransferHistory->getTransferedDate()->format('m'),
+                'month' =>  date('m', strtotime( $paypalTransferHistory->getTransferedDate()->format('Y-m-d') . '-1 month' )),
                 'transfer_money' => $paypalTransferHistory->getTransfered()
             ]);
 
-            $Customer->setBalance(0);
+            $Customer->setBalance($aggregatedMoney);
             $this->entityManager->persist($Customer);
             $this->entityManager->persist($paypalTransferHistory);
         }
@@ -145,4 +154,8 @@ class PaypalTransferHelper
         $this->entityManager->flush();
         $this->cacheUtil->clearDoctrineCache();
     }
+    
+    // public function startPaypalPayout1() {
+    //     $this->mailService->sendCronTestMail();
+    // }
 }

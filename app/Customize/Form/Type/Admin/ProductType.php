@@ -66,7 +66,7 @@ class ProductType extends BaseType
                 'mapped' => false,
             ])
             // 基本情報
-            ->add('name', TextType::class, [
+            ->add('name', TextareaType::class, [
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),

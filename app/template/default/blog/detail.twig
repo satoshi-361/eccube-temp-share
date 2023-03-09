@@ -58,7 +58,7 @@
 }
 .pluginCMBblog .cm_blog_main_image img{
     max-width: 100%;
-    width: auto;
+    width: 100%;
 }
 ul.tag-ul {
     padding-left:8px;
@@ -96,8 +96,7 @@ h5.tag-header {
     padding: 3px 27px;
 }
 .ec-productRole__description > p img {
-    width: calc(var(--width));
-    height: auto;
+    width: auto;
     margin-bottom: 15px;
 }
 .archive-link-div {
@@ -107,7 +106,12 @@ h5.tag-header {
 .archive-link-div::-webkit-scrollbar {
     display: none;
 }
-@media screen and (max-width: 768px){
+@media screen and (max-width: 767px){
+    .pluginCMBblog.blog_detail a {
+        overflow-wrap: anywhere;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
     .pluginCMBblog.blog_detail .blog_Title{
         padding: 20px 0;
     }
@@ -120,6 +124,9 @@ h5.tag-header {
     }
     .side-bar > div {
         width: 100%
+    }
+    .ec-productRole__description > p img {
+        height: auto;
     }
 }
 @media only screen and (min-width: 768px) {

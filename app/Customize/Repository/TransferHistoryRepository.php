@@ -17,6 +17,8 @@ use Customize\Entity\TransferHistory;
 use Eccube\Repository\AbstractRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Eccube\Entity\Master\OrderItemType;
+
 /**
  * TransferHistoryRepository
  *
@@ -32,5 +34,56 @@ class TransferHistoryRepository extends AbstractRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, TransferHistory::class);
+    }
+
+    /**
+     * @param \Eccube\Entity\Customer $Customer
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * 
+     * @return float $aggregatedMoney
+     * @return array $orderItems
+     */
+    public function aggregateMoneyByPeriod( $Customer, $startDate, $endDate, &$orderItems = null )
+    {
+        $baseInfo = $this->getEntityManager()->getRepository(\Eccube\Entity\BaseInfo::class)->get();
+        $shopFee = $baseInfo->getFee();
+        $orderItemRepository = $this->getEntityManager()->getRepository(\Eccube\Entity\OrderItem::class);
+
+        $qb = $orderItemRepository->createQueryBuilder('oi')
+            ->leftJoin('oi.Product', 'p')
+            ->leftJoin('oi.Order', 'o')
+            ->where('oi.OrderItemType = :OrderItemType')
+            ->andWhere('p.Customer = :Customer')
+            ->orWhere('oi.affiliater = :customer_id')
+            ->andWhere('o.order_date >= :start_date')
+            ->andWhere('o.order_date <= :end_date')
+            ->setParameter('OrderItemType', OrderItemType::PRODUCT)
+            ->setParameter('Customer', $Customer)
+            ->setParameter('customer_id', $Customer->getId())
+            ->setParameter('start_date', $startDate)
+            ->setParameter('end_date', $endDate);
+        
+        $aggregatedMoney = 0;
+        $orderItems = $qb->getQuery()->getResult();
+
+        foreach ( $orderItems as $orderItem ) {
+            $Blog = $orderItem->getProduct();
+
+            if ( $Customer == $Blog->getCustomer() ) {
+                // 投稿者の場合
+                if ( !empty( $orderItem->getAffiliater() ) && $orderItem->getAffiliater() != $Customer->getId() ) {
+                    // 他のユーザーによって提携された場合
+                    $aggregatedMoney += $Blog->getPrice02IncTaxMax() * ( 100 - $Blog->getAffiliateReward() - $shopFee ) / 100;
+                } else {
+                    $aggregatedMoney += $Blog->getPrice02IncTaxMax() * ( 100 - $shopFee ) / 100;
+                }
+            } else {
+                // アフィリエイトの場合
+                $aggregatedMoney += $Blog->getPrice02IncTaxMax() * $Blog->getAffiliateReward() / 100;
+            }
+        }
+
+        return $aggregatedMoney;
     }
 }

@@ -183,6 +183,15 @@ file that was distributed with this source code.
             display: none;
         }
 
+        .ec-editBlogRole .error .tox .tox-edit-area__iframe {
+            border: 1px solid #CF3F34;
+            background: #FDF1F0;
+        }
+
+        .ec-input .ec-errorMessage {
+            margin-top: 5px;
+        }
+
         @media only screen and (min-width: 768px) {
             .ec-borderedDefs dt {
                 padding: 0 10px 0;
@@ -194,13 +203,13 @@ file that was distributed with this source code.
 
         @media only screen and (max-width: 767px) {
             .ec-editBlogRole {
-                padding: 10px;
+                padding: 0;
                 flex-direction: column;
             }
             .ec-editBlogRole .ec-grid__left {
                 width: 100%;
                 margin-right: 0;
-                padding: 10px;
+                padding: 0;
             }
             .ec-editBlogRole .ec-grid__right {
                 width: 100%;
@@ -428,7 +437,12 @@ file that was distributed with this source code.
             selector: '#admin_product_description_detail',
             height: '600',
             plugins : 'code image link',
-            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            menubar: false,
+            toolbar : 'undo redo | h2 h3 bold italic forecolor backcolor image link | alignleft aligncenter alignright alignjustify | outdent indent code',
+            toolbar_mode: 'sliding',
+            mobile: {
+                toolbar_mode: 'wrap',
+            },
             language: 'ja',
             language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
             images_upload_url: '{{ url("mypage_blog_upload") }}',
@@ -440,8 +454,13 @@ file that was distributed with this source code.
         tinymce.init({
             selector: '#wysiwyg-area',
             height: '600',
-            plugins : 'code image link ',
-            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            plugins : 'code image link',
+            menubar: false,
+            toolbar : 'undo redo | h2 h3 bold italic forecolor backcolor image link | alignleft aligncenter alignright alignjustify | outdent indent code',
+            toolbar_mode: 'sliding',
+            mobile: {
+                toolbar_mode: 'wrap',
+            },
             language: 'ja',
             language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
             images_upload_url: '{{ url("mypage_blog_upload") }}',
@@ -498,7 +517,7 @@ file that was distributed with this source code.
                                 </dt>
                                 <dd>
                                     <div class="ec-input{{ has_errors(form.name) ? ' error' }}">
-                                        {{ form_widget(form.name) }}
+                                        {{ form_widget(form.name, {attr : { rows : "2" } }) }}
                                         {{ form_errors(form.name) }}
                                     </div>
                                     <div class="d-none">
@@ -511,7 +530,8 @@ file that was distributed with this source code.
                                     <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top" title="{{ 'tooltip.product.image'|trans }}">
                                         <span>{{ 'admin.product.image'|trans }}</span>
                                         <br>{{ '推奨サイズ : 1280px×670px'|trans }}
-                                    </div>
+                                    </div><br>
+                                    <span style="font-size: 13px;">※上記サイズでない場合、正しく表示されない場合があります。</span>
                                 </dt>
                                 <dd>
                                     <div class="progress" style="display: none;">
@@ -537,6 +557,7 @@ file that was distributed with this source code.
                                     <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top"
                                         title="{{ 'セールスレター'|trans }}">
                                         <span>{{ 'セールスレター'|trans }}</span>
+                                        <span class="ec-required">必須</span>
                                     </div>
                                 </dt>
                                 <dd>
@@ -549,6 +570,7 @@ file that was distributed with this source code.
                             <dl>
                                 <dt>
                                     <span class="ec-label">{{ 'マニュアル'|trans }}</span>
+                                    <span class="ec-required">必須</span>
                                 </dt>
                                 <dd>
                                     <div class="ec-input{{ has_errors(form.free_area) ? ' error' }}">

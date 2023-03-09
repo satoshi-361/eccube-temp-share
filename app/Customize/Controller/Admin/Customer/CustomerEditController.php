@@ -80,40 +80,23 @@ class CustomerEditController extends AbstractController
         }
 
         // 売上履歴一覧.
-        $OrderItemType = OrderItemType::PRODUCT;
-        $orderItems = null;
+        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
+        $orderItems = [];
 
         if ( $request->request->has('transfer-date') ) {
             $date = $request->request->get('transfer-date') . '-01' ;
-            $startDate = new \DateTime(date('Y-m-01', strtotime($date)));
-            $endDate = new \DateTime(date('Y-m-t', strtotime($date)));
+            $startDate = new \DateTime(date('Y-m-01 00:00:00', strtotime($date)));
+            $endDate = new \DateTime(date('Y-m-t 23:59:59', strtotime($date)));
         } else {
             $date = date('Y-m-01');
-            $startDate = new \DateTime($date);
-            $date = date('Y-m-t');
-            $endDate = new \DateTime($date);
+            $startDate = new \DateTime(date('Y-m-01 00:00:00'));
+            $endDate = new \DateTime(date('Y-m-t 23:59:59'));
         }
 
         if ( $id ) {
-            $orderItemRepository = $this->getDoctrine()->getRepository(OrderItem::class);
-            $qb = $orderItemRepository->createQueryBuilder('oi')
-                ->leftJoin('oi.Product', 'p')
-                ->leftJoin('oi.Order', 'o')
-                ->where('oi.OrderItemType = :OrderItemType')
-                ->andWhere('p.Customer = :Customer')
-                ->orWhere('oi.affiliater = :customer_id')
-                ->andWhere('o.order_date >= :start_date')
-                ->andWhere('o.order_date <= :end_date')
-                ->setParameter('OrderItemType', $OrderItemType)
-                ->setParameter('Customer', $Customer)
-                ->setParameter('customer_id', $Customer->getId())
-                ->setParameter('start_date', $startDate)
-                ->setParameter('end_date', $endDate);
-    
-            $orderItems = $qb->getQuery()->getResult();
+            $transferHistoryRepository->aggregateMoneyByPeriod( $Customer, $startDate, $endDate, $orderItems );
         }
 
-        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
         $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);
 
         $balance = 0;

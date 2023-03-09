@@ -299,10 +299,14 @@ a:hover img {
     background-color: darkgrey;
 }
 
-.ec-productRole .cs-productRole__detail img {
+/* .ec-productRole .cs-productRole__detail img {
     width: auto;
-    height: auto;
-}
+} */
+
+/* .ec-productRole .cs-productRole__detail .blog-sales-letter img,
+.ec-productRole .cs-productRole__detail .blog-manual img {
+    width: auto;
+} */
 
 .ec-layoutRole__main #plg_customer_review_detail.review_detail_default .review-sortLayout {
     margin-bottom: 10px;
@@ -524,6 +528,9 @@ a:hover img {
 }
 
 @media only screen and (min-width: 768px) {
+    .ec-newsRole {
+        padding: 10px 0 70px;
+    }
     .cs-contentRole {
         padding: 0 30px;
         z-index: 1000;
@@ -618,14 +625,15 @@ a:hover img {
         font-size: 24px;
     }
 
+    .ec-productRole .cs-productRole__detail img {
+        height: auto;
+    }
+
     .ec-productRole .ec-productRole__utils .editor-name {
         font-size: 13px;
     }
     .ec-productRole .ec-productRole__utils .launch-date {
         font-size: 12px;
-    }
-    .ec-productRole .ec-productRole__utils .ec-productRole__btn .ec-blockBtn--action {
-
     }
 
     .ec-headerTitle__title .image {

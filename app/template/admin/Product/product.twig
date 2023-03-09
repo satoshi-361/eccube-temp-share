@@ -52,6 +52,15 @@ file that was distributed with this source code.
             display: none;
         }
 
+        .error .tox .tox-edit-area__iframe {
+            border: 1px solid #CF3F34;
+            background: #FDF1F0;
+        }
+
+        .ec-input .ec-errorMessage {
+            margin-top: 5px;
+        }
+
         .image {
             width: 50px;
         }
@@ -278,7 +287,12 @@ file that was distributed with this source code.
             selector: '#admin_product_description_detail',
             height: '600',
             plugins : 'code image link',
-            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            menubar: false,
+            toolbar : 'undo redo | h2 h3 bold italic forecolor backcolor image link | alignleft aligncenter alignright alignjustify | outdent indent code',
+            toolbar_mode: 'sliding',
+            mobile: {
+                toolbar_mode: 'wrap',
+            },
             language: 'ja',
             language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
             images_upload_url: '{{ url("admin_product_blog_upload") }}',
@@ -290,7 +304,12 @@ file that was distributed with this source code.
             selector: '#wysiwyg-area',
             height: '600',
             plugins : 'code image link',
-            toolbar : 'undo redo | image code | link styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent',
+            menubar: false,
+            toolbar : 'undo redo | h2 h3 bold italic forecolor backcolor image link | alignleft aligncenter alignright alignjustify | outdent indent code',
+            toolbar_mode: 'sliding',
+            mobile: {
+                toolbar_mode: 'wrap',
+            },
             language: 'ja',
             language_url: '{{ asset("assets/tinymce/langs/ja.js", "user_data") }}',
             images_upload_url: '{{ url("admin_product_blog_upload") }}',

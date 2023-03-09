@@ -212,7 +212,7 @@ class MailService extends BaseService
         log_info('提携メール送信完了', ['count' => $count]);
 
         return $message;
-    }    
+    }
     
     /**
      * Send sale mail.
@@ -652,6 +652,22 @@ class MailService extends BaseService
         $this->mailHistoryRepository->save($MailHistory);
 
         log_info('ペイパル未登録メール送信完了', ['count' => $count]);
+
+        return $message;
+    }
+    
+    public function sendCronTestMail()
+    {
+        $message = (new \Swift_Message())
+            ->setSubject('['.$this->BaseInfo->getShopName().'] Cron Test Mail')
+            ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
+            ->setTo(['reader2024@dispomail.win'])
+            ->setBody('eee')
+            ->setBcc($this->BaseInfo->getEmail01())
+            ->setReplyTo($this->BaseInfo->getEmail03())
+            ->setReturnPath($this->BaseInfo->getEmail04());
+
+        $count = $this->mailer->send($message);
 
         return $message;
     }

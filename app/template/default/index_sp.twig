@@ -29,10 +29,10 @@ file that was distributed with this source code.
             }
             .menu-bar .btn {
                 width: calc(50% - 13px);
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 padding: 10px 12px;
                 display: inline-block;
-                background: linear-gradient(to left, #faebd7 50%, #f7e0c1 50%) right;
+                background: linear-gradient(to left, #f8f8de 50%, #f4f4bb 50%) right;
                 background-size: 200%;
                 transition: 0.3s ease-out;
                 font-family: inherit;
@@ -41,13 +41,13 @@ file that was distributed with this source code.
                 font-weight: bold;
             }
             .menu-bar .btn:nth-child(odd) {
-                margin-right: 10px;
+                margin-right: 20px;
             }
             .menu-bar .btn:hover {
                 background-position: left;
             }
             .menu-bar .btn.active {
-                background: #f7e0c1;
+                background: #f4f4bb;
                 color: red;
                 box-shadow: 0 0 15px #ddd;
             }
@@ -121,9 +121,9 @@ file that was distributed with this source code.
         var flag_loop_successed = true;
 
         var proto_blog = `
-            <a href="https://jck-shizai.com/share/blogs/detail/\'__id__\'" class="blog">
+            <a href="{{ url('homepage') }}blogs/detail/\'__id__\'" class="blog">
                 <div class="image photo">
-                    <img src="/share/html/upload/save_image/\'__blog_image__\'" loading="lazy">
+                    <img src="/html/upload/save_image/\'__blog_image__\'" loading="lazy">
                 </div>
                 <p class="title">\'__blog_name__\'</p>
                 <div class="badges">
@@ -142,7 +142,7 @@ file that was distributed with this source code.
                     </div>
                     <div class="d-flex align-center" style="padding: 8px 0">
                         <div class="image profile">
-                            <img src="/share/html/upload/save_image/\'__editor_image__\'">
+                            <img src="/html/upload/save_image/\'__editor_image__\'">
                         </div>
                         <div style="padding-left: 15px">
                             <span class="editor-name">\'__nick_name__\'</span><br>

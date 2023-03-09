@@ -140,7 +140,7 @@ file that was distributed with this source code.
                             {% for CartItem in Cart.CartItems %}
                                 {% set ProductClass = CartItem.ProductClass %}
                                 {% set Product = ProductClass.Product %}
-                                <div class="ec-cartRow__name">
+                                <div class="ec-cartRow__name sp-only">
                                     <a target="_blank" href="{{ url('product_detail', {id : Product.id} ) }}">{{ Product.name }}</a>
                                     {% if ProductClass.ClassCategory1 and ProductClass.ClassCategory1.id %}
                                         <br>{{ ProductClass.ClassCategory1.ClassName.name }}：{{ ProductClass.ClassCategory1 }}

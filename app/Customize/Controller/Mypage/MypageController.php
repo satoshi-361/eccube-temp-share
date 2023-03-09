@@ -663,38 +663,21 @@ class MypageController extends AbstractController
      */
     public function transferHistory(Request $request)
     {
+        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
         $Customer = $this->getUser();
-        $OrderItemType = OrderItemType::PRODUCT;
 
         if ( $request->query->has('transfer_date') ) {
             $date = $request->query->get('transfer_date') . '-01' ;
-            $startDate = new \DateTime(date('Y-m-01', strtotime($date)));
-            $endDate = new \DateTime(date('Y-m-t', strtotime($date)));
+            $startDate = new \DateTime(date('Y-m-01 00:00:00', strtotime($date)));
+            $endDate = new \DateTime(date('Y-m-t 23:59:59', strtotime($date)));
         } else {
             $date = date('Y-m-01');
-            $startDate = new \DateTime($date);
-            $date = date('Y-m-t');
-            $endDate = new \DateTime($date);
+            $startDate = new \DateTime(date('Y-m-01 00:00:00'));
+            $endDate = new \DateTime(date('Y-m-t 23:59:59'));
         }
 
-        $qb = $this->orderItemRepository->createQueryBuilder('oi')
-            ->leftJoin('oi.Product', 'p')
-            ->leftJoin('oi.Order', 'o')
-            ->where('oi.OrderItemType = :OrderItemType')
-            ->andWhere('p.Customer = :Customer')
-            ->orWhere('oi.affiliater = :customer_id')
-            ->andWhere('o.order_date >= :start_date')
-            ->andWhere('o.order_date <= :end_date')
-            ->setParameter('OrderItemType', $OrderItemType)
-            ->setParameter('Customer', $Customer)
-            ->setParameter('customer_id', $Customer->getId())
-            ->setParameter('start_date', $startDate)
-            ->setParameter('end_date', $endDate);
-
-        $orderItems = $qb->getQuery()->getResult();
-
-        $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
-        $transferHistory = $transferHistoryRepository->findOneBy(['customer_id' => $Customer->getId(), 'transfered_date' => $endDate]);
+        $orderItems = [];
+        $transferHistoryRepository->aggregateMoneyByPeriod( $Customer, $startDate, $endDate, $orderItems );
 
         // $balance = 0;
         // if ( $transferHistory )
@@ -1002,7 +985,7 @@ class MypageController extends AbstractController
                 return $this->json([
                     'uploaded' => 1,
                     'filename' => $fileName,
-                    'location' => '/share/html/upload/save_image/' . $fileName,
+                    'location' => '/html/upload/save_image/' . $fileName,
                 ]);
             } else {
                 throw new \Exception("ファイルアップロードに失敗しました");
