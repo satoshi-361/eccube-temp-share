@@ -544,7 +544,7 @@ file that was distributed with this source code.
                                     </div>
                                     <div class="col mb-2">
                                         <div>
-                                            {{ form_widget(form.launch_date) }}
+                                            <input type="datetime-local" id="admin_product_launch_date" name="admin_product[launch_date]" class="datetimepicker-input form-control" data-target="#admin_product_launch_date" data-toggle="datetimepicker" value="{{ form.launch_date.vars.value }}">
                                             {{ form_errors(form.launch_date) }}
                                         </div>
                                     </div>

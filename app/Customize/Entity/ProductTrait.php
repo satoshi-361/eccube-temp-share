@@ -41,14 +41,13 @@ trait ProductTrait
      *
      * @ORM\Column(name="launch_date", type="datetimetz", nullable=true)
      * @Eccube\Annotation\FormAppend(
-     *     auto_render=true,
-     *     type="\Symfony\Component\Form\Extension\Core\Type\DateType",
+     *     auto_render=false,
+     *     type="\Symfony\Component\Form\Extension\Core\Type\DateTimeType",
      *     options={
      *          "required": false,
      *          "label": false,
      *          "input": "datetime",
      *          "widget": "single_text",
-     *          "format": "yyyy-MM-dd",
      *          "attr": {
      *              "class": "datetimepicker-input",
      *              "data-target": "#admin_product_launch_date",

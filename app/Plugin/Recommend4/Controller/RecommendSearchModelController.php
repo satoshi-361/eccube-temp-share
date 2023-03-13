@@ -99,6 +99,8 @@ class RecommendSearchModelController extends AbstractController
             $searchData['category_id'] = $this->categoryRepository->find($searchData['category_id']);
         }
 
+        $searchData['status'] = $this->getDoctrine()->getRepository(\Eccube\Entity\Master\ProductStatus::class)->find(1);
+
         $qb = $this->productRepository->getQueryBuilderBySearchDataForAdmin($searchData);
 
         /** @var \Knp\Component\Pager\Pagination\SlidingPagination $pagination */
