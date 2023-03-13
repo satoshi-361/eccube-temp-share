@@ -80,13 +80,12 @@ class ProductType extends BaseType
             ->add('description_detail', TextareaType::class, [
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
                 ],
             ])
             ->add('description_list', TextareaType::class, [
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
+                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
                 ],
             ])
             ->add('Category', ChoiceType::class, [
@@ -119,7 +118,7 @@ class ProductType extends BaseType
             ->add('search_word', TextType::class, [
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
+                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
                 ],
             ])
             // サブ情報
@@ -128,7 +127,6 @@ class ProductType extends BaseType
                 'constraints' => [
                     new Assert\NotBlank(),
                     new TwigLint(),
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
                 ],
             ])
 
@@ -141,7 +139,7 @@ class ProductType extends BaseType
             ->add('note', TextareaType::class, [
                 'required' => false,
                 'constraints' => [
-                    new Assert\Length(['max' => $this->eccubeConfig['eccube_ltext_len']]),
+                    new Assert\Length(['max' => $this->eccubeConfig['eccube_stext_len']]),
                 ],
             ])
 

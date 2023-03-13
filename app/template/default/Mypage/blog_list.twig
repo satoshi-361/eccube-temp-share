@@ -37,6 +37,12 @@ file that was distributed with this source code.
             vertical-align: baseline;
             border-radius: 0.25rem;
         }
+        .btn-ec-regular {
+            background-color: #FFFFFF;
+            border-color: #337ab7;
+            color: #337ab7;
+            cursor: pointer;
+        }
         @media only screen and (max-width: 767px) {
             .ec-historyRole .ec-historyRole__contents {
                 overflow-x: scroll;
@@ -63,6 +69,9 @@ file that was distributed with this source code.
                 min-width: 72px;
                 font-size: 13px;
             }
+            /** .btn-ec-regular.confirm {
+                margin-top: 5px;
+            } */
         }
     </style>
 {% endblock %}
@@ -83,6 +92,7 @@ file that was distributed with this source code.
                             <table class="table table-sm">
                                 <thead>
                                 <tr>
+                                    <th class="border-top-0 pt-2 pb-2"></th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.product_id__short'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.image__short'|trans }}</th>
                                     <th class="border-top-0 pt-2 pb-2">{{ 'admin.product.name'|trans }}</th>
@@ -97,6 +107,10 @@ file that was distributed with this source code.
                                 <tbody>
                                 {% for Blog in pagination %}
                                     <tr id="ex-product-{{ Blog.id }}">
+                                        <td class="align-middle">
+                                            <a href="{{ url('mypage_blog_edit', { id : Blog.id }) }}" class="btn btn-ec-regular mr-2">編集</a>
+                                            <a href="{{ url('product_detail', { id : Blog.id }) }}" class="btn btn-ec-regular confirm">確認</a>
+                                        </td>
                                         <td class="align-middle blog-id">{{ Blog.id }}</td>
                                         {# TODO: 画像のサイズをベタ指定しているので、styleguide側を直す #}
                                         <td class="align-middle">
