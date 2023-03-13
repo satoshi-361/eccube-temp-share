@@ -202,6 +202,9 @@ file that was distributed with this source code.
         }
 
         @media only screen and (max-width: 767px) {
+            .ec-mypageRole form {
+                font-size: 14px;
+            }
             .ec-editBlogRole {
                 padding: 0;
                 flex-direction: column;
@@ -215,6 +218,11 @@ file that was distributed with this source code.
                 width: 100%;
                 margin-top: 20px;
                 margin-left: 0;
+            }
+            .ec-editBlogRole .ec-input input,
+            .ec-editBlogRole .ec-input textarea,
+            .ec-editBlogRole .ec-input select {
+                font-size: 13px;
             }
         }
     </style>
@@ -436,6 +444,7 @@ file that was distributed with this source code.
     <script type="text/javascript">
         tinymce.init({
             selector: '#admin_product_description_detail',
+            content_css: '{{ asset("assets/tinymce/customize.css", "user_data") }}',
             height: '600',
             plugins : 'code image link editimage',
             menubar: false,
@@ -454,6 +463,7 @@ file that was distributed with this source code.
         });
         tinymce.init({
             selector: '#wysiwyg-area',
+            content_css: '{{ asset("assets/tinymce/customize.css", "user_data") }}',
             height: '600',
             plugins : 'code image link editimage',
             menubar: false,
@@ -489,7 +499,7 @@ file that was distributed with this source code.
                 content = content.replace(/&quot;/g, '"');
                 $('#wysiwyg-area').val(content);
             {% endif %}
-        })
+        });
     </script>
 {% endblock javascript %}
 

@@ -38,8 +38,20 @@ class PaypalTransferCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+        $date = $input->getOption('date');
 
-        $this->paypalTransferHelper->startPaypalPayout();
+        if (empty($date)) {
+            $io->error('date is required.');
+
+            return 1;
+        }
+
+        if ( $date == 15 ) {
+            $this->paypalTransferHelper->startPaypalPayout15();
+        } else {
+            $this->paypalTransferHelper->startPaypalPayout30();
+        }
+
 
         $io->success('Paypal Transfered');
 
