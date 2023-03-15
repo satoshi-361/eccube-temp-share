@@ -1,9 +1,19 @@
-@media only screen and (max-width: 767px) {
-    .mce-content-body {
-        font-size: 13px;
-    }
-    .mce-content-body p {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
+
+.mce-content-body {
+    font-size: 14px;
+}
+.mce-content-body p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.mce-content-body img {
+    max-width: 100%;
+}
+
+.mce-content-body blockquote {
+    padding: 8px 32px;
+    margin: 0;
+    border: none;
+    background: #f7f9f9;
 }

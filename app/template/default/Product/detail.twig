@@ -128,8 +128,35 @@ file that was distributed with this source code.
             opacity: 1;
         }
 
+        .ec-productRole .cs-productRole__detail {
+            line-height: 35px;
+        }
+
         .ec-productRole .cs-productRole__detail img {
             width: auto;
+        }
+
+        
+        .ec-productRole .cs-productRole__detail blockquote {
+            padding: 8px 32px;
+            margin: 0;
+            border: none;
+            background: #f7f9f9;
+            font-size: 15px;
+        }
+
+        .message_purchase_necessary {
+            border-radius: 3px;
+            border: 1px solid #eb7066;
+            padding: 10px;
+            background: #FDF1F0;
+            font-weight: 600;
+        }
+        @media only screen and (min-width: 768px) {
+            .blog-sales-letter,
+            .blog-manual {
+                padding: 20px;
+            } 
         }
 
         @media only screen and (max-width: 767px) {
@@ -141,6 +168,9 @@ file that was distributed with this source code.
             }
             .ec-productRole .cs-productRole__detail img {
                 height: auto;
+            }
+            .message_purchase_necessary {
+                padding: 5px;
             }
         }
     </style>
@@ -393,23 +423,24 @@ file that was distributed with this source code.
                 {% if is_owner %}
                     <div class="blog-sales-letter">
                         {# セールスレター #}
-                        {{ Product.description_detail|raw|nl2br }}
+                        {{ Product.description_detail|raw }}
                     </div>
                     <div class="blog-manual">
                         {# マニュアル #}
-                        {{ Product.free_area|raw|nl2br }}
+                        {{ Product.free_area|raw }}
                     </div>
                 {% else %}
                     {% if blog_premium_enabled %}
                         <div class="blog-manual">
                             {# マニュアル #}
-                            {{ Product.free_area|raw|nl2br }}
+                            {{ Product.free_area|raw }}
                         </div>
                     {% else %}
                         <div class="blog-sales-letter">
                             {# セールスレター #}
-                            {{ Product.description_detail|raw|nl2br }}
+                            {{ Product.description_detail|raw }}
                         </div>
+                        <p class="message_purchase_necessary">この続きを見るには、記事の購入が必要です！</p>
                     {% endif %}
                 {% endif %}
             </div>
