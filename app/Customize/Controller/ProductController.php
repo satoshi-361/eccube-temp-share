@@ -544,7 +544,11 @@ class ProductController extends AbstractController
             //     }
             // }
             // 公開ステータスでない商品は表示しない.
-            if ($Product->getStatus()->getId() !== ProductStatus::DISPLAY_SHOW) {
+            // if ($Product->getStatus()->getId() !== ProductStatus::DISPLAY_SHOW) {
+            //     return false;
+            // }
+            
+            if ($Product->getStatus()->getId() === ProductStatus::DISPLAY_ABOLISHED) {
                 return false;
             }
         }

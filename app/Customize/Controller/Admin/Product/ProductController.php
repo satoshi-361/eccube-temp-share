@@ -383,7 +383,7 @@ class ProductController extends AbstractController
             $Product
                 ->addProductClass($ProductClass)
                 ->setStatus($ProductStatus)
-                ->setLaunchDate(new \DateTime());
+                ->setLaunchDate(new \DateTime(date('Y-m-d 00:00:00')));
 
             $ProductClass
                 ->setVisible(true)

@@ -338,7 +338,7 @@ class MypageController extends AbstractController
             $Product
                 ->addProductClass($ProductClass)
                 ->setStatus($ProductStatus)
-                ->setLaunchDate(new \DateTime());
+                ->setLaunchDate(new \DateTime(date('Y-m-d 00:00:00')));
             $ProductClass
                 ->setVisible(true)
                 ->setStockUnlimited(true)
@@ -508,18 +508,31 @@ class MypageController extends AbstractController
 
                 // 画像の登録
                 $add_images = $form->get('add_images')->getData();
-                foreach ($add_images as $add_image) {
-                    $ProductImage = new \Eccube\Entity\ProductImage();
-                    $ProductImage
-                        ->setFileName($add_image)
-                        ->setProduct($Product)
-                        ->setSortNo(1);
-                    $Product->addProductImage($ProductImage);
-                    $this->entityManager->persist($ProductImage);
 
-                    // 移動
-                    $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$add_image);
-                    $file->move($this->eccubeConfig['eccube_save_image_dir']);
+                if ( count( $add_images ) ) {
+                    $fs = new Filesystem();
+
+                    foreach ( $Product->getProductImage() as $ProductImage ) {
+                        $Product->removeProductImage($ProductImage);
+                        $this->entityManager->remove($ProductImage);
+                        $this->entityManager->flush();
+
+                        $fs->remove($this->eccubeConfig['eccube_save_image_dir'].'/'.$ProductImage->getFileName());
+                    }
+
+                    foreach ($add_images as $add_image) {
+                        $ProductImage = new \Eccube\Entity\ProductImage();
+                        $ProductImage
+                            ->setFileName($add_image)
+                            ->setProduct($Product)
+                            ->setSortNo(1);
+                        $Product->addProductImage($ProductImage);
+                        $this->entityManager->persist($ProductImage);
+    
+                        // 移動
+                        $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$add_image);
+                        $file->move($this->eccubeConfig['eccube_save_image_dir']);
+                    }
                 }
 
                 // 画像の削除

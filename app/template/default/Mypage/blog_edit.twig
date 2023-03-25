@@ -149,7 +149,7 @@ file that was distributed with this source code.
         }
 
         #upload-zone {
-            border: 1px dashed #ccc;
+            border: 1px dashed #e9e9e9;
             border-radius: 0.25rem;
             padding: 3rem;
             display: flex;
@@ -224,7 +224,38 @@ file that was distributed with this source code.
             .ec-editBlogRole .ec-input select {
                 font-size: 13px;
             }
+            .ec-pageHeader h1 {
+                border: unset;
+                font-size: 18px;
+            }
+            
+            .ec-navlistRole .ec-navlistRole__item {
+                border-color: #e9e9e9;
+            }
+            .ec-label {
+                margin-bottom: 10px;
+            }
         }
+
+        .ec-input textarea, .ec-halfInput textarea, .ec-numberInput textarea, .ec-zipInput textarea, .ec-telInput textarea, .ec-select textarea, .ec-birth textarea,
+        .ec-input input, .ec-halfInput input, .ec-numberInput input, .ec-zipInput input, .ec-telInput input, .ec-select input, .ec-birth input,
+        .ec-input select, .ec-halfInput select, .ec-numberInput select, .ec-zipInput select, .ec-telInput select, .ec-select select, .ec-birth select
+        {
+            border: 1px solid #e9e9e9;
+        }
+
+        .ec-borderedDefs dl {
+            border-bottom: unset;
+        }
+        
+        .tox-tinymce {
+            border: 1px solid #e7e7e7 !important;
+        }
+
+        #admin_product_class_stock {
+            margin-bottom: 0;
+        }
+
     </style>
 {% endblock stylesheet %}
 

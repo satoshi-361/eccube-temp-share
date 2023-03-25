@@ -3,12 +3,12 @@
     font-size: 14px;
 }
 .mce-content-body p {
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin: 18px auto 0;
 }
 
 .mce-content-body img {
     max-width: 100%;
+    margin-top: 25px;
 }
 
 .mce-content-body blockquote {
