@@ -71,6 +71,14 @@ a:hover img {
     text-decoration: underline;
 }
 
+.cs-side .title.news {
+    display: block;
+}
+
+.cs-side .title.news:hover {
+    color: red;
+}
+
 .cs-side-blog {
     display: block;
     margin-bottom: 20px;
@@ -560,8 +568,8 @@ a:hover img {
 
     /* end blog detail */
     .ec-shelfGrid .cs-blogList__item {
-        margin-left: 20px;
-        margin-right: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
     }
 
     .ec-footerRole {

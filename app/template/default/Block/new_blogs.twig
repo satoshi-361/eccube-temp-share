@@ -50,7 +50,7 @@
 {% endblock javascript %}
 
 <div class="ec-shelfRole cs-side news">
-    <p class="title">新着記事</p>
+    <a class="title news" href="{{ url('product_list') }}?orderby=2">新着記事</p>
     {% for Blog in NewBlogs %}
         <a href="{{ url('product_detail', {'id': Blog.id}) }}" class="cs-side-blog">
             <img src="{{ asset(blog_image(Blog, 'middle'), "save_image") }}" loading="lazy">

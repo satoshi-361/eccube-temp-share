@@ -169,7 +169,8 @@ file that was distributed with this source code.
                         <li class="cs-blogList__item">
                             <a href="{{ url('product_detail', {'id': Product.id}) }}" class="blog">
                                 <div class="image photo">
-                                    <img src="{{ asset(Product.mainFileName|no_image_product, "save_image") }}">
+                                    <img src="{{ asset(blog_image(Product, 'middle'), "save_image") }}" loading="lazy">
+                                    {# <img src="{{ asset(Product.mainFileName|no_image_product, "save_image") }}"> #}
                                 </div>
                                 <p class="title">{{ Product.name }}</p>
                                 <div class="badges">

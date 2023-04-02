@@ -291,4 +291,36 @@ class TopController extends AbstractController
 
         return new JsonResponse($response);
     }
+
+    /**
+     * @Route("/paypal-registered", name="paypal_registered", methods={"GET", "POST"})
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function paypalRegistered(Request $request)
+    {
+        try {
+            // Get the JSON data sent by PayPal
+            $postData = file_get_contents("php://input");
+    
+            // Convert JSON to array
+            $data = json_decode($postData, true);
+    
+            // Get the email address from the array
+            $email = $data['resource']['payer']['email_address'];
+            
+            if ( $this->isGranted('IS_AUTHENTICATED_FULLY') && $Customer = $this->getUser() ) {
+                $Customer->setPaypalEmail( $email );
+                $this->entityManager->persist( $Customer );
+                $this->entityManager->flush();
+            }
+            log_info( 'eee' . $email );
+            log_info( 'fff' . $postData );
+    
+            return $this->redirectToRoute('homepage');
+        } catch (\Exception $exception) {
+            log_error( 'ペイパルアカウント開設後のリダイレクトエラー。' );
+        }
+        return new \Symfony\Component\HttpFoundation\Response( false );
+    }
 }

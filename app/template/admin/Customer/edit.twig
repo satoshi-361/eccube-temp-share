@@ -485,7 +485,7 @@ file that was distributed with this source code.
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {% for Blog in Customer.Blogs %}
+                                            {% for Blog in Customer.Blogs if Blog.Status.id != 3 %}
                                                 <tr id="ex-product-{{ Blog.id }}">
                                                     <td class="align-middle">{{ Blog.id }}</td>
                                                     {# TODO: 画像のサイズをベタ指定しているので、styleguide側を直す #}
