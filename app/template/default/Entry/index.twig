@@ -314,6 +314,18 @@ file that was distributed with this source code.
                         </dl>
                         <dl>
                             <dt>
+                                <label class="ec-label">プロフィール</label>
+                                <span class="ec-required">必須</span>
+                            </dt>
+                            <dd>
+                                <div class="ec-halfInput{{ has_errors(form.description) ? ' error' }}">
+                                    {{ form_widget(form.description) }}
+                                    {{ form_errors(form.description) }}
+                                </div>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
                                 {{ form_label(form.address, 'common.address', { 'label_attr': { 'class': 'ec-label' }}) }}
                             </dt>
                             <dd>

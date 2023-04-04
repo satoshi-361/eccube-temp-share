@@ -79,7 +79,7 @@ class TopController extends AbstractController
      */
     public function index()
     {
-        $limit = 3;
+        $limit = 4;
 
         $Ranks = $this->rankService->getRanks( $limit );
         $Pickups = $this->pickupRepository->getRecommendProduct( $limit );
@@ -152,14 +152,14 @@ class TopController extends AbstractController
             ->setParameter('today', new \DateTime())
             ->orderBy('b.approved_date', 'DESC')
             ->setFirstResult(0)
-            ->setMaxResults(4)
+            ->setMaxResults(5)
             ->getQuery()
             ->getResult();
 
         return [
             'NewBlogs' => $NewBlogs,
             'page_no' => 0,
-            'limit' => 4,
+            'limit' => 5,
         ];
     }
 
@@ -236,7 +236,7 @@ class TopController extends AbstractController
 
             $reviewList = $CustomerReviewTotalRepository->getRecommend($Product->getId());
             $reviewerTotal = $reviewTotalPoint = 0;
-            $count = 5;
+            $count = 4;
 
             foreach ( $reviewList as $review ) {
                 $reviewerTotal += $review;

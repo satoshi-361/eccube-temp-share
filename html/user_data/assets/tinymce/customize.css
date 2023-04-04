@@ -12,8 +12,18 @@
 }
 
 .mce-content-body blockquote {
-    padding: 8px 32px;
-    margin: 0;
-    border: none;
-    background: #f7f9f9;
+    margin: 18px auto 0;
+    border-left: solid 3px #afe1e1;
+    padding: 8px 15px;
+    background: #e1f7f7;
+}
+
+.mce-content-body blockquote p {
+    margin: 0 auto;
+}
+
+@media only screen and ( max-width: 450px ) {
+    .mce-content-body blockquote {
+        padding: 8px 10px;
+    }
 }

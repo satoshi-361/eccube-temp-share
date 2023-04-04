@@ -61,6 +61,8 @@ a:hover img {
 
 .ec-shelfRole.cs-side {
     margin: 50px auto;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .cs-side .title {
@@ -648,7 +650,7 @@ a:hover img {
         font-size: 14px;
     }
     .ec-productRole .ec-productRole__utils .launch-date {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .ec-headerTitle__title .image {

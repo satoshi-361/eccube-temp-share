@@ -82,6 +82,16 @@ file that was distributed with this source code.
                         </dl>
                         <dl>
                             <dt>
+                                <label class="ec-label">プロフィール</label>
+                                <span class="ec-required">必須</span>
+                            </dt>
+                            <dd>
+                                {{ form.description.vars.data }}
+                                {{ form_widget(form.description, { type : 'hidden' }) }}
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
                                 {{ form_label(form.address, 'common.address', { 'label_attr': { 'class': 'ec-label' }}) }}
                             </dt>
                             <dd>

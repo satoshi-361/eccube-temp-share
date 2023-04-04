@@ -20,6 +20,7 @@ use Eccube\Form\Type\RepeatedEmailType;
 use Eccube\Form\Type\RepeatedPasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -57,6 +58,12 @@ class EntryType extends BaseType
                 'required' => true,
             ])
             ->add('nick_name', TextType::class, [
+                'required' => true,
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+            ])
+            ->add('description', TextareaType::class, [
                 'required' => true,
                 'constraints' => [
                     new Assert\NotBlank(),
