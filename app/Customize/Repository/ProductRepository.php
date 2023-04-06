@@ -13,13 +13,12 @@
 
 namespace Customize\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Eccube\Common\EccubeConfig;
 use Eccube\Doctrine\Query\Queries;
-use Eccube\Entity\Product;
 use Eccube\Entity\ProductStock;
 use Eccube\Util\StringUtil;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Eccube\Repository\QueryKey;
 
 use Eccube\Repository\ProductRepository as BaseRepository;
 

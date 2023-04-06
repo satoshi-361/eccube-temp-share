@@ -12,14 +12,53 @@
 }
 
 .mce-content-body blockquote {
-    margin: 18px auto 0;
-    border-left: solid 3px #afe1e1;
+    margin: 0;
+    /* border-left: solid 3px #afe1e1; */
     padding: 8px 15px;
     background: #e1f7f7;
 }
 
 .mce-content-body blockquote p {
     margin: 0 auto;
+}
+
+.mce-content-body ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.mce-content-body .mce-toc {
+    display: none;
+    border: 1px solid #e7a6a6;
+}
+
+.mce-content-body .mce-toc ul {
+    padding-left: 20px;
+}
+
+.mce-content-body .mce-toc li::before {
+    content: "•";
+    color: chocolate;
+    margin-right: 0.5em;
+  }
+
+.mce-content-body .mce-toc a {
+    color: chocolate;
+    text-decoration: none;
+}
+
+.mce-content-body .mce-toc a:hover {
+    text-decoration: underline;
+}
+
+.mce-content-body .mce-toc > ul > li::before {
+    color: brown;
+}
+
+.mce-content-body .mce-toc > ul > li > a {
+    color: brown;
+    /* font-size: 16px;
+    font-weight: 600; */
 }
 
 @media only screen and ( max-width: 450px ) {

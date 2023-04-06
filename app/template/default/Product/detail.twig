@@ -95,13 +95,13 @@ file that was distributed with this source code.
 
         .blog-sales-letter {
             margin-bottom: 30px;
-            padding: 10px;
-            /* background: #f8ffff; */
+            /* padding: 10px;
+            background: #f8ffff; */
         }
 
         .blog-manual {
-            padding: 10px;
-            /* background: #fafafb; */
+            /* padding: 10px;
+            background: #fafafb; */
         }
         .blog-sales-letter a,
         .blog-manual a {
@@ -143,19 +143,25 @@ file that was distributed with this source code.
             margin-top: 30px;
         }
 
+        .ec-productRole .cs-productRole__detail .blog-sales-letter p,
+        .ec-productRole .cs-productRole__detail .blog-manual p {
+            margin: 8px auto;
+            line-height: 28px;
+        }
         
         .ec-productRole .cs-productRole__detail blockquote {
-            margin: 8px auto 0;
-            border-left: 4px solid #f5bb71;
-            padding: 8px 18px;
-            background: #fff5e8;
-            font-size: 15px;
+            padding: 8px 32px;
+            border: none;
+            background: #f7f9f9;
+            font-size: 16px;
+            margin: 0px;
         }
         .ec-productRole .cs-productRole__detail blockquote p {
             margin: 0px;
         }
 
         .message_purchase_necessary {
+            margin: 20px;
             border-radius: 3px;
             border: 1px solid #eb7066;
             padding: 10px;
@@ -163,11 +169,100 @@ file that was distributed with this source code.
             font-weight: 600;
             text-align: center;
         }
+
+        .ec-productRole .cs-productRole__detail .container {
+            width: 100%;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .ec-productRole .cs-productRole__detail h2 {
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 2px solid #212121;
+            border-bottom: 1px solid #212121;
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 35px;
+        }
+        
+        .ec-productRole .cs-productRole__detail h3 {
+            margin: 16px auto;
+            border-left: 4px solid #f5bb71;
+            padding: 15px 18px;
+            background: #fff5e8;
+            font-size: 20px;
+            line-height: 30px;
+        }
+
+        .ec-productRole .cs-productRole__detail ul {
+            padding-left: 0;
+            list-style-type: none;
+        }
+
+        .ec-productRole .cs-productRole__detail .mce-toc {
+            font-style: normal;
+            margin-bottom: 36px;
+            padding-left: 20px;
+            padding-right: 20px;
+            background-color: #f7f9f9;
+            border: 1px solid #d8d8d8;
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc .toc-header {
+            position: relative;
+        }
+
+        .ec-productRole .cs-productRole__detail .mce-toc h2 {
+            margin-top: 10px;
+            padding: unset;
+            border: unset;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d8d8d8;
+        }
+
+        .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out button {
+            width: 30px;
+            height: 30px;
+            margin-left: 0;
+            border: unset;
+            border-radius: 15px;
+            background-color: unset;
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out button:hover {
+            /* background: #e3e3e3; */
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out i {
+            color: rgb(249, 98, 4);
+            caret-color: rgb(249, 98, 4);
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out i.rotate {
+            transform: rotate(180deg);
+        }
+        .ec-productRole .cs-productRole__detail .mce-toc ul {
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .ec-productRole .cs-productRole__detail .mce-toc > ul > li > a {
+            font-weight: bold;
+        }
+
         @media only screen and (min-width: 768px) {
-            .blog-sales-letter,
-            .blog-manual {
+            .ec-productRole .cs-productRole__detail .blog-sales-letter,
+            .ec-productRole .cs-productRole__detail .blog-manual {
                 padding: 20px;
-            } 
+            }
+            
+            .ec-productRole .cs-productRole__detail img {
+                max-width: 650px;
+            }
         }
 
         @media only screen and (max-width: 767px) {
@@ -181,21 +276,47 @@ file that was distributed with this source code.
                 height: auto;
             }
             .message_purchase_necessary {
+                margin: 20px auto;
                 padding: 5px;
             }
 
             .ec-productRole .cs-productRole__detail blockquote {
-                border-left: 3px solid #f5bb71;
                 padding: 8px 12px;
             }
         
-            .blog-sales-letter p,
-            .blog-manual p {
-                margin: 8px auto 0;
+            .ec-productRole .cs-productRole__detail .blog-sales-letter p,
+            .ec-productRole .cs-productRole__detail .blog-manual p {
+                margin: 0;
+                font-size: 14px;
             }
             
             .ec-productRole .cs-productRole__detail {
                 line-height: 25px;
+            }
+            
+            .ec-productRole .cs-productRole__detail h3 {
+                padding: 8px;
+            }
+            
+            .ec-productRole .cs-productRole__detail .mce-toc {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+
+            .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out {
+                top: 15px;
+                right: 10px;
+            }
+
+            .ec-productRole .cs-productRole__detail .mce-toc .fade-in-out i {
+                margin-top: 2px;
+            }
+
+            .ec-productRole .cs-productRole__detail .mce-toc li::before {
+                position: absolute;
+                left: 8px;
+                content: "•";
+                color: #337ab7;
             }
         }
     </style>
@@ -323,7 +444,14 @@ file that was distributed with this source code.
                     $('.add-cart').prop('disabled', false);
                 });
             });
+
+            $('.cs-productRole__detail .toc-header').prepend('<div class="fade-in-out"><span>閉じる</span><button><i class="fas fa-chevron-down"></i></button></div>')
         });
+
+        $('.cs-productRole__detail .toc-header').on('click', '.fade-in-out', function(){
+            $(this).find('i').toggleClass('rotate');
+            $(this).parents('.mce-toc').children('ul').toggle(100);
+        })
 
         $('.ec-modal-wrap').on('click', function(e) {
             // モーダル内の処理は外側にバブリングさせない
@@ -445,11 +573,13 @@ file that was distributed with this source code.
                 </div>
             </div>
             <div class="cs-productRole__detail">
+                {# {% if is_owner or app.session.has('_security_admin') %} #}
                 {% if is_owner %}
                     <div class="blog-sales-letter">
                         {# セールスレター #}
                         {{ Product.description_detail|raw }}
                     </div>
+                    <p class="message_purchase_necessary">この続きを見るには、記事の購入が必要です！</p>
                     <div class="blog-manual">
                         {# マニュアル #}
                         {{ Product.free_area|raw }}

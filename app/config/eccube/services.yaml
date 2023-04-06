@@ -231,3 +231,6 @@ services:
 
     Customize\Twig\Extension\EccubeExtension:
         decorates: Eccube\Twig\Extension\EccubeExtension
+
+    Customize\Repository\ProductRepository:
+        decorates: Eccube\Repository\ProductRepository

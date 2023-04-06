@@ -193,10 +193,17 @@ file that was distributed with this source code.
         }
 
         @media only screen and (min-width: 768px) {
+            .ec-borderedDefs dl {
+                flex-wrap: wrap;
+            }
             .ec-borderedDefs dt {
+                width: 100%;
+                margin-top: 20px;
+                margin-bottom: 5px;
                 padding: 0 10px 0;
             }
             .ec-borderedDefs dd {
+                width: 100%;
                 padding-left: 10px;
             }
         }
@@ -460,8 +467,13 @@ file that was distributed with this source code.
             });
 
             $('button[name="status"]').on('click', function(){
-                $('#admin_product_Status').val($(this).attr('value')).change();
-                $('#form1').submit();
+                let alertMessage = '記事を' + $(this).text() + 'しますか？';
+                if (confirm(alertMessage)) {
+                    $('#admin_product_Status').val($(this).attr('value')).change();
+                    $('#form1').submit();
+                } else {
+                    return false;
+                }
             });
         });
 
@@ -471,16 +483,47 @@ file that was distributed with this source code.
         });
     </script>
     {# <script type="text/javascript" src="{{ asset('assets/tinymce/tinymce.min.js', 'user_data') }}"></script> #}
+    <script src="https://unpkg.com/twemoji@14.0.2/dist/twemoji.min.js"></script>
     <script src="https://cdn.tiny.cloud/1/mwr1xyp2cwjqjr7qlbbqdyn8ag0xotu83m221miypxxd2r67/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script type="text/javascript">
+        twemoji.parse(document.body);
+        function generateToc( content ) {
+            var tempEl = document.createElement('div');
+            tempEl.innerHTML = content;
+            eTocs = tempEl.querySelectorAll('.mce-toc');
+            eTocs.forEach(function(eToc) {
+                eToc.parentNode.removeChild(eToc);
+            });
+
+            var headings = tempEl.querySelectorAll('h2, h3');
+            var toc = '<div class="mce-toc" contenteditable="false" data-mce-toc="true" data-mce-selected="1"><div class="toc-header"><h2 contenteditable="true">目次</h2></div><ul>';
+            headings.forEach(function(heading) {
+                if ( heading.innerHTML.trim() == "" ) {
+                    heading.parentNode.removeChild(heading);
+                } else {
+                    var id = heading.getAttribute('id') || 'toc-' + Math.random().toString(36).substring(7);
+                    heading.setAttribute('id', id);
+                    var name = heading.textContent;
+                    var level = (heading.tagName == 'H2') ? 2 : 3;
+                    toc += ( level == 2 )
+                        ? '<li><a href="#' + id + '">' + name + '</a></li>'
+                        : '<ul><li><a href="#' + id + '">' + name + '</a></li></ul>'
+                    ;
+                }
+            });
+            toc += '</ul></div>';
+
+            return toc + tempEl.innerHTML;
+        }
         tinymce.init({
             selector: '#admin_product_description_detail',
             content_css: '{{ asset("assets/tinymce/customize.css", "user_data") }}',
             height: '600',
-            plugins : 'code image link editimage emoticons',
+            plugins : 'code image link editimage emoticons tableofcontents',
             menubar: false,
-            toolbar : 'undo redo | h2 h3 bold italic blockquote outdent indent image link | forecolor backcolor emoticons code',
+            toolbar : 'undo redo | h2 h3 bold italic blockquote image link | forecolor backcolor fontsize',
             toolbar_mode: 'sliding',
+            font_size_formats: '10px 14px 16px 20px 23px 26px',
             mobile: {
                 toolbar_mode: 'wrap',
             },
@@ -490,16 +533,25 @@ file that was distributed with this source code.
             automatic_uploads: true,
             branding: false,
             relative_urls: false,
-            hidden_input: false
+            hidden_input: false,
+            // emoticons_database_url: '{{ asset("assets/tinymce/plugins/emoticons/js/emojis.min.js", "user_data") }}',
+            // content_style: 'body { font-family:Helvetica,Arial,sans-serif; }',
+            setup: function(editor) {
+                editor.on('SaveContent', function(e) {
+                    var content = generateToc(e.content);
+                    editor.setContent(content);
+                });
+            }
         });
         tinymce.init({
             selector: '#wysiwyg-area',
             content_css: '{{ asset("assets/tinymce/customize.css", "user_data") }}',
             height: '600',
-            plugins : 'code image link editimage emoticons',
+            plugins : 'code image link editimage emoticons tableofcontents',
             menubar: false,
-            toolbar : 'undo redo | h2 h3 bold italic blockquote outdent indent image link | forecolor backcolor emoticons code',
+            toolbar : 'undo redo | h2 h3 bold italic blockquote image link | forecolor backcolor fontsize',
             toolbar_mode: 'sliding',
+            font_size_formats: '10px 14px 16px 20px 23px 26px',
             mobile: {
                 toolbar_mode: 'wrap',
             },
@@ -509,7 +561,13 @@ file that was distributed with this source code.
             automatic_uploads: true,
             branding: false,
             relative_urls: false,
-            hidden_input: false
+            hidden_input: false,
+            setup: function(editor) {
+                editor.on('SaveContent', function(e) {
+                    var content = generateToc(e.content);
+                    editor.setContent(content);
+                });
+            }
         });
 
         $(function (){
@@ -598,11 +656,11 @@ file that was distributed with this source code.
                                     </div><!-- /.media -->
                                 </dd>
                             </dl>
-                            <dl>
+                            <dl class="no-flex">
                                 <dt>
                                     <div class="d-inline-block ec-label" data-tooltip="true" data-placement="top"
-                                        title="{{ 'セールスレター'|trans }}">
-                                        <span>{{ 'セールスレター'|trans }}</span>
+                                        title="{{ '無料記事部分'|trans }}">
+                                        <span>{{ '無料記事部分'|trans }}</span>
                                         <span class="ec-required">必須</span>
                                     </div>
                                 </dt>
@@ -613,9 +671,9 @@ file that was distributed with this source code.
                                     </div>
                                 </dd>
                             </dl>
-                            <dl>
+                            <dl class="no-flex">
                                 <dt>
-                                    <span class="ec-label">{{ 'マニュアル'|trans }}</span>
+                                    <span class="ec-label">{{ '有料記事部分'|trans }}</span>
                                     <span class="ec-required">必須</span>
                                 </dt>
                                 <dd>
@@ -742,7 +800,7 @@ file that was distributed with this source code.
                                         
                                 <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
                             {% endif %} #}
-                            {% if Product.id %}<a href="{{ url('product_detail', { id: Product.id }) }}" class="ec-blockBtn mb-3">{{ 'プレビュー'|trans }}</a>{% endif %}
+                            {% if Product.id %}<a href="{{ url('product_detail', { id: Product.id }) }}" class="ec-blockBtn mb-3" target="_blank">{{ 'プレビュー'|trans }}</a>{% endif %}
                             <button class="ec-blockBtn--primary mb-3" name="status" value="4">{{ '下書き保存'|trans }}</button>
                             <button class="ec-blockBtn--action mb-3" name="status" value="2">{{ '記事審査・再審査'|trans }}</button>
                             <button class="ec-blockBtn--cancel mb-3" name="status" value="3">{{ '削除'|trans }}</button>
