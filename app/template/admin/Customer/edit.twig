@@ -421,13 +421,13 @@ file that was distributed with this source code.
                                                         {% else %}
                                                             <span>販売者：　　
                                                                 {% if Product.Customer is not empty %}
-                                                                    <a href="{{ url('admin_customer_edit', { id: Product.Customer.id }) }}"> {{ Product.Customer.__toString }} </a>
+                                                                    <a href="{{ url('admin_customer_edit', { id: Product.Customer.id }) }}"> {{ Product.Customer.nick_name }} </a>
                                                                 {% else %}
                                                                     管理者
                                                                 {% endif %}
                                                             </span><br/>
                                                             <span>購⼊者：　　
-                                                                    <a href="{{ url('admin_customer_edit', { id: orderItem.Order.Customer.id }) }}"> {{ orderItem.Order.Customer.__toString }} </a>
+                                                                    <a href="{{ url('admin_customer_edit', { id: orderItem.Order.Customer.id }) }}"> {{ orderItem.Order.Customer.nick_name }} </a>
                                                             </span>
                                                         {% endif %}
                                                     </td>

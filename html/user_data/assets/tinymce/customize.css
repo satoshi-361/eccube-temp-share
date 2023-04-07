@@ -7,7 +7,7 @@
 }
 
 .mce-content-body img {
-    max-width: 100%;
+    max-width: 500px;
     margin-top: 25px;
 }
 
@@ -64,5 +64,9 @@
 @media only screen and ( max-width: 450px ) {
     .mce-content-body blockquote {
         padding: 8px 10px;
+    }
+    
+    .mce-content-body img {
+        max-width: 100%;
     }
 }

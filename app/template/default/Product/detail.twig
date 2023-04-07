@@ -502,7 +502,9 @@ file that was distributed with this source code.
                 <div class="d-flex align-center space-between">
                     <div class="d-flex align-center">
                         <div class="image profile">
-                            <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                            <a href="{{ url('user_profile', { id: Product.Customer.id }) }}">
+                                <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                            </a>
                         </div>
                         <div style="padding-left: 15px">
                             <span class="editor-name">{{ Product.Customer.nick_name }}</span><br />
@@ -603,7 +605,9 @@ file that was distributed with this source code.
                 <div class="d-flex align-center space-between">
                     <div class="d-flex align-center">
                         <div class="image profile">
-                            <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                            <a href="{{ url('user_profile', { id: Product.Customer.id }) }}">
+                                <img src="{{ asset(Product.Customer.image|no_image_product, "save_image") }}">
+                            </a>
                         </div>
                         <div style="padding-left: 15px">
                             <span class="editor-name">{{ Product.Customer.nick_name }}</span><br />

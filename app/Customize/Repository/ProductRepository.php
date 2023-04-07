@@ -87,6 +87,14 @@ class ProductRepository extends BaseRepository
                     ->setParameter($key, '%'.$keyword.'%');
             }
         }
+        
+        // customer
+        if (!empty($searchData['customer_id']) && $searchData['customer_id']) {
+            $qb
+                ->innerJoin('p.Customer', 'cst')
+                ->andWhere('cst.id = :customer_id')
+                ->setParameter('customer_id', $searchData['customer_id']);
+        }
 
         // Order By
         // 価格低い順
