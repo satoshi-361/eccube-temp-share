@@ -150,7 +150,8 @@ class TopController extends AbstractController
             ->andWhere('b.Status = 1')
             ->andWhere('b.launch_date <= :today')
             ->setParameter('today', new \DateTime())
-            ->orderBy('b.approved_date', 'DESC')
+            ->orderBy('b.update_date', 'DESC')
+            ->addOrderBy('b.approved_date', 'DESC')
             ->setFirstResult(0)
             ->setMaxResults(5)
             ->getQuery()
@@ -300,6 +301,49 @@ class TopController extends AbstractController
     public function paypalRegistered(Request $request)
     {
         try {
+            // Read the raw POST data from PayPal
+            $raw_post_data = file_get_contents('php://input');
+    
+            // Parse the POST data as key/value pairs
+            $post_data = array();
+            parse_str($raw_post_data, $post_data);
+    
+            // Verify that the IPN notification came from PayPal
+            $req = 'cmd=_notify-validate';
+            foreach ($post_data as $key => $value) {
+                $value = urlencode(stripslashes($value));
+                $req .= "&$key=$value";
+            }
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, 'https://www.paypal.com/cgi-bin/webscr');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+            $res = curl_exec($ch);
+            curl_close($ch);
+    
+            // Check that the response from PayPal is "VERIFIED"
+            if (strcmp($res, "VERIFIED") == 0) {
+                // Extract the email address from the IPN notification
+                $email = $post_data['payer_email'];
+                
+                if ( $this->isGranted('IS_AUTHENTICATED_FULLY') && $Customer = $this->getUser() ) {
+                    $Customer->setPaypalEmail( $email );
+                    $this->entityManager->persist( $Customer );
+                    $this->entityManager->flush();
+                }
+        
+                return $this->redirectToRoute('homepage');
+            }
+        } catch (\Exception $exception) {
+            log_error( 'ペイパルアカウント開設後のリダイレクトエラー。' );
+        }
+        return new \Symfony\Component\HttpFoundation\Response( false );
+
+        try {
             // Get the JSON data sent by PayPal
             $postData = file_get_contents("php://input");
     
@@ -314,8 +358,6 @@ class TopController extends AbstractController
                 $this->entityManager->persist( $Customer );
                 $this->entityManager->flush();
             }
-            log_info( 'eee' . $email );
-            log_info( 'fff' . $postData );
     
             return $this->redirectToRoute('homepage');
         } catch (\Exception $exception) {

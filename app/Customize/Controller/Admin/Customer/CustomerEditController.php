@@ -141,6 +141,10 @@ class CustomerEditController extends AbstractController
                 $Customer->setEmail(StringUtil::random(60).'@dummy.dummy');
             }
 
+            if ($profile = $this->detectLinks($Customer->getDescription())) {
+                $Customer->setDescription($profile);
+            }
+
             $this->entityManager->persist($Customer);
             $this->entityManager->flush();
 
@@ -169,5 +173,15 @@ class CustomerEditController extends AbstractController
             'balance' => $balance,
             'selectedMonth' => substr($date, 0, 7),
         ];
+    }
+
+    private function detectLinks($text) {
+        if (str_contains($text, '</a>')) return false;
+
+        // Regular expression to match URLs in text
+        $urlRegex = '/(https?:\/\/[^\s]+)/';
+        
+        // Replace each URL with an HTML link element
+        return preg_replace($urlRegex, '<a href="$0" target="_blank">$0</a>', $text);
     }
 }

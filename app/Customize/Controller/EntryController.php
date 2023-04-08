@@ -187,6 +187,10 @@ class EntryController extends AbstractController
                         $file->move($this->eccubeConfig['eccube_save_image_dir']);
                     }
 
+                    if ($profile = $this->detectLinks($Customer->getDescription())) {
+                        $Customer->setDescription($profile);
+                    }
+
                     $this->entityManager->persist($Customer);
                     $this->entityManager->flush();
 
@@ -266,9 +270,15 @@ class EntryController extends AbstractController
             ]
         );
 
+        $affiliateBlogId = null;
+        if ( $this->session->has(\Customize\Controller\ProductController::SESSION_AFFILIATE_BLOG) ) {
+            $affiliateBlogId = $this->session->get(\Customize\Controller\ProductController::SESSION_AFFILIATE_BLOG);
+        }
+
         if (!is_null($qtyInCart)) {
             return [
                 'qtyInCart' => $qtyInCart,
+                'affiliateBlogId' => $affiliateBlogId,
             ];
         } elseif ($request->getMethod() === 'GET' && count($errors) === 0) {
             // 会員登録処理を行う
@@ -276,6 +286,7 @@ class EntryController extends AbstractController
 
             return [
                 'qtyInCart' => $qtyInCart,
+                'affiliateBlogId' => $affiliateBlogId,
             ];
         }
 
@@ -374,5 +385,15 @@ class EntryController extends AbstractController
         }
 
         return $this->json(['files' => $files], 200);
+    }
+
+    private function detectLinks($text) {
+        if (str_contains($text, '</a>')) return false;
+
+        // Regular expression to match URLs in text
+        $urlRegex = '/(https?:\/\/[^\s]+)/';
+        
+        // Replace each URL with an HTML link element
+        return preg_replace($urlRegex, '<a href="$0" target="_blank">$0</a>', $text);
     }
 }

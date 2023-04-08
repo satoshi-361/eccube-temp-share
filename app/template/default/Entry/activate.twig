@@ -31,7 +31,11 @@ file that was distributed with this source code.
                             <a class="ec-blockBtn--action" style="margin-bottom: 3px" href="{{ url('cart') }}">{{ 'common.go_to_cart'|trans }}</a>
                         {% endif %}
                         <a class="ec-blockBtn--action" href="https://www.paypal.com/signin?country.x=JP&locale.x=ja_JP&langTgl=ja&returnUri={{ url('paypal_registered') }}" style="padding: 0 4px;">{{ 'PayPalアカウントの作成'|trans }}</a> <br />
-                        <a class="ec-blockBtn--cancel" href="{{ url('homepage') }}">{{ 'common.go_to_top'|trans }}</a>
+                        {% if affiliateBlogId is defined and affiliateBlogId is not empty %}
+                            <a class="ec-blockBtn--cancel" href="{{ url('product_detail', { id: affiliateBlogId }) }}">{{ '記事ページに移動'|trans }}</a>
+                        {% else %}
+                            <a class="ec-blockBtn--cancel" href="{{ url('homepage') }}">{{ 'common.go_to_top'|trans }}</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
