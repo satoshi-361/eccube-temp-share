@@ -1,0 +1,20 @@
+{#
+Copyright(c) YAMATO CO.,LTD. All Rights Reserved.
+#}
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    {% for SitemapUrl in SitemapUrls %}
+    <url>
+        <loc>{{ SitemapUrl.loc }}</loc>
+        {% if SitemapUrl.lastmod %}
+        <lastmod>{{ SitemapUrl.lastmod|date('Y-m-d\TH:i:sP') }}</lastmod>
+        {% endif %}
+        {% if SitemapUrl.changefreq %}
+        <changefreq>{{ SitemapUrl.changefreq }}</changefreq>
+        {% endif %}
+        {% if SitemapUrl.priority %}
+        <priority>{{ SitemapUrl.priority }}</priority>
+        {% endif %}
+    </url>
+    {% endfor %}
+</urlset>

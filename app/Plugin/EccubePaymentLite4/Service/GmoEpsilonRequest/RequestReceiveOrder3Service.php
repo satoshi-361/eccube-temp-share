@@ -4,6 +4,8 @@ namespace Plugin\EccubePaymentLite4\Service\GmoEpsilonRequest;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Order;
+use Eccube\Common\Constant;
+use Eccube\Repository\PluginRepository;
 use Plugin\EccubePaymentLite4\Entity\Config;
 use Plugin\EccubePaymentLite4\Repository\ConfigRepository;
 use Plugin\EccubePaymentLite4\Service\GetProductInformationFromOrderService;
@@ -38,13 +40,19 @@ class RequestReceiveOrder3Service
      */
     private $configRepository;
 
+    /**
+     * @var pluginRepository
+     */
+    private $pluginRepository;
+    
     public function __construct(
         GmoEpsilonRequestService $gmoEpsilonRequestService,
         ConfigRepository $configRepository,
         GmoEpsilonUrlService $gmoEpsilonUrlService,
         EccubeConfig $eccubeConfig,
         GetProductInformationFromOrderService $getProductInformationFromOrderService,
-        GmoEpsilonOrderNoService $gmoEpsilonOrderNoService
+        GmoEpsilonOrderNoService $gmoEpsilonOrderNoService,
+        PluginRepository $pluginRepository
     ) {
         $this->gmoEpsilonRequestService = $gmoEpsilonRequestService;
         $this->configRepository = $configRepository;
@@ -52,6 +60,7 @@ class RequestReceiveOrder3Service
         $this->eccubeConfig = $eccubeConfig;
         $this->getProductInformationFromOrderService = $getProductInformationFromOrderService;
         $this->gmoEpsilonOrderNoService = $gmoEpsilonOrderNoService;
+        $this->pluginRepository = $pluginRepository;
     }
 
     /**
@@ -107,6 +116,9 @@ class RequestReceiveOrder3Service
 
         /** @var Config $Config */
         $Config = $this->configRepository->find(1);
+        
+        $PluginVersion = $this->pluginRepository->findByCode('EccubePaymentLite4')->getVersion();
+        
         // 送信データを作成
         $parameter = [
             'contract_code' => $Config->getContractCode(),
@@ -122,7 +134,7 @@ class RequestReceiveOrder3Service
             'process_code' => 1,                              // 処理区分(固定)
             'xml' => 1,                                                       // 応答形式(固定)
             'memo1' => '',                                                      // 予備01
-            'memo2' => 'EC-CUBE4_'.date('YmdHis'),                       // 予備02
+            'memo2' => 'EC-CUBE_' . Constant::VERSION . '_' . $PluginVersion . "_" . date('YmdHis'),  // 予備02
             'version' => 1,
         ];
         if ($Order->getPaymentMethod() === $this->eccubeConfig['gmo_epsilon']['pay_name']['reg_credit']) {

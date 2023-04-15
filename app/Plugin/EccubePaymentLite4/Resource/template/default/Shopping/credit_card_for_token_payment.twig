@@ -20,6 +20,8 @@
                     {{ form_widget(form.contract_code) }}
                     {{ form_errors(form.contract_code) }}
                     {{ form_errors(form.token) }}
+                </form>
+                <form method="post" id="formSubmit" action="javascript:void(0);">
                     <div class="ec-borderedDefs">
                         <dl>
                             <dt>
@@ -78,7 +80,6 @@
                         <div class="ec-off4Grid">
                             <div class="ec-off4Grid__cell">
                                 <button
-                                    id="formSubmit"
                                     type="submit"
                                     class="ec-blockBtn--action"
                                 >
@@ -104,19 +105,59 @@
 <script src='{{ url_token_js }}'></script>
 <script>
     {# トークンを送信 #}
+    var gmo_token_error_messages = {
+		"100" : "カード番号に数字以外の文字が含まれています",
+		"101" : "カード番号の桁数が正しくありません",
+		"110" : "有効期限が入力されていません",
+		"111" : "有効期限に数値以外の文字が含まれています",
+		"112" : "有効期限は6又は4ケタで指定してください",
+		"113" : "有効期限は有効な年月を指定してください",
+		"121" : "セキュリティコードに数字以外の文字が含まれています",
+		"122" : "セキュリティコードは4桁以内で指定してください",
+		"131" : "名義人に無効な文字が含まれています",
+		"132" : "名義人は50桁以内で指定してください",
+    };
+    
+	var gmo_token_error_element = {
+        "100" : "credit_card_number",
+        "101" : "credit_card_number",
+        "110" : "expiration_month",
+        "111" : "expiration_month",
+        "112" : "expiration_month",
+        "113" : "expiration_month",
+        "121" : "security_code",
+        "122" : "security_code",
+        "131" : "holder_name",
+        "132" : "holder_name",
+    };
+        
+    function getErrorMessage(error_code) {
+        if (typeof gmo_token_error_messages[error_code] == null) {
+            return  + "決済エラーです。";
+        }　else {
+        	return gmo_token_error_messages[error_code];	
+        }
+    }
+
+    
     function execTrade(response) {
-        if (response.resultCode != 000) {
+        if (response.resultCode != '000') {
             document.getElementById('credit_card_for_token_payment_token').value = '';
+			alert(getErrorMessage(response.resultCode)); // エラーの場合
+			document.getElementById("credit_card_for_token_payment_" + gmo_token_error_element[response.resultCode]).focus();
+            loadingOverlay('hide');
+            return;
         } else {
             {# フォームに値を設定 #}
             document.getElementById('credit_card_for_token_payment_token').value = response.tokenObject.token;
+            document.getElementById('createTokenForm').submit()
         }
         {# スクリプトからフォームをsubmit #}
-        document.getElementById('createTokenForm').submit()
     }
+
     $(function() {
         {# トークン発行 #}
-        $('#formSubmit').on('click', function(e) {
+        $('#formSubmit').on('submit', function(e) {
             e.preventDefault();
             var cardObj = {};
             var year = document.getElementById('credit_card_for_token_payment_expiration_year').value;

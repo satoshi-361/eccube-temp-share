@@ -1,1 +1,1 @@
-{"name":"ec-cube\/eccubepaymentlite4","version":"1.0.15","description":"EC-CUBE\u30da\u30a4\u30e1\u30f3\u30c8Lite4","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6 || ^2.0"},"extra":{"code":"EccubePaymentLite4","id":2200}}
+{"name":"ec-cube\/eccubepaymentlite4","version":"1.0.17","description":"EC-CUBE\u30da\u30a4\u30e1\u30f3\u30c8Lite4","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.6 || ^2.0"},"extra":{"code":"EccubePaymentLite4","id":2200}}

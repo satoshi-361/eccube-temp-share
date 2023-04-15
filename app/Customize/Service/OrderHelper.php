@@ -90,6 +90,7 @@ class OrderHelper extends BaseService
                 ->setProductClass($ProductClass)
                 ->setProductName($Product->getName())
                 ->setProductCode($ProductClass->getCode())
+                ->setAffiliateReward($Product->getAffiliateReward())
                 ->setPrice($ProductClass->getPrice02())
                 ->setQuantity($item->getQuantity())
                 ->setOrderItemType($ProductItemType);

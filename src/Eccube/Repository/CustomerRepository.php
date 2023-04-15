@@ -56,6 +56,10 @@ class CustomerRepository extends AbstractRepository
      */
     protected $encoderFactory;
 
+    public const COLUMNS = [
+        'customer_id' => 'c.id', 'name' => 'c.name01', 'balance' => 'c.balance',
+    ];
+
     /**
      * CustomerRepository constructor.
      *
@@ -280,7 +284,15 @@ class CustomerRepository extends AbstractRepository
         }
 
         // Order By
-        $qb->addOrderBy('c.update_date', 'DESC');
+        if (isset($searchData['sortkey']) && !empty($searchData['sortkey'])) {
+            $sortOrder = (isset($searchData['sorttype']) && $searchData['sorttype'] == 'a') ? 'ASC' : 'DESC';
+            $qb->orderBy(self::COLUMNS[$searchData['sortkey']], $sortOrder);
+            $qb->addOrderBy('c.update_date', 'DESC');
+            $qb->addOrderBy('c.id', 'DESC');
+        } else {
+            $qb->orderBy('c.update_date', 'DESC');
+            $qb->addOrderBy('c.id', 'DESC');
+        }
 
         return $this->queries->customize(QueryKey::CUSTOMER_SEARCH, $qb, $searchData);
     }

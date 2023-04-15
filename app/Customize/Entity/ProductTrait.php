@@ -84,7 +84,7 @@ trait ProductTrait
      * })
      */
     private $StatusColor;
-    
+
     /**
      * Get affiliate_reward
      * 

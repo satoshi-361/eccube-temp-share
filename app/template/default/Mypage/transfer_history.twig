@@ -76,22 +76,22 @@ file that was distributed with this source code.
                         </tr>
                     </thead>
                     <tbody>
-                        {% for orderItem in orderItems %}
+                        {% for orderItem in pagination %}
                         {% set Product = orderItem.Product %}
                         <tr>
                             <td>{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
                             <td class="blog-name"><a class="" href="{{ url('product_detail', { id: Product.id }) }}"> {{ Product.name }} </a></td>
                             <td class="reward">
                                 {% if orderItem.affiliater is not empty and orderItem.affiliater == app.user.id %}
-                                    {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                    {{ ( orderItem.price * orderItem.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
                                 {% endif %}
                             </td>
                             <td class="profit">
                                 {% if Product.Customer.id == app.user.id %}
                                     {% if orderItem.affiliater is not empty and orderItem.affiliater != app.user.id %}
-                                        {{ ( Product.getPrice02IncTaxMax * ( 100 - Product.affiliate_reward - shopFee ) / 100 )|price }}
+                                        {{ ( orderItem.price * ( 100 - orderItem.affiliate_reward - shopFee ) / 100 )|price }}
                                     {% else %}
-                                        {{ ( Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
+                                        {{ ( orderItem.price * ( 100 - shopFee ) / 100 )|price }}
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -99,24 +99,24 @@ file that was distributed with this source code.
                                 {% if Product.Customer.id == app.user.id %}
                                     {% if orderItem.affiliater is not empty and orderItem.affiliater != app.user.id %}
                                         <p>
-                                            <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                            <span class="label price"> {{ orderItem.price|price }} </span>
                                             <span class="plus"> + </span> 
                                             <span class="label comment">（記事販売額）</span>
                                         </p>
                                         <p> 
-                                            <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
+                                            <span class="label price"> {{ ( orderItem.price * orderItem.affiliate_reward / 100 )|price }} </span>
                                             <span class="minus"> - </span>
                                             <span class="label comment">（アフィリエイト）</span>
                                         </p>
                                     {% else %}
                                         <p>
-                                            <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                            <span class="label price"> {{ orderItem.price|price }} </span>
                                             <span class="plus"> + </span>
                                             <span class="label comment">（記事販売額）</span>
                                         </p>
                                     {% endif %}
                                         <p>
-                                            <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
+                                            <span class="label price"> {{ (orderItem.price * shopFee / 100)|price }} </span>
                                             <span class="minus"> - </span>
                                             <span class="label comment">（手数料）</span>
                                         </p>
@@ -137,6 +137,9 @@ file that was distributed with this source code.
                         {% endfor %}
                     </tbody>
                 </table>
+                <div class="ec-pagerRole">
+                    {% include "transfer_history_pager.twig" with {'pages': pagination.paginationData} %}
+                </div>
             </div>
         </div>
     </div>

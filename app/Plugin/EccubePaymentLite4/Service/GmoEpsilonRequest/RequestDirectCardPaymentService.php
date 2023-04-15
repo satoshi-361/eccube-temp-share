@@ -5,6 +5,8 @@ namespace Plugin\EccubePaymentLite4\Service\GmoEpsilonRequest;
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Customer;
 use Eccube\Service\OrderHelper;
+use Eccube\Common\Constant;
+use Eccube\Repository\PluginRepository;
 use Plugin\EccubePaymentLite4\Repository\ConfigRepository;
 use Plugin\EccubePaymentLite4\Service\GetProductInformationFromOrderService;
 use Plugin\EccubePaymentLite4\Service\GmoEpsilonOrderNoService;
@@ -48,6 +50,11 @@ class RequestDirectCardPaymentService
      */
     protected $orderHelper;
 
+    /**
+     * @var pluginRepository
+     */
+    private $pluginRepository;
+    
     public function __construct(
         GmoEpsilonRequestService $gmoEpsilonRequestService,
         ConfigRepository $configRepository,
@@ -56,7 +63,8 @@ class RequestDirectCardPaymentService
         GetProductInformationFromOrderService $getProductInformationFromOrderService,
         GmoEpsilonOrderNoService $gmoEpsilonOrderNoService,
         SessionInterface $session,
-        OrderHelper $orderHelper
+        OrderHelper $orderHelper,
+        PluginRepository $pluginRepository
     ) {
         $this->gmoEpsilonRequestService = $gmoEpsilonRequestService;
         $this->Config = $configRepository->get();
@@ -66,6 +74,7 @@ class RequestDirectCardPaymentService
         $this->gmoEpsilonOrderNoService = $gmoEpsilonOrderNoService;
         $this->session = $session;
         $this->orderHelper = $orderHelper;
+        $this->pluginRepository = $pluginRepository;
     }
 
     public function handle($Order, $processCode, $stCode, $route, $token)
@@ -82,6 +91,8 @@ class RequestDirectCardPaymentService
         }
         $itemInfo = $this->getProductInformationFromOrderService->handle($Order);
         $orderNumber = $this->gmoEpsilonOrderNoService->create($Order->getId());
+        $PluginVersion = $this->pluginRepository->findByCode('EccubePaymentLite4')->getVersion();
+        
         $parameters = [
             'contract_code' => $this->Config->getContractCode(),
             'user_id' => $user_id,
@@ -95,7 +106,7 @@ class RequestDirectCardPaymentService
             'mission_code' => 1,
             'process_code' => $processCode,
             'memo1' => $route,
-            'memo2' => 'EC-CUBE4_'.date('YmdHis'),
+            'memo2' => 'EC-CUBE_' . Constant::VERSION . '_' . $PluginVersion . "_" . date('YmdHis'),
             'xml' => '1',
             'user_agent' => array_key_exists('HTTP_USER_AGENT', $_SERVER) ? $_SERVER['HTTP_USER_AGENT'] : null,
             'tds_check_code' => 1, // 3DSフラグ / NULL or 1 ：通常処理　（初回）

@@ -369,7 +369,7 @@ file that was distributed with this source code.
                                 </div>
                             </div>
                             <div class="collapse show ec-cardCollapse" id="transferHistory">
-                                {% if Customer.Blogs|length > 0 %}
+                                {% if pagination|length > 0 %}
                                     <div class="card-body">
                                         <table class="table table-sm">
                                             <thead>
@@ -382,40 +382,40 @@ file that was distributed with this source code.
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {% for orderItem in orderItems %}
+                                            {% for orderItem in pagination %}
                                                 {% set Product = orderItem.Product %}
                                                 <tr>
                                                     <td class="align-middle">{{ orderItem.Order.order_date|date('Y年m月d日') }}</td>
                                                     <td class="align-middle"><a class="" href="{{ url('admin_product_product_edit', { id: Product.id }) }}"> {{ Product.name }} </a></td>
                                                     <td class="align-middle">
                                                         {% if orderItem.affiliater is not empty and orderItem.affiliater == Customer.id %}
-                                                            {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
+                                                            {{ ( orderItem.price * orderItem.affiliate_reward / 100 )|price }} <span class="plus"> + </span>
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle">
                                                         {% if Product.Customer.id == Customer.id %}
                                                             {% if orderItem.affiliater is not empty and orderItem.affiliater != Customer.id %}
-                                                                {{ ( Product.getPrice02IncTaxMax * ( 100 - Product.affiliate_reward - shopFee ) / 100 )|price }}
+                                                                {{ ( orderItem.price * ( 100 - orderItem.affiliate_reward - shopFee ) / 100 )|price }}
                                                             {% else %}
-                                                                {{ ( Product.getPrice02IncTaxMax * ( 100 - shopFee ) / 100 )|price }}
+                                                                {{ ( orderItem.price * ( 100 - shopFee ) / 100 )|price }}
                                                             {% endif %}
                                                         {% endif %}
                                                     </td>
                                                     <td class="align-middle" style="width: 25%">
                                                         {% if Product.Customer.id == Customer.id %}
                                                             {% if orderItem.affiliater is not empty and orderItem.affiliater != Customer.id %}
-                                                                    <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                                                    <span class="label price"> {{ orderItem.price|price }} </span>
                                                                     <span class="plus"> + </span>
                                                                     <span class="label comment">（記事販売額）</span> <br />
-                                                                    <span class="label price"> {{ ( Product.getPrice02IncTaxMax * Product.affiliate_reward / 100 )|price }} </span>
+                                                                    <span class="label price"> {{ ( orderItem.price * orderItem.affiliate_reward / 100 )|price }} </span>
                                                                     <span class="minus"> - </span>
                                                                     <span class="label comment">（アフィリエイト）</span><br />
                                                             {% else %}
-                                                                    <span class="label price"> {{ Product.getPrice02IncTaxMax|price }} </span>
+                                                                    <span class="label price"> {{ orderItem.price|price }} </span>
                                                                     <span class="plus"> + </span>
                                                                     <span class="label comment">（記事販売額）</span> <br />
                                                             {% endif %}
-                                                                    <span class="label price"> {{ (Product.getPrice02IncTaxMax * shopFee / 100)|price }} </span>
+                                                                    <span class="label price"> {{ (orderItem.price * shopFee / 100)|price }} </span>
                                                                     <span class="minus"> - </span>
                                                                     <span class="label comment">（手数料）</span><br />
                                                         {% else %}
@@ -435,12 +435,17 @@ file that was distributed with this source code.
                                             {% endfor %}
                                             </tbody>
                                         </table>
+                                        <div class="row justify-content-md-center mb-4">
+                                            {% if pagination.totalItemCount > 0 %}
+                                                {% include "@admin/customer_pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_customer_edit_page', 'customer_id': Customer.id } %}
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 {% else %}
                                     <div class="card-body">
                                         <div id="history_box" class="data-empty">
                                         <span>
-                                            {{ 'この会員の投稿履歴がありません'|trans }}
+                                            {{ 'この会員の売上履歴がありません'|trans }}
                                         </span>
                                         </div>
                                     </div>

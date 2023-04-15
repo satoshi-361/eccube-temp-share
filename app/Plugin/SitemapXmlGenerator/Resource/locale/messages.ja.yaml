@@ -1,0 +1,33 @@
+#------------------------------------------------------------------------------------
+# sitemap.xml管理
+#------------------------------------------------------------------------------------
+
+# 画面項目ラベル
+admin.sitemapxmlgenerator_management: sitemap.xml管理
+admin.sitemapxmlgenerator.sitemap_xml_url_title: Sitemap XML URL
+admin.sitemapxmlgenerator.setting_title: 出力項目設定
+admin.sitemapxmlgenerator.setting: 出力項目設定
+admin.sitemapxmlgenerator.sitemap_link: sitemap.xml 表示
+admin.sitemapxmlgenerator.lastmodAvailed: 最終更新日の取得可否
+admin.sitemapxmlgenerator.changefreq: 更新頻度記述の有無
+admin.sitemapxmlgenerator.priorityAvailed: 優先度の自動設定
+admin.sitemapxmlgenerator.excludedDirectories: 除外ディレクトリ
+admin.sitemapxmlgenerator.sameTitleUrlExcluded: 同一タイトルURLの除外
+# 選択肢　共通
+admin.sitemapxmlgenerator.yes: する
+admin.sitemapxmlgenerator.no: しない
+# 更新頻度の選択肢
+admin.sitemapxmlgenerator.none: 記述しない
+admin.sitemapxmlgenerator.always: アクセスごと
+admin.sitemapxmlgenerator.hourly: 1時間ごと
+admin.sitemapxmlgenerator.daily: 1日ごと
+admin.sitemapxmlgenerator.weekly: 1週間ごと
+admin.sitemapxmlgenerator.monthly: 1ヶ月ごと
+admin.sitemapxmlgenerator.yearly: 1年ごと
+admin.sitemapxmlgenerator.never: 更新しない
+# ツールチップ
+tooltip.admin.sitemapxmlgenerator.lastmodAvailed: ファイルの最終更新日です。 この日付は W3C Datetime 形式で記述します。 必要な場合は、時刻の部分を省略して YYYY-MM-DD の形式で記述することもできます。\nこのタグは、サーバーが返す If-Modified-Since (304) ヘッダーとは別のものです。検索エンジンは、両方のソースからの情報を別々に使用することがあります。
+tooltip.admin.sitemapxmlgenerator.changefreq: ページの更新頻度です。 検索エンジンではこの値を参考情報として使用しますが、指定した値とは異なる頻度でクロールされることがあります。
+tooltip.admin.sitemapxmlgenerator.priorityAvailed: サイト内の他の URL と比較したこの URL の優先度です。0.0 から 1.0 までの値を指定できます。この値は他のサイトのページとの比較方法に影響するものではなく、検索エンジンのクローラに重要なページを知らせるためのものです。
+tooltip.admin.sitemapxmlgenerator.excludedDirectories: sitemap.xml内に含めたくないディレクトリを指定出来ます。例：search,member,admin,mypage(カンマ区切りで複数可)
+tooltip.admin.sitemapxmlgenerator.sameTitleUrlExcluded: パラメータの違いだけで、同一タイトル同一内容のページを省くことが可能です。

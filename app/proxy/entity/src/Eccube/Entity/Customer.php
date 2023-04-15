@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
      */
     class Customer extends \Eccube\Entity\AbstractEntity implements UserInterface, \Serializable
     {
-    use \Customize\Entity\CustomerTrait, \Plugin\PayPalCheckout\Entity\CustomerTrait;
+    use \Customize\Entity\CustomerTrait, \Plugin\PayPalCheckout\Entity\CustomerTrait, \Plugin\MailMagazine4\Entity\CustomerTrait;
 
         /**
          * @var int

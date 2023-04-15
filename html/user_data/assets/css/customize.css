@@ -262,6 +262,11 @@ a:hover img {
     border: 1px solid #ddd;
 }
 
+.ec-productRole .ec-productRole__utils .profile-data {
+    width: calc(100% - 60px);
+    padding-left: 15px
+}
+
 .ec-productRole .ec-productRole__utils .label {
     margin-right: 4px;
     padding: 10px;
@@ -766,7 +771,17 @@ a:hover img {
     }
 
     /** end review list page */
+    .ec-productRole .ec-productRole__utils .image.profile {
+        width: 50px;
+    }
+    .ec-productRole .ec-productRole__utils .image.profile img {
+        height: 50px;
+        border-radius: 25px;
+    }
 
+    .ec-productRole .ec-productRole__utils .profile-data {
+        width: calc(100% - 50px);
+    }
 }
 
 @media only screen and (max-width: 450px) {

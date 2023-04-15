@@ -64,10 +64,7 @@ class EntryType extends BaseType
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank(),
-                ],
+                'required' => false,
             ])
             ->add('postal_code', PostalType::class, [
                 'required' => true,

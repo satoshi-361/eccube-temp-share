@@ -3,6 +3,8 @@
 namespace Plugin\EccubePaymentLite4\Service\GmoEpsilonRequest;
 
 use Eccube\Common\EccubeConfig;
+use Eccube\Common\Constant;
+use Eccube\Repository\PluginRepository;
 use Plugin\EccubePaymentLite4\Repository\ConfigRepository;
 use Plugin\EccubePaymentLite4\Service\GetProductInformationFromOrderService;
 use Plugin\EccubePaymentLite4\Service\GmoEpsilonOrderNoService;
@@ -36,13 +38,19 @@ class RequestReceiveOrderService
      */
     private $gmoEpsilonOrderNoService;
 
+    /**
+     * @var pluginRepository
+     */
+    private $pluginRepository;
+    
     public function __construct(
         GmoEpsilonRequestService $gmoEpsilonRequestService,
         ConfigRepository $configRepository,
         GmoEpsilonUrlService $gmoEpsilonUrlService,
         EccubeConfig $eccubeConfig,
         GetProductInformationFromOrderService $getProductInformationFromOrderService,
-        GmoEpsilonOrderNoService $gmoEpsilonOrderNoService
+        GmoEpsilonOrderNoService $gmoEpsilonOrderNoService,
+        PluginRepository $pluginRepository
     ) {
         $this->gmoEpsilonRequestService = $gmoEpsilonRequestService;
         $this->Config = $configRepository->get();
@@ -50,11 +58,13 @@ class RequestReceiveOrderService
         $this->eccubeConfig = $eccubeConfig;
         $this->getProductInformationFromOrderService = $getProductInformationFromOrderService;
         $this->gmoEpsilonOrderNoService = $gmoEpsilonOrderNoService;
+        $this->pluginRepository = $pluginRepository;
     }
 
     public function handle($Customer, $processCode, $route, $Order = null)
     {
         $status = 'NG';
+        $PluginVersion = $this->pluginRepository->findByCode('EccubePaymentLite4')->getVersion();
         $parameters = [
             'contract_code' => $this->Config->getContractCode(),
             'user_id' => $Customer->getId(),
@@ -63,7 +73,7 @@ class RequestReceiveOrderService
             'st_code' => '11000-0000-00000-00000-00000-00000-00000',
             'process_code' => $processCode,
             'memo1' => $route,
-            'memo2' => 'EC-CUBE4_'.date('YmdHis'),
+            'memo2' => 'EC-CUBE_' . Constant::VERSION . '_' . $PluginVersion . "_" . date('YmdHis'), 
             'xml' => 1,
             'version' => 1,
         ];

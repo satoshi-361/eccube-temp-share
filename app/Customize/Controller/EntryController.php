@@ -180,7 +180,8 @@ class EntryController extends AbstractController
                         ->setSalt($salt)
                         ->setPassword($password)
                         ->setSecretKey($secretKey)
-                        ->setPoint(0);
+                        ->setPoint(0)
+                        ->setMailmagaFlg(1);
 
                     if (!$Customer->getImage() == '') {
                         $file = new File($this->eccubeConfig['eccube_temp_image_dir'].'/'.$Customer->getImage());

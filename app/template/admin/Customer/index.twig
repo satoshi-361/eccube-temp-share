@@ -46,6 +46,15 @@ file that was distributed with this source code.
             border-radius: 3px;
             object-fit: cover;
         }
+
+        .js-listSort {
+            color: #999;
+        }
+        .js-listSort .fa {
+            display: inline-block;
+            width: 1em;
+            margin-left: 3px;
+        }
     </style>
 {% endblock stylesheet %}
 
@@ -310,6 +319,8 @@ file that was distributed with this source code.
                     </div>
                 {% endfor %}
             </div>
+            {{ form_widget(searchForm.sortkey, {'attr': {'class': 'js-listSort-key'}}) }}
+            {{ form_widget(searchForm.sorttype, {'attr': {'class': 'js-listSort-type'}}) }}
         </div>
         <div class="c-outsideBlock__contents mb-5">
             <button type="submit" class="btn btn-ec-conversion px-5">{{ 'admin.common.search'|trans }}</button>
@@ -361,7 +372,7 @@ file that was distributed with this source code.
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.name'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.phone_number'|trans }}</th>
                                         <th class="border-top-0 pt-2 pb-3">{{ 'admin.common.mail_address'|trans }}</th>
-                                        <th class="border-top-0 pt-2 pb-3">{{ '残高'|trans }}</th>
+                                        <th class="border-top-0 pt-2 pb-3">{{ '残高'|trans }}<a href="#" class="js-listSort" data-sortkey="balance"><i class="fa fa-arrow-up" aria-hidden="true"></i></th>
                                         <th class="border-top-0 pt-2 pb-3">&nbsp;</th>
                                         <th class="border-top-0 pt-2 pb-3 pr-3">&nbsp;</th>
                                     </tr>

@@ -62,7 +62,8 @@ class TransferHistoryRepository extends AbstractRepository
             ->setParameter('Customer', $Customer)
             ->setParameter('customer_id', $Customer->getId())
             ->setParameter('start_date', $startDate)
-            ->setParameter('end_date', $endDate);
+            ->setParameter('end_date', $endDate)
+            ->orderBy('o.update_date', 'DESC');
         
         $aggregatedMoney = 0;
         $orderItems = $qb->getQuery()->getResult();

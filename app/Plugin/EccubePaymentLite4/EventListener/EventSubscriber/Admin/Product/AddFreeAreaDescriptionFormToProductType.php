@@ -24,7 +24,7 @@ class AddFreeAreaDescriptionFormToProductType implements EventSubscriberInterfac
     public static function getSubscribedEvents()
     {
         return [
-            // '@admin/Product/product.twig' => 'product',
+            '@admin/Product/product.twig' => 'product',
         ];
     }
 

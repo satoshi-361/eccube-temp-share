@@ -223,6 +223,9 @@ services:
     Customize\Form\Type\Admin\ProductType:
         decorates: Eccube\Form\Type\Admin\ProductType
 
+    Customize\Form\Type\Admin\SearchCustomerType:
+        decorates: Eccube\Form\Type\Admin\SearchCustomerType
+
     Customize\Service\OrderHelper:
         decorates: Eccube\Service\OrderHelper
 

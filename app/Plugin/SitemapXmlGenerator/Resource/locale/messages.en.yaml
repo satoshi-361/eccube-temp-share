@@ -1,0 +1,33 @@
+#------------------------------------------------------------------------------------
+# sitemap.xml
+#------------------------------------------------------------------------------------
+
+# Screen Label
+admin.sitemapxmlgenerator_management: sitemap.xml
+admin.sitemapxmlgenerator.sitemap_xml_url_title: Sitemap XML URL
+admin.sitemapxmlgenerator.setting_title: Output settings
+admin.sitemapxmlgenerator.setting: Output settings
+admin.sitemapxmlgenerator.sitemap_link: Show sitemap.xml
+admin.sitemapxmlgenerator.lastmodAvailed: Whether to get lastmod
+admin.sitemapxmlgenerator.changefreq: Whether changefreq description is possible
+admin.sitemapxmlgenerator.priorityAvailed: Whether priority can be described
+admin.sitemapxmlgenerator.excludedDirectories: Excluded directories
+admin.sitemapxmlgenerator.sameTitleUrlExcluded: Exclusion of the same title URL
+# Common choices
+admin.sitemapxmlgenerator.yes: yes
+admin.sitemapxmlgenerator.no: no
+# Update frequency options
+admin.sitemapxmlgenerator.none: none
+admin.sitemapxmlgenerator.always: always
+admin.sitemapxmlgenerator.hourly: hourly
+admin.sitemapxmlgenerator.daily: daily
+admin.sitemapxmlgenerator.weekly: weekly
+admin.sitemapxmlgenerator.monthly: montyly
+admin.sitemapxmlgenerator.yearly: yearly
+admin.sitemapxmlgenerator.never: never
+# Tooltip
+tooltip.admin.sitemapxmlgenerator.lastmodAvailed: The date of last modification of the file. This date should be in W3C Datetime format. This format allows you to omit the time portion, if desired, and use YYYY-MM-DD.
+tooltip.admin.sitemapxmlgenerator.changefreq: How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page. 
+tooltip.admin.sitemapxmlgenerator.priorityAvailed: The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0. This value does not affect how your pages are compared to pages on other sites—it only lets the search engines know which pages you deem most important for the crawlers.
+tooltip.admin.sitemapxmlgenerator.excludedDirectories: You can specify directories that you do not want to include in sitemap.xml. Example:search,member,admin,mypage(カンマ区切りで複数可)
+tooltip.admin.sitemapxmlgenerator.sameTitleUrlExcluded: It is possible to omit pages with the same title and the same content just by changing the parameters.

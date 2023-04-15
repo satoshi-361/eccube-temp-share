@@ -4,6 +4,8 @@ namespace Plugin\EccubePaymentLite4\Service\GmoEpsilonRequest;
 
 use Eccube\Common\EccubeConfig;
 use Eccube\Entity\Order;
+use Eccube\Common\Constant;
+use Eccube\Repository\PluginRepository;
 use Plugin\EccubePaymentLite4\Entity\Config;
 use Plugin\EccubePaymentLite4\Entity\RegularOrder;
 use Plugin\EccubePaymentLite4\Repository\ConfigRepository;
@@ -42,7 +44,11 @@ class RequestCreateRegularOrderService
      * @var GetCardCgiUrlService
      */
     private $getCardCgiUrlService;
-
+    /**
+     * @var pluginRepository
+     */
+    private $pluginRepository;
+    
     public function __construct(
         GmoEpsilonRequestService $gmoEpsilonRequestService,
         ConfigRepository $configRepository,
@@ -50,7 +56,8 @@ class RequestCreateRegularOrderService
         EccubeConfig $eccubeConfig,
         GetProductInformationFromOrderService $getProductInformationFromOrderService,
         GmoEpsilonOrderNoService $gmoEpsilonOrderNoService,
-        GetCardCgiUrlService $getCardCgiUrlService
+        GetCardCgiUrlService $getCardCgiUrlService,
+        PluginRepository $pluginRepository
     ) {
         $this->gmoEpsilonRequestService = $gmoEpsilonRequestService;
         $this->gmoEpsilonUrlService = $gmoEpsilonUrlService;
@@ -59,6 +66,7 @@ class RequestCreateRegularOrderService
         $this->configRepository = $configRepository;
         $this->gmoEpsilonOrderNoService = $gmoEpsilonOrderNoService;
         $this->getCardCgiUrlService = $getCardCgiUrlService;
+        $this->pluginRepository = $pluginRepository;
     }
 
     public function handle(RegularOrder $RegularOrder, Order $Order, string $route)
@@ -69,6 +77,9 @@ class RequestCreateRegularOrderService
         $Customer = $RegularOrder->getCustomer();
         $gmoEpsilonOrderNo = $this->gmoEpsilonOrderNoService->create($Order->getId());
         $itemInformation = $this->getProductInformationFromOrderService->handle($Order);
+        $PluginVersion = $this->pluginRepository->findByCode('EccubePaymentLite4')->getVersion();
+        
+        
         $xmlResponse = $this->gmoEpsilonRequestService->sendData(
             $this->gmoEpsilonUrlService->getUrl('receive_order3'), [
                 'version' => 1,
@@ -84,7 +95,7 @@ class RequestCreateRegularOrderService
                 'item_price' => (int) $Order->getPaymentTotal(),
                 'process_code' => 2, // 登録済み課金
                 'memo1' => $route, // 管理画面より登録したことを記録。card3.cgiのリダイレクト先(eccube_payment_lite4_payment_complete)で利用する。
-                'memo2' => 'EC-CUBE4_'.date('YmdHis'),
+                'memo2' => 'EC-CUBE_' . Constant::VERSION . '_' . $PluginVersion . "_" . date('YmdHis'),
                 'xml' => 1,
             ]
         );

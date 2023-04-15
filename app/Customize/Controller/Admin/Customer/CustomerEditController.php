@@ -29,6 +29,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Eccube\Entity\Master\OrderItemType;
 use Eccube\Entity\OrderItem;
 use Customize\Entity\TransferHistory;
+use Knp\Component\Pager\PaginatorInterface;
 
 class CustomerEditController extends AbstractController
 {
@@ -53,9 +54,10 @@ class CustomerEditController extends AbstractController
     /**
      * @Route("/%eccube_admin_route%/customer/new", name="admin_customer_new", methods={"GET", "POST"})
      * @Route("/%eccube_admin_route%/customer/{id}/edit", requirements={"id" = "\d+"}, name="admin_customer_edit", methods={"GET", "POST"})
+     * @Route("/%eccube_admin_route%/customer/{id}/page/{page_no}", requirements={"id" = "\d+", "page_no" = "\d+"}, name="admin_customer_edit_page", methods={"GET", "POST"})
      * @Template("@admin/Customer/edit.twig")
      */
-    public function index(Request $request, $id = null)
+    public function index(Request $request, $id = null, $page_no = null, PaginatorInterface $paginator)
     {
         $this->entityManager->getFilters()->enable('incomplete_order_status_hidden');
         // 編集
@@ -165,11 +167,20 @@ class CustomerEditController extends AbstractController
                 'id' => $Customer->getId(),
             ]);
         }
+        
+        if ( empty($page_no) ) {
+            $page_no = 1;
+        }
+        $pagination = $paginator->paginate(
+            $orderItems,
+            $page_no,
+            20
+        );
 
         return [
             'form' => $form->createView(),
             'Customer' => $Customer,
-            'orderItems' => $orderItems,
+            'pagination' => $pagination,
             'balance' => $balance,
             'selectedMonth' => substr($date, 0, 7),
         ];

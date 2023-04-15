@@ -365,6 +365,17 @@ class CustomerController extends AbstractController
      */
     public function bulkCheckout(Request $request)
     {
+        // $orderItemRepository = $this->entityManager->getRepository(\Eccube\Entity\OrderItem::class);
+        // foreach( $orderItemRepository->findAll() as $orderItem ) {
+        //     if ( $orderItem->isProduct() ) {
+        //         $Product = $orderItem->getProduct();
+        //         $orderItem->setAffiliateReward($Product->getAffiliateReward());
+        //         $this->entityManager->persist($orderItem);
+        //     }
+        // }
+        // $this->entityManager->flush();
+        // return $this->redirectToRoute('admin_customer');
+
         $this->paypalTransferHelper->startPaypalPayout();
 
         $this->addSuccess( '送金完了しました。', 'admin' );

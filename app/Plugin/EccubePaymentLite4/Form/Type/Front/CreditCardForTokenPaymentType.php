@@ -53,29 +53,8 @@ class CreditCardForTokenPaymentType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('credit_card_number', TextType::class, [
-                'constraints' => [
-                    new Type([
-                        'type' => 'numeric',
-                        'message' => 'クレジットカード番号は数値を入力してください。',
-                    ]),
-                    new NotBlank(),
-                    new Length([
-                        'max' => 16,
-                        'min' => 14,
-                    ]),
-                ],
-                'attr' => ['maxlength' => 16],
-            ])
-            ->add('holder_name', TextType::class, [
-                'constraints' => [
-                    new NotBlank(),
-                    new Length([
-                        'max' => 255,
-                    ]),
-                    new Assert\Regex(array('pattern' => "/[^a-zA-Z\d\s]/", 'match' => false, 'message' => '※ カードの名義人名は英数字で入力してください。')),
-                ],
-            ])
+            ->add('credit_card_number', TextType::class,)
+            ->add('holder_name', TextType::class)
             ->add('expiration_month', ChoiceType::class, [
                 'choices' => [
                     '-' => null,
@@ -92,29 +71,11 @@ class CreditCardForTokenPaymentType extends AbstractType
                     '11月' => '11',
                     '12月' => '12',
                 ],
-                'constraints' => [
-                    new NotBlank(),
-                ],
             ])
             ->add('expiration_year', ChoiceType::class, [
                 'choices' => $this->getYearsService->get(10),
-                'constraints' => [
-                    new NotBlank(),
-                ],
             ])
-            ->add('security_code', TextType::class, [
-                'constraints' => [
-                    new Type([
-                        'type' => 'numeric',
-                        'message' => 'セキュリティコードは数値を入力してください。',
-                    ]),
-                    new NotBlank(),
-                    new Length([
-                        'max' => 4,
-                        'min' => 3,
-                    ]),
-                ],
-            ])
+            ->add('security_code', TextType::class)
             ->add('token', HiddenType::class, [
                 'constraints' => [
                     new NotBlank([
@@ -133,6 +94,7 @@ class CreditCardForTokenPaymentType extends AbstractType
     public function validateExpiration(FormEvent $event)
     {
         /** @var Form $form */
+        /*
         $form = $event->getForm();
         $form['expiration_month'];
         $form['expiration_year'];
@@ -143,6 +105,6 @@ class CreditCardForTokenPaymentType extends AbstractType
         if ($firstDayOfThisMonth > $inputExpirationDateTime) {
             $form['expiration_year']->addError(new FormError('有効な年月を入力する必要があります。'));
             $form['expiration_month']->addError(new FormError(''));
-        }
+        }*/
     }
 }

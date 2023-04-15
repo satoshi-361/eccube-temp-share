@@ -19,7 +19,7 @@
     </div>
 {% else %}
     <ul style="list-style: none; padding-left: 0;">
-{% for Review in review_list %}
+        {% for Review in review_list %}
         <li>
             <div class="review-commentLayout">
                 <div class="reviewTitle">
@@ -36,7 +36,7 @@
                 </div>
             </div>
         </li>
-{% endfor %}
+    {% endfor %}
     </ul>
     {% if review_list|length > 2 %}
     <div class="ec-off1Grid__cell">

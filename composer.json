@@ -34,6 +34,7 @@
         "doctrine/orm": "^2.6",
         "easycorp/easy-log-handler": "^1.0",
         "ec-cube/eccubepaymentlite4": "^1.0",
+        "ec-cube/mailmagazine4": "^4.1",
         "ec-cube/plugin-installer": "^2.0",
         "ec-cube/salesreport4": "^4.1",
         "ec-cube/securitychecker4": "^4.1",

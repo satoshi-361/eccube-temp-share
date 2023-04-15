@@ -16,6 +16,12 @@ trait OrderItemTrait
      * @ORM\Column(type="integer", nullable=true)
      */
     private $affiliater = null;
+
+    /**
+     * @var integer
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $affiliate_reward = null;
     
     /**
      * Get affiliater
@@ -35,6 +41,28 @@ trait OrderItemTrait
     public function setAffiliater($affiliater)
     {
         $this->affiliater = $affiliater;
+        
+        return $this;
+    }
+    
+    /**
+     * Get affiliate_reward
+     * 
+     * @return integer
+     */
+    public function getAffiliateReward()
+    {
+        return $this->affiliate_reward;
+    }
+
+    /**
+     * @param  integer  $affiliate_reward
+     *
+     * @return this
+     */
+    public function setAffiliateReward($affiliate_reward)
+    {
+        $this->affiliate_reward = $affiliate_reward;
         
         return $this;
     }

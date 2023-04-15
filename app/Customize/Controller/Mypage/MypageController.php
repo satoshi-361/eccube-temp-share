@@ -674,7 +674,7 @@ class MypageController extends AbstractController
      * @Route("/mypage/transfer_history", name="mypage_transfer_history", methods={"GET"})
      * @Template("Mypage/transfer_history.twig")
      */
-    public function transferHistory(Request $request)
+    public function transferHistory(Request $request, $page_no = null, PaginatorInterface $paginator)
     {
         $transferHistoryRepository = $this->getDoctrine()->getRepository(TransferHistory::class);
         $Customer = $this->getUser();
@@ -695,9 +695,15 @@ class MypageController extends AbstractController
         // $balance = 0;
         // if ( $transferHistory )
         //     $balance = $transferHistory->getBalance();
+        
+        $pagination = $paginator->paginate(
+            $orderItems,
+            $request->get('pageno', 1),
+            20
+        );
 
         return [
-            'orderItems' => $orderItems,
+            'pagination' => $pagination,
             // 'balance' => $balance,
             'selectedMonth' => substr($date, 0, 7),
         ];
