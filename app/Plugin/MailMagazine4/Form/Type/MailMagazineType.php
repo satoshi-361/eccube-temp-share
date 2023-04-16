@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Eccube\Form\Type\Admin\SearchCustomerType;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -57,6 +58,11 @@ class MailMagazineType extends SearchCustomerType
             ->add('htmlBody', TextareaType::class, [
                 'label' => 'mailmagazine.select.label_body_html',
                 'required' => false,
+            ])
+            ->add('balanceExisted', CheckboxType::class, [
+                'label' => '残高がある方',
+                'required' => false,
+                // 'mapped' => false,
             ])
             // ソート用
             ->add('sortkey', HiddenType::class, [

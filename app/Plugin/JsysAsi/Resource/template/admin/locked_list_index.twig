@@ -1,0 +1,213 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+管理 > ログイン管理 > ロック済み一覧
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['jsys_asi_admin_menu_login', 'jsys_asi_admin_menu_locked_list'] %}
+
+{% block title %}{{ 'jsys_asi.admin.locked_list.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'jsys_asi.admin.admin_menu.login.title'|trans }}{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block main %}
+  {# ▼ 検索条件 ▼ #}
+  <div class="c-outsideBlock">
+    <form id="search_form" name="search_form" method="post" action="">
+      {{ form_widget(searchForm._token) }}
+      <div class="c-outsideBlock__contents mb-2">
+        <div class="row justify-content-start">
+          <div class="col-6">
+            <div class="mb-2">
+              <label class="col-form-label">
+                {{ 'jsys_asi.admin.locked_list.search_ip'|trans }}
+              </label>
+              {{ form_widget(searchForm.ip_address) }}
+              {{ form_errors(searchForm.ip_address) }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {# 検索ボタンと検索結果 #}
+      <div class="c-outsideBlock__contents mb-5">
+        <button id="search_submit" class="btn btn-ec-conversion px-5" type="submit">
+          {{ 'jsys_asi.admin.locked_list.index.search_button'|trans }}
+        </button>
+        {% if pagination %}
+          <span id="search_total_count" class="font-weight-bold ml-2">
+            {{ 'jsys_asi.admin.locked_list.index.search_result_count'|trans({"%count%": pagination.totalItemCount}) }}
+          </span>
+        {% endif %}
+      </div>
+      {# 検索内容 #}
+      <div class="c-outsideBlock__contents mb-5">
+        {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
+      </div>
+    </form>
+  </div>
+  {# ▲ 検索条件 ▲ #}
+  {# ▼ ロック済み一覧 ▼ #}
+  <div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+      <div class="c-primaryCol">
+        {% if pagination and pagination.totalItemCount %}
+          {# 表示件数 #}
+          <div class="row justify-content-between mb-2">
+            <div class="col-6">
+              &nbsp;
+            </div>
+            <div class="col-5 text-right">
+              <div class="d-inline-block mr-2">
+                <div>
+                  <select class="custom-select" onchange="location = this.value;">
+                    {% for pageMax in pageMaxis %}
+                      <option
+                        value="{{ path('admin_jsys_asi_locked_list_page', {'page_no': 1, 'page_count': pageMax.name}) }}"
+                        {% if pageMax.name == page_count %} selected {% endif %}
+                      >
+                        {{ 'admin.common.count'|trans({ '%count%': pageMax.name}) }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          {# レコード #}
+          <div class="card rounded border-0 mb-4 d-block">
+            <div class="card-body p-0">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.locked_list.index.ip'|trans }}
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.locked_list.index.create_date'|trans }}
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for Locked in pagination %}
+                    <tr id="jsys_asi_locked_data_{{ Locked.id }}">
+                      <td class="align-middle">{{ Locked.ip_address }}</td>
+                      <td class="align-middle">{{ Locked.create_date|date_sec }}</td>
+                      <td class="align-middle pr-3">
+                        <div class="text-right">
+                          {# ▼ 削除 ▼ #}
+                          <div class="px-1 d-inline-block">
+                            {# 削除ボタン #}
+                            <div
+                              class="d-inline-block mr-4"
+                              data-tooltip="true"
+                              data-placement="top"
+                              data-original-title="{{ 'jsys_asi.admin.locked_list.index.button.delete'|trans }}"
+                            >
+                              <a
+                                class="btn btn-ec-actionIcon action-delete"
+                                data-toggle="modal"
+                                data-target="#jsys_asi_locked_delete_{{ Locked.id }}"
+                              >
+                                <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                              </a>
+                            </div>
+                            {# 削除確認モーダル #}
+                            <div
+                              id="jsys_asi_locked_delete_{{ Locked.id }}"
+                              class="modal fade"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="jsys_asi_locked_delete_{{ Locked.id }}"
+                              aria-hidden="true"
+                            >
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title font-weight-bold">
+                                      {{ 'jsys_asi.admin.locked_list.index.dialog.delete.title'|trans }}
+                                    </h5>
+                                    <button
+                                      class="close"
+                                      type="button"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">×</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-left">
+                                    <p class="text-left">
+                                      {{ 'jsys_asi.admin.locked_list.index.dialog.delete.body'|trans({ '%ip%': Locked.ip_address})|nl2br }}
+                                    </p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button
+                                      class="btn btn-ec-sub"
+                                      type="button"
+                                      data-dismiss="modal"
+                                    >
+                                      {{ 'admin.common.cancel'|trans }}
+                                    </button>
+                                    <a
+                                      class="btn btn-ec-delete"
+                                      href="{{ url('admin_jsys_asi_locked_list_delete', { id : Locked.id }) }}"
+                                      {{ csrf_token_for_anchor() }}
+                                      data-method="delete"
+                                      data-confirm="false"
+                                    >
+                                      {{ 'jsys_asi.admin.locked_list.index.button.delete'|trans }}
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {# ▲ 削除 ▲ #}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {# ページ #}
+          {% if pagination.totalItemCount > 0 %}
+            <div class="row justify-content-md-center mb-4 pb-4">
+              {% include "@admin/pager.twig" with { 'pages': pagination.paginationData, 'routes': 'admin_jsys_asi_locked_list_page' } %}
+            </div>
+          {% endif %}
+        {% elseif has_errors %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">
+                {{ 'admin.common.search_invalid_condition'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_change_condition'|trans }}
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">
+                {{ 'admin.common.search_no_result'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_change_condition'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_advanced_search'|trans }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {# ▲ ロック済み一覧 ▲ #}
+{% endblock %}

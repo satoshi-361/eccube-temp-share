@@ -1,2 +1,9 @@
 User-agent: *
 Disallow: /*.csv$
+Disallow: /mypage/*
+Disallow: /cart
+Disallow: /shopping/*
+Disallow: /entry/*
+Disallow: /contact/*
+Disallow: /blog/*
+Sitemap: https://share-departmentshop.com/sitemap.xml

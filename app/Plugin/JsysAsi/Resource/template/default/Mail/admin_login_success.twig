@@ -1,0 +1,19 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+ログイン成功通知メール
+#}
+{% autoescape false %}
+{{ 'jsys_asi.mail.admin_login.success.header'|trans }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{{ 'jsys_asi.mail.admin_login.success.shop.title'|trans }}：{{ shop_name }}
+{{ 'jsys_asi.mail.admin_login.success.login_id.title'|trans }}：{{ login_id }}
+{{ 'jsys_asi.mail.admin_login.success.member.title'|trans }}：{{ member }}
+{{ 'jsys_asi.mail.admin_login.success.login_date.title'|trans }}：{{ login_date|date_sec }}
+{{ 'jsys_asi.mail.admin_login.success.ip.title'|trans }}：{{ ip }}
+{{ 'jsys_asi.mail.admin_login.success.ua.title'|trans }}：{{ ua }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{% endautoescape %}

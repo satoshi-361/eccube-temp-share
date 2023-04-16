@@ -1,0 +1,343 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+管理 > ログイン管理 > ログイン履歴
+#}
+
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['jsys_asi_admin_menu_login', 'jsys_asi_admin_menu_login_history'] %}
+
+{% block title %}{{ 'jsys_asi.admin.login_history.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'jsys_asi.admin.admin_menu.login.title'|trans }}{% endblock %}
+
+{% form_theme searchForm '@admin/Form/bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+  <style type="text/css">
+    .datetimepicker-days th.dow:first-child,
+    .datetimepicker-days td:first-child {
+      color: #f00;
+    }
+    .datetimepicker-days th.dow:last-child,
+    .datetimepicker-days td:last-child {
+      color: #00f;
+    }
+
+    i.fa-check { color: #25B877; }
+    i.fa-times { color: #C04949; }
+    i.fa-exclamation { color: #EEB128; }
+
+    th.jsys-asi-ua { width: 35%; }
+    td.jsys-asi-ua { font-size: 0.9rem; }
+  </style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+  <script src="{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"></script>
+  <script src="{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"></script>
+  <script src="{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}"></script>
+  <script>
+    $(function () {
+        // datetimepickerでvalueが消えてしまうのでdata-valueに保持
+        $('input.datetimepicker-input').each(function () {
+            $(this).data('value', $(this).val());
+        });
+
+        $('input.datetimepicker-input').datetimepicker({
+            locale: '{{ eccube_config.locale }}',
+            format: 'YYYY-MM-DD HH:mm:ss',
+            useCurrent: false,
+            buttons: {
+                showToday: true,
+                showClose: true
+            }
+        });
+
+        // datetimepickerでvalueが消えてしまうので更新
+        $('input.datetimepicker-input').each(function () {
+        	$(this).val($(this).data('value'));
+        });
+    });
+  </script>
+{% endblock javascript %}
+
+{% block main %}
+  {# ▼ 検索条件 ▼ #}
+  <div class="c-outsideBlock">
+    <form id="search_form" name="search_form" method="post" action="">
+      {{ form_widget(searchForm._token) }}
+      <div class="c-outsideBlock__contents">
+        <div class="row justify-content-start">
+          <div class="col-6">
+            <div class="mb-2">
+              <label
+                class="col-form-label"
+                data-tooltip="true"
+                data-placement="top"
+                title="{{ 'jsys_asi.admin.login_history.index.tooltip.multi_search_label'|trans }}"
+              >
+                {{ 'jsys_asi.admin.login_history.search_multi'|trans }}
+                <i class="fa fa-question-circle fa-lg ml-1"></i>
+              </label>
+              {{ form_widget(searchForm.multi) }}
+              {{ form_errors(searchForm.multi) }}
+            </div>
+            <div
+              class="d-inline-block mb-3"
+              data-toggle="collapse"
+              href="#searchDetail"
+              aria-expanded="false"
+              aria-controls="searchDetail"
+            >
+              <a>
+                <i class="fa fa-plus-square-o font-weight-bold mr-1"></i><span class="font-weight-bold">{{ 'jsys_asi.admin.login_history.index.search_detail'|trans }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="searchDetail"
+        class="c-subContents collapse ec-collapse{{ has_errors ? ' show' }}"
+      >
+        <div class="row mb-2">
+          {# ログイン日時 #}
+          <div class="col">
+            <label class="col-form-label">
+              {{ 'jsys_asi.admin.login_history.search_login_date'|trans }}
+            </label>
+            <div class="form-row align-items-center">
+              <div class="col">
+                {{ form_widget(searchForm.login_date_start) }}
+                {{ form_errors(searchForm.login_date_start) }}
+              </div>
+              <div class="col-auto text-center">
+                {{ 'admin.common.separator__range'|trans }}
+              </div>
+              <div class="col">
+                {{ form_widget(searchForm.login_date_end) }}
+                {{ form_errors(searchForm.login_date_end) }}
+              </div>
+            </div>
+          </div>
+          {# ステータス #}
+          <div class="col">
+            <div class="form-row">
+              <div class="col-12">
+                {{ form_label(searchForm.status) }}
+                {{ form_widget(searchForm.status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                {{ form_errors(searchForm.status) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-2">
+          {# 2要素認証ステータス #}
+          <div class="col">
+            <div class="form-row">
+              <div class="col-12">
+                {{ form_label(searchForm.tfa_status) }}
+                {{ form_widget(searchForm.tfa_status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                {{ form_errors(searchForm.tfa_status) }}
+              </div>
+            </div>
+          </div>
+          {# ロックステータス #}
+          <div class="col">
+            <div class="form-row">
+              <div class="col-12">
+                {{ form_label(searchForm.lock_status) }}
+                {{ form_widget(searchForm.lock_status, { 'label_attr': { 'class': 'checkbox-inline'}}) }}
+                {{ form_errors(searchForm.lock_status) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {# 検索ボタンと検索結果 #}
+      <div class="c-outsideBlock__contents mb-5">
+        <button id="search_submit" class="btn btn-ec-conversion px-5" type="submit">
+          {{ 'jsys_asi.admin.login_history.index.search_button'|trans }}
+        </button>
+        {% if pagination %}
+          <span id="search_total_count" class="font-weight-bold ml-2">
+            {{ 'jsys_asi.admin.login_history.index.search_result_count'|trans({"%count%": pagination.totalItemCount}) }}
+          </span>
+        {% endif %}
+      </div>
+      {# 検索内容 #}
+      <div class="c-outsideBlock__contents mb-5">
+        {{ include('@admin/search_items.twig', { 'form': searchForm }, ignore_missing = true) }}
+      </div>
+    </form>
+  </div>
+  {# ▲ 検索条件 ▲ #}  
+  {# ▼ ログイン履歴 ▼ #}
+  <div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+      <div class="c-primaryCol">
+        {% if pagination and pagination.totalItemCount %}
+          {# 表示件数 #}
+          <div class="row justify-content-between mb-2">
+            <div class="col-6">
+              &nbsp;
+            </div>
+            <div class="col-5 text-right">
+              <div class="d-inline-block mr-2">
+                <div>
+                  <select class="custom-select" onchange="location = this.value;">
+                    {% for pageMax in pageMaxis %}
+                      <option
+                        value="{{ path('admin_jsys_asi_login_history_page', {'page_no': 1, 'page_count': pageMax.name}) }}"
+                        {% if pageMax.name == page_count %} selected {% endif %}
+                      >
+                        {{ 'admin.common.count'|trans({ '%count%': pageMax.name}) }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          {# レコード #}
+          <div class="card rounded border-0 mb-4 d-block">
+            <div class="card-body p-0">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.login_history.index.id'|trans }}
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.login_history.index.login_date'|trans }}
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.login_history.index.login_id'|trans }}
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2">
+                      {{ 'jsys_asi.admin.login_history.index.ip'|trans }}
+                    </th>
+                    <th
+                      class="border-top-0 pt-2 pb-2 text-center"
+                      data-tooltip="true"
+                      data-placement="top"
+                      data-html="true"
+                      title="{{ 'jsys_asi.admin.login_history.index.tooltip.status'|trans }}"
+                    >
+                      {{ 'jsys_asi.admin.login_history.index.status'|trans }}
+                      <i class="fas fa-exclamation-circle ml-1"></i>
+                    </th>
+                    <th
+                      class="border-top-0 pt-2 pb-2 text-center"
+                      data-tooltip="true"
+                      data-placement="top"
+                      data-html="true"
+                      title="{{ 'jsys_asi.admin.login_history.index.tooltip.tfa_status'|trans }}"
+                    >
+                      {{ 'jsys_asi.admin.login_history.index.tfa_status'|trans }}
+                      <i class="fas fa-exclamation-circle ml-1"></i>
+                    </th>
+                    <th
+                      class="border-top-0 pt-2 pb-2 text-center"
+                      data-tooltip="true"
+                      data-placement="top"
+                      data-html="true"
+                      title="{{ 'jsys_asi.admin.login_history.index.tooltip.lock_status'|trans }}"
+                    >
+                      {{ 'jsys_asi.admin.login_history.index.lock_status'|trans }}
+                      <i class="fas fa-exclamation-circle ml-1"></i>
+                    </th>
+                    <th class="border-top-0 pt-2 pb-2 jsys-asi-ua">
+                      {{ 'jsys_asi.admin.login_history.index.ua'|trans }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for History in pagination %}
+                    <tr id="jsys_asi_history_data_{{ History.id }}">
+                      <td class="align-middle">{{ History.id }}</td>
+                      <td class="align-middle">{{ History.login_date|date_sec }}</td>
+                      <td class="align-middle">{{ History.login_id }}</td>
+                      <td class="align-middle">{{ History.ip_address }}</td>
+                      <td class="align-middle text-center">
+                        {% if History.Status.id == 1 %}
+                          <i class="fas fa-check"></i>
+                        {% elseif History.Status.id == 2 %}
+                          <i class="fas fa-exclamation"></i>
+                        {% elseif History.Status.id == 9 %}
+                          <i class="fas fa-times"></i>
+                        {% else %}
+                          ?
+                        {% endif %}
+                      </td>
+                      <td class="align-middle text-center">
+                        {% if History.TfaStatus.id == 1 %}
+                          -
+                        {% elseif History.TfaStatus.id == 2 %}
+                          <i class="fas fa-check"></i>
+                        {% elseif History.TfaStatus.id == 3 %}
+                          <i class="fas fa-times"></i>
+                        {% elseif History.TfaStatus.id == 4 %}
+                          <i class="fas fa-exclamation"></i>
+                        {% else %}
+                          ?
+                        {% endif %}
+                      </td>
+                      <td class="align-middle text-center">
+                        {% if History.LockStatus.id == 1 %}
+                          -
+                        {% elseif History.LockStatus.id == 2 %}
+                          <i class="fas fa-check"></i>
+                        {% elseif History.LockStatus.id == 3 %}
+                          <i class="fas fa-times"></i>
+                        {% else %}
+                          ?
+                        {% endif %}
+                      </td>
+                      <td class="align-middle jsys-asi-ua">
+                        {{ History.user_agent }}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {# ページ #}
+          {% if pagination.totalItemCount > 0 %}
+            <div class="row justify-content-md-center mb-4 pb-4">
+              {% include "@admin/pager.twig" with { 'pages' : pagination.paginationData, 'routes' : 'admin_jsys_asi_login_history_page' } %}
+            </div>
+          {% endif %}
+        {% elseif has_errors %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">
+                {{ 'admin.common.search_invalid_condition'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_change_condition'|trans }}
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="card rounded border-0">
+            <div class="card-body p-4">
+              <div class="text-center text-muted mb-4 h5">
+                {{ 'admin.common.search_no_result'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_change_condition'|trans }}
+              </div>
+              <div class="text-center text-muted">
+                {{ 'admin.common.search_try_advanced_search'|trans }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {# ▲ ログイン履歴 ▲ #}
+{% endblock %}

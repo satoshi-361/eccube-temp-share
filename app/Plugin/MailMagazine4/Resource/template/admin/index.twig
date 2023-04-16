@@ -121,6 +121,13 @@ function fnChangeActionSubmit(action) {
                     </div>
                     <div class="d-inline-block mb-3 collapsed" data-toggle="collapse" href="#searchDetail" aria-expanded="false" aria-controls="searchDetail"><a><i class="fa font-weight-bold mr-1 fa-plus-square-o"></i><span class="font-weight-bold">{{ 'admin.common.search_detail'|trans }}</span></a></div>
                 </div>
+                <div class="col">
+                    <div class="mb-2">
+                        <label class="col-form-label">{{ '残高がある方'|trans }}</label>
+                        {{ form_widget(searchForm.balanceExisted) }}
+                        {{ form_errors(searchForm.balanceExisted) }}
+                    </div>
+                </div>
             </div>
         </div>
         <div class="c-subContents ec-collapse collapse{{ has_errors ? ' show' }}" id="searchDetail">

@@ -1,0 +1,175 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+管理 > 2要素認証管理 > ユーザー登録 > 登録
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['jsys_asi_admin_menu_tfa', 'jsys_asi_admin_menu_tfa_user'] %}
+
+{% block title %}{{ 'jsys_asi.admin.tfa_user.edit.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'jsys_asi.admin.admin_menu.tfa.title'|trans }}{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}
+  <style type="text/css">
+    #jsys_asi_qr {
+      width: 150px;
+    }
+    #jsys_asi_step_two a {
+      text-decoration: none;
+    }
+
+    .fa-stack {
+      font-size: 0.85rem;
+    }
+    .jsys-asi-badge-googleplay {
+      margin-top: -41px;
+      width: 171px;
+    }
+    .jsys-asi-badge-appstore {
+      width: 150px;
+      height: 46px;
+      border-radius: 13px;
+    }
+    a.jsys-asi-badge-appstore {
+      background-size: contain;
+      display: inline-block;
+      overflow: hidden;
+    }
+  </style>
+{% endblock stylesheet %}
+
+{% block main %}
+  <form
+    role="form"
+    id="form1"
+    name="form1"
+    class="form-horizontal"
+    method="post"
+    action="{{ url('admin_jsys_asi_tfa_user_edit', { member_id : Member.id }) }}"
+  >
+    {{ form_widget(form._token) }}
+
+    <div class="c-contentsArea__cols">
+      <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+          {# ▼ STEP 1 ▼ #}
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header">
+              <span class="fa-stack text-dark">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-inverse fa-stack-1x">1</i>
+              </span>
+              <span class="text-dark font-weight-bold">
+                &nbsp;{{ 'jsys_asi.admin.tfa_user.edit.step_one.title'|trans }}
+              </span>
+            </div>
+            <div class="card-body">
+              <p>
+                <span class="h5">【&nbsp;{{ Member.name }}&nbsp;】</span>
+                {{ 'jsys_asi.admin.tfa_user.edit.step_one.body'|trans }}
+              </p>
+            </div>
+          </div>
+          {# ▲ STEP 1 ▲ #}
+          {# ▼ STEP 2 ▼ #}
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header">
+              <span class="fa-stack text-dark">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-inverse fa-stack-1x">2</i>
+              </span>
+              <span class="text-dark font-weight-bold">
+                &nbsp;{{ 'jsys_asi.admin.tfa_user.edit.step_two.title'|trans }}
+              </span>
+            </div>
+            <div id="jsys_asi_step_two" class="card-body">
+              <p class="pt-2">
+                <a href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                  <img
+                    class="jsys-asi-badge-googleplay"
+                    alt='Google Play で手に入れよう'
+                    src='https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png'
+                  />
+                </a>
+                <a
+                  class="jsys-asi-badge-appstore ml-2"
+                  href="https://apps.apple.com/us/app/google-authenticator/id388497605?itsct=apps_box_badge&amp;itscg=30200"
+                >
+                  <img
+                    class="jsys-asi-badge-appstore"
+                    src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/ja-jp?size=250x83&amp;releaseDate=1284940800&h=f8adb3ab127f72bb3307dc8e24b915ad"
+                    alt="Download on the App Store"
+                  >
+                </a>
+              </p>
+            </div>
+          </div>
+          {# ▲ STEP 2 ▲ #}
+          {# ▼ STEP 3 ▼ #}
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header">
+              <span class="fa-stack text-dark">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-inverse fa-stack-1x">3</i>
+              </span>
+              <span class="text-dark font-weight-bold">
+                &nbsp;{{ 'jsys_asi.admin.tfa_user.edit.step_three.title'|trans }}
+              </span>
+            </div>
+            <div class="card-body">
+              <p class="pl-3">
+                <img id="jsys_asi_qr" src="{{ QRCode }}" alt="QRコード" />
+              </p>
+            </div>
+          </div>
+          {# ▲ STEP 3 ▲ #}
+          {# ▼ STEP 4 ▼ #}
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header">
+              <span class="fa-stack text-dark">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-inverse fa-stack-1x">4</i>
+              </span>
+              <span class="text-dark font-weight-bold">
+                &nbsp;{{ 'jsys_asi.admin.tfa_user.edit.step_four.title'|trans }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row pl-3">
+                <div class="col-7">
+                  {{ form_widget(form.otp) }}
+                  {{ form_errors(form.otp) }}
+                </div>
+              </div>
+              </p>
+            </div>
+          </div>
+          {# ▲ STEP 4 ▲ #}
+        </div>
+      </div>
+
+      <div class="c-conversionArea">
+        <div class="c-conversionArea__container">
+          <div class="row justify-content-between align-items-center">
+            <div class="col-6">
+              <div class="c-conversionArea__leftBlockItem">
+                <a class="c-baseLink" href="{{ url('admin_jsys_asi_tfa_user') }}">
+                  <i class="fa fa-backward" aria-hidden="true"></i>
+                  <span>{{ 'jsys_asi.admin.tfa_user.index.title'|trans }}</span>
+                </a>
+              </div>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-ec-conversion px-5" type="submit">
+                {{ 'admin.common.registration'|trans }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+{% endblock %}

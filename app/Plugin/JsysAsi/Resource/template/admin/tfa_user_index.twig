@@ -1,0 +1,239 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+管理 > 2要素認証管理 > ユーザー登録 > 一覧
+#}
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['jsys_asi_admin_menu_tfa', 'jsys_asi_admin_menu_tfa_user'] %}
+
+{% block title %}{{ 'jsys_asi.admin.tfa_user.index.title'|trans }}{% endblock %}
+{% block sub_title %}{{ 'jsys_asi.admin.admin_menu.tfa.title'|trans }}{% endblock %}
+
+{% block main %}
+  <div class="c-contentsArea__cols">
+    <div class="c-contentsArea__primaryCol">
+      <div class="c-primaryCol">
+        
+        <div class="card rounded border-0 mb-4">
+          <div class="card-body p-0">
+            <table class="table table-sm">
+              <thead>
+                <th class="border-top-0 pt-2 pb-2 text-center">
+                  {{ 'jsys_asi.admin.tfa_user.index.member_id.title'|trans }}
+                </th>
+                <th class="border-top-0 pt-2 pb-2 text-center">
+                  {{ 'jsys_asi.admin.tfa_user.index.member.title'|trans }}
+                </th>
+                <th class="border-top-0 pt-2 pb-2 text-center">
+                  {{ 'jsys_asi.admin.tfa_user.index.status.title'|trans }}
+                </th>
+                <th class="border-top-0 pt-2 pb-2 text-center">&nbsp;</th>
+              </thead>
+              <tbody>
+                {% for Member in Members %}
+                  {% set registered = TfaUsers[Member.id] is defined %}
+                  <tr>
+                    <td class="align-middle text-center pl-3">
+                      {{ Member.id }}
+                    </td>
+                    <td class="align-middle text-center">
+                      {{ Member.name }}
+                    </td>
+                    <td class="align-middle text-center">
+                      {% if registered %}
+                        <i
+                          class="fas fa-power-off fa-lg text-info"
+                          data-tooltip="true"
+                          data-placement="top"
+                          data-original-title="{{ 'jsys_asi.admin.tfa_user.index.status.registered'|trans }}"
+                          aria-hidden="true"
+                        ></i>
+                      {% else %}
+                        <i
+                          class="fas fa-power-off fa-lg text-danger"
+                          data-tooltip="true"
+                          data-placement="top"
+                          data-original-title="{{ 'jsys_asi.admin.tfa_user.index.status.unregistered'|trans }}"
+                          aria-hidden="true"
+                        ></i>
+                      {% endif %}
+                    </td>
+                    <td class="align-middle pr-3">
+                      <div class="text-right">
+                        {# ▼ 設定 ▼ #}
+                        <div class="px-1 d-inline-block">
+                          <a
+                            href="{{ url('admin_jsys_asi_tfa_user_edit', { member_id : Member.id }) }}"
+                            class="btn btn-ec-actionIcon action-edit {% if registered %} disabled {% endif %}"
+                            data-tooltip="true"
+                            data-placement="top"
+                            data-original-title="{{ 'jsys_asi.admin.tfa_user.index.button.registration'|trans }}"
+                          >
+                            <i class="fas fa-cog fa-lg text-secondary" aria-hidden="true"></i>
+                          </a>
+                        </div>
+                        {% if not registered %}
+                          {# 未登録の場合のQRコードと削除ボタン #}
+                          <div class="px-1 d-inline-block">
+                            <a
+                              class="btn btn-ec-actionIcon action-edit disabled"
+                              data-tooltip="true"
+                              data-placement="top"
+                              data-original-title="{{ 'jsys_asi.admin.tfa_user.index.button.qr'|trans }}"
+                            >
+                              <i class="fas fa-qrcode fa-lg text-secondary" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                          <div class="px-1 d-inline-block">
+                            <a
+                              class="btn btn-ec-actionIcon action-edit mr-4 disabled"
+                              data-tooltip="true"
+                              data-placement="top"
+                              data-original-title="{{ 'jsys_asi.admin.tfa_user.index.button.delete'|trans }}"
+                            >
+                              <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                            </a>
+                          </div>
+                        {% else %}
+                          {% set tfa_id = TfaUsers[Member.id].id %}
+                          {% set tfa_qr = TfaUsers[Member.id].qr %}
+                          {# ▼ QRコード ▼ #}
+                          <div class="px-1 d-inline-block">
+                            {# QRコード確認 #}
+                            <div
+                              class="d-inline-block"
+                              data-tooltip="true"
+                              data-placement="top"
+                              data-original-title="{{ 'jsys_asi.admin.tfa_user.index.button.qr'|trans }}"
+                            >
+                              <a
+                                class="btn btn-ec-actionIcon"
+                                data-toggle="modal"
+                                data-target="#jsys_asi_tfa_qr_{{ tfa_id }}"
+                              >
+                                <i class="fas fa-qrcode fa-lg text-secondary" aria-hidden="true"></i>
+                              </a>
+                            </div>
+                            {# QRコードモーダル #}
+                            <div
+                              id="jsys_asi_tfa_qr_{{ tfa_id }}"
+                              class="modal fade"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="jsys_asi_tfa_qr_{{ tfa_id }}"
+                              aria-hidden="true"
+                            >
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title font-weight-bold">
+                                      {{ 'jsys_asi.admin.tfa_user.index.dialog.qr.title'|trans }}
+                                    </h5>
+                                    <button
+                                      class="close"
+                                      type="button"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">×</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-center">
+                                    <img src="{{ tfa_qr }}" alt="QRコード" />
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button
+                                      class="btn btn-ec-sub"
+                                      type="button"
+                                      data-dismiss="modal"
+                                    >
+                                      {{ 'admin.common.close'|trans }}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {# ▲ QRコード ▲ #}
+                          {# ▼ 削除 ▼ #}
+                          <div class="px-1 d-inline-block">
+                            {# 削除 #}
+                            <div
+                              class="d-inline-block mr-4"
+                              data-tooltip="true"
+                              data-placement="top"
+                              data-original-title="{{ 'jsys_asi.admin.tfa_user.index.button.delete'|trans }}"
+                            >
+                              <a
+                                class="btn btn-ec-actionIcon action-delete"
+                                data-toggle="modal"
+                                data-target="#jsys_asi_tfa_user_delete_{{ tfa_id }}"
+                              >
+                                <i class="fa fa-close fa-lg text-secondary" aria-hidden="true"></i>
+                              </a>
+                            </div>
+                            {# 削除確認モーダル #}
+                            <div
+                              id="jsys_asi_tfa_user_delete_{{ tfa_id }}"
+                              class="modal fade"
+                              tabindex="-1"
+                              role="dialog"
+                              aria-labelledby="jsys_asi_tfa_user_delete_{{ tfa_id }}"
+                              aria-hidden="true"
+                            >
+                              <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title font-weight-bold">
+                                      {{ 'jsys_asi.admin.tfa_user.index.dialog.delete.title'|trans }}
+                                    </h5>
+                                    <button
+                                      class="close"
+                                      type="button"
+                                      data-dismiss="modal"
+                                      aria-label="Close"
+                                    >
+                                      <span aria-hidden="true">×</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body text-left">
+                                    <p class="text-left">
+                                      {{ 'jsys_asi.admin.tfa_user.index.dialog.delete.body'|trans }}
+                                    </p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button
+                                      class="btn btn-ec-sub"
+                                      type="button"
+                                      data-dismiss="modal"
+                                    >
+                                      {{ 'admin.common.cancel'|trans }}
+                                    </button>
+                                    <a
+                                      class="btn btn-ec-delete"
+                                      href="{{ url('admin_jsys_asi_tfa_user_delete', { id : tfa_id }) }}"
+                                      {{ csrf_token_for_anchor() }}
+                                      data-method="delete"
+                                      data-confirm="false"
+                                    >
+                                      {{ 'admin.common.delete'|trans }}
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+{% endblock %}

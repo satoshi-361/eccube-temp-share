@@ -237,3 +237,6 @@ services:
 
     Customize\Repository\ProductRepository:
         decorates: Eccube\Repository\ProductRepository
+
+    Customize\Repository\CustomerRepository:
+        decorates: Eccube\Repository\CustomerRepository

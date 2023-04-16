@@ -40,6 +40,7 @@
         "ec-cube/securitychecker4": "^4.1",
         "ec-cube/sitekit": "^1.1",
         "egulias/email-validator": "^2.1",
+        "endroid/qr-code": "^4.6",
         "exercise/htmlpurifier-bundle": "^3.1",
         "friendsofphp/php-cs-fixer": "^2.16",
         "guzzlehttp/guzzle": "^6.3",

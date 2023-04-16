@@ -1,4 +1,7 @@
 {
+    "bacon/bacon-qr-code": {
+        "version": "2.0.8"
+    },
     "behat/gherkin": {
         "version": "v4.5.1"
     },
@@ -64,6 +67,9 @@
             "version": "4.0",
             "ref": "56eaa387b5e48ebcc7c95a893b47dfa1ad51449c"
         }
+    },
+    "dasprid/enum": {
+        "version": "1.0.4"
     },
     "doctrine/annotations": {
         "version": "1.0",
@@ -169,6 +175,9 @@
     },
     "egulias/email-validator": {
         "version": "1.2.14"
+    },
+    "endroid/qr-code": {
+        "version": "4.6.1"
     },
     "exercise/htmlpurifier-bundle": {
         "version": "3.0",

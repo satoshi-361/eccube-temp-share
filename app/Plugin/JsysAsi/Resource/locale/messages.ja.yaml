@@ -1,0 +1,142 @@
+# ==========================================
+# メッセージ
+# ==========================================
+jsys_asi.encrypt.failure: 暗号化に失敗しました。
+jsys_asi.tfa.check_code.failure: 認証に失敗しました。サーバー側の時刻が正しくない可能性があります。
+jsys_asi.empty.login_id: 未入力
+jsys_asi.not_found.status: ステータスが見つかりません。
+jsys_asi.not_found.tfa_status: 2要素認証ステータスが見つかりません。
+jsys_asi.not_found.lock_status: ロックステータスが見つかりません。
+
+# ==========================================
+# メール
+# ==========================================
+
+# ログイン成功通知
+jsys_asi.mail.admin_login.success.subject: '[%shop%]管理画面へ%member%さまがログインされました'
+jsys_asi.mail.admin_login.success.header: |-
+  管理画面へのログインが確認されましたので、お知らせいたします。
+  ログインに心当たりがない場合、第三者による不正アクセスの可能性があります。
+  安全のため、パスワードを変更してください。
+jsys_asi.mail.admin_login.success.shop.title: ショップ名
+jsys_asi.mail.admin_login.success.login_id.title: ログインID
+jsys_asi.mail.admin_login.success.member.title: メンバー名
+jsys_asi.mail.admin_login.success.login_date.title: ログイン日時
+jsys_asi.mail.admin_login.success.ip.title: IPアドレス
+jsys_asi.mail.admin_login.success.ua.title: ユーザーエージェント
+
+# ログイン失敗通知
+jsys_asi.mail.admin_login.failure.subject: '[%shop%]管理画面へのログインに失敗しました'
+jsys_asi.mail.admin_login.failure.header: |-
+  管理画面へのログイン失敗が確認されましたので、お知らせいたします。
+  心当たりがない場合、第三者がアクセスを試みた可能性があります。
+jsys_asi.mail.admin_login.failure.shop.title: ショップ名
+jsys_asi.mail.admin_login.failure.login_id.title: 試行ログインID
+jsys_asi.mail.admin_login.failure.login_date.title: ログイン試行日時
+jsys_asi.mail.admin_login.failure.ip.title: IPアドレス
+jsys_asi.mail.admin_login.failure.ua.title: ユーザーエージェント
+
+# ==========================================
+# サービス
+# ==========================================
+
+# 暗号・復号化サービス
+jsys_asi.service.crypt_service.blank.data: データが設定されていません。
+jsys_asi.service.crypt_service.blank.password: パスワードが設定されていません。
+jsys_asi.service.crypt_service.blank.salt: ソルトが設定されていません。
+
+# ==========================================
+# 管理画面
+# ==========================================
+
+# 管理ログイン
+jsys_asi.admin.login.otp: 認証コード
+
+# 管理画面メニュー
+jsys_asi.admin.admin_menu.tfa.title: 2要素認証管理
+jsys_asi.admin.admin_menu.tfa_user.title: ユーザー設定
+jsys_asi.admin.admin_menu.login.title: ログイン管理
+jsys_asi.admin.admin_menu.login_history.title: ログイン履歴
+jsys_asi.admin.admin_menu.locked_list.title: ロック済み一覧
+
+# 2要素認証管理 > ユーザー登録 > 一覧
+jsys_asi.admin.tfa_user.index.title: ユーザー一覧
+jsys_asi.admin.tfa_user.index.member_id.title: ID
+jsys_asi.admin.tfa_user.index.member.title: メンバー
+jsys_asi.admin.tfa_user.index.status.title: On/Off
+jsys_asi.admin.tfa_user.index.status.registered: 'On'
+jsys_asi.admin.tfa_user.index.status.unregistered: 'Off'
+jsys_asi.admin.tfa_user.index.button.registration: 設定
+jsys_asi.admin.tfa_user.index.button.qr: QRコード確認
+jsys_asi.admin.tfa_user.index.button.delete: 削除
+jsys_asi.admin.tfa_user.index.dialog.qr.title: QRコード
+jsys_asi.admin.tfa_user.index.dialog.delete.title: 設定を削除します。
+jsys_asi.admin.tfa_user.index.dialog.delete.body: 削除してよろしいですか？
+
+# 2要素認証管理 > ユーザー登録 > 編集
+jsys_asi.admin.tfa_user.edit.title: ユーザー設定
+jsys_asi.admin.tfa_user.edit.member.not_found: メンバーが見つかりません。
+jsys_asi.admin.tfa_user.edit.step_one.title: 2要素認証を設定するメンバーを確認してください。
+jsys_asi.admin.tfa_user.edit.step_one.body: へ設定します。
+jsys_asi.admin.tfa_user.edit.step_two.title: ご使用の端末に「Google Authenticator」をインストールしてください。
+jsys_asi.admin.tfa_user.edit.step_three.title: 「Google Authenticator」を起動し、QRコードを読み取ってください。
+jsys_asi.admin.tfa_user.edit.step_four.title: 「Google Authenticator」に表示された6桁の認証コードを入力し、登録を押してください。
+jsys_asi.admin.tfa_user.edit.otp.placeholder: 認証コード（6桁）
+
+# ログイン管理 > ログイン履歴 > 一覧
+jsys_asi.admin.login_history.search_multi: ログインID・IPアドレス
+jsys_asi.admin.login_history.search_login_date: ログイン日時
+jsys_asi.admin.login_history.search_login_date_start: ログイン日時(開始)
+jsys_asi.admin.login_history.search_login_date_end: ログイン日時(終了)
+jsys_asi.admin.login_history.search_status: 結果
+jsys_asi.admin.login_history.search_tfa_status: 2要素認証
+jsys_asi.admin.login_history.search_lock_status: ロック
+
+jsys_asi.admin.login_history.index.title: ログイン履歴
+jsys_asi.admin.login_history.index.tooltip.multi_search_label: 情報を入力して一覧の絞り込み検索ができます。より詳細な条件を指定するには［詳細検索］を開いてください。
+jsys_asi.admin.login_history.index.search_detail: 詳細検索
+jsys_asi.admin.login_history.index.search_button: 検索
+jsys_asi.admin.login_history.index.search_result_count: '検索結果：%count%件が該当しました'
+jsys_asi.admin.login_history.index.id: ID
+jsys_asi.admin.login_history.index.login_date: 日時
+jsys_asi.admin.login_history.index.login_id: ログインID
+jsys_asi.admin.login_history.index.ip: IPアドレス
+jsys_asi.admin.login_history.index.status: 結果
+jsys_asi.admin.login_history.index.tfa_status: 2要素
+jsys_asi.admin.login_history.index.lock_status: ロック
+jsys_asi.admin.login_history.index.ua: UserAgent
+jsys_asi.admin.login_history.index.tooltip.status: '&check;:成功、&times;:失敗、&#33;:拒否'
+jsys_asi.admin.login_history.index.tooltip.tfa_status: '-:無効, &check;:有効, &times;:無効, &#33;:使用済'
+jsys_asi.admin.login_history.index.tooltip.lock_status: '-:無効, &check;:未ロック, &times;:ロック済'
+
+# ログイン管理 > ロック済み一覧 > 一覧
+jsys_asi.admin.locked_list.search_ip: IPアドレス
+
+jsys_asi.admin.locked_list.index.title: ロック済み一覧
+jsys_asi.admin.locked_list.index.search_button: 検索
+jsys_asi.admin.locked_list.index.search_result_count: '検索結果：%count%件が該当しました。'
+jsys_asi.admin.locked_list.index.ip: IPアドレス
+jsys_asi.admin.locked_list.index.create_date: 登録日
+jsys_asi.admin.locked_list.index.button.delete: 解除
+jsys_asi.admin.locked_list.index.dialog.delete.title: ロックを解除します
+jsys_asi.admin.locked_list.index.dialog.delete.body: |-
+  この操作は後から取り消すことができません。
+  「%ip%」のロックを解除してよろしいですか？
+jsys_asi.admin.locked_list.index.delete_complete: 解除しました
+jsys_asi.admin.locked_list.index.delete_error: 解除に失敗しました
+
+# プラグイン設定
+jsys_asi.admin.config.option_tfa: 2要素認証
+jsys_asi.admin.config.option_tfa_master_key: 2要素認証マスターキー
+jsys_asi.admin.config.option_login_success_mail: ログイン成功通知
+jsys_asi.admin.config.option_login_failure_mail: ログイン失敗通知
+jsys_asi.admin.config.option_ip_address_lock: IPアドレスロック
+jsys_asi.admin.config.option_ip_address_lock_count: ロックまでの回数
+jsys_asi.admin.config.option_ip_address_lock_count.after: 回以上の連続失敗でロック
+jsys_asi.admin.config.master_key.wait_message: ...マスターキーを生成中...
+jsys_asi.admin.config.master_key.describe: |-
+  ※ 2要素認証を有効にした時に生成されます。
+  ※ マスターキーの生成には時間がかかる場合がございます。
+  ※ マスターキーは安全かつアクセス可能な場所に保存してください。
+  ※ 使用後、2要素認証の無効化とマスターキーのクリアが行われます。
+  ※ 使用後は、お早めに2要素認証を有効にすることをお勧めします。

@@ -1,0 +1,1 @@
+{"name":"ec-cube\/jsysasi","version":"1.1.0","description":"\u7ba1\u7406\u753b\u9762\u30bb\u30ad\u30e5\u30ea\u30c6\u30a3\u5411\u4e0a\u30d7\u30e9\u30b0\u30a4\u30f3","type":"eccube-plugin","require":{"ec-cube\/plugin-installer":"~0.0.7 || ^2.0","spomky-labs\/otphp":"^9.1|^10.0","paragonie\/constant_time_encoding":"^2.2","endroid\/qr-code":"^3.0"},"extra":{"code":"JsysAsi"}}

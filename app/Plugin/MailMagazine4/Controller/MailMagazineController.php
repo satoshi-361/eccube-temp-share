@@ -152,7 +152,7 @@ class MailMagazineController extends AbstractController
             }
             $searchData = FormUtil::submitAndGetData($searchForm, $viewData);
         }
-
+// dd($searchData);
         $searchData['plg_mailmagazine_flg'] = Constant::ENABLED;
         /** @var QueryBuilder $qb */
         $qb = $this->customerRepository->getQueryBuilderBySearchData($searchData);

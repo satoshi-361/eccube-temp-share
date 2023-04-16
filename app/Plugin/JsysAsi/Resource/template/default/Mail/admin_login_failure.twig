@@ -1,0 +1,18 @@
+{#
+JsysAsi(管理画面セキュリティ向上プラグイン)
+ログイン成功通知メール
+#}
+{% autoescape false %}
+{{ 'jsys_asi.mail.admin_login.failure.header'|trans }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{{ 'jsys_asi.mail.admin_login.failure.shop.title'|trans }}：{{ shop_name }}
+{{ 'jsys_asi.mail.admin_login.failure.login_id.title'|trans }}：{{ login_id }}
+{{ 'jsys_asi.mail.admin_login.failure.login_date.title'|trans }}：{{ login_date|date_sec }}
+{{ 'jsys_asi.mail.admin_login.failure.ip.title'|trans }}：{{ ip }}
+{{ 'jsys_asi.mail.admin_login.failure.ua.title'|trans }}：{{ ua }}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{% endautoescape %}

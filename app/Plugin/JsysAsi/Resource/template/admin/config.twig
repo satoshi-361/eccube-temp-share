@@ -1,0 +1,195 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% set menus = ['store', 'plugin', 'plugin_list'] %}
+
+{% block title %}管理画面セキュリティ向上プラグイン{% endblock %}
+{% block sub_title %}プラグイン一覧{% endblock %}
+
+{% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block stylesheet %}{% endblock stylesheet %}
+
+{% block javascript %}
+  <script>
+    $(function() {
+      var $changeOptionTfa = function() {
+        var $checked = $('#config_option_tfa').prop('checked');
+        if (!$checked) {
+          $('#config_option_tfa_master_key').val('');
+          $('#config_option_tfa_master_key').prop('disabled', true);
+          return;
+        };
+        if ('' != $('#config_option_tfa_master_key').val()) {
+          return;
+        }
+
+        $('#config_option_tfa_master_key').prop(
+          'placeholder',
+          '{{ 'jsys_asi.admin.config.master_key.wait_message'|trans }}'
+        );
+        $.ajax({
+          url: '{{ url('jsys_asi_admin_config_ajax_create_master_key') }}'
+        })
+        .done(($data) => {
+          $('#config_option_tfa_master_key').prop('placeholder', '');
+          $checked = $('#config_option_tfa').prop('checked');
+          if ($checked) {
+            $('#config_option_tfa_master_key').prop('disabled', false);
+            $('#config_option_tfa_master_key').val($data['masterKey']);
+          }
+        })
+        .fail(($jqXHR, $textSatus, $errorThrow) => {
+          $('#config_option_tfa_master_key').val('');
+          alert('Failed to create master key.');
+        });
+      };
+      
+      var $changeOptionIpAddressLock = function() {
+        let $checked = $('#config_option_ip_address_lock').prop('checked');
+        if (!$checked) {
+          $('#config_option_ip_address_lock_count').val('');
+          $('#config_option_ip_address_lock_count').prop('disabled', true);
+        } else {
+          $('#config_option_ip_address_lock_count').prop('disabled', false);
+        }
+      };
+
+      // Events
+      $('#config_option_tfa').change($changeOptionTfa);
+      $('#config_option_ip_address_lock').change($changeOptionIpAddressLock);
+
+      // Initialized
+      $changeOptionTfa();
+      $changeOptionIpAddressLock();
+    });
+  </script>
+{% endblock javascript %}
+
+{% block main %}
+  <form role="form" method="post">
+
+    {{ form_widget(form._token) }}
+
+    <div class="c-contentsArea__cols">
+      <div class="c-contentsArea__primaryCol">
+        <div class="c-primaryCol">
+          <div class="card rounded border-0 mb-4">
+            <div class="card-header"><span>設定</span></div>
+            <div class="card-body">
+
+              {# ▼ 2要素認証 ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_tfa'|trans }}
+                  </span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.option_tfa) }}
+                  {{ form_errors(form.option_tfa) }}
+                </div>
+              </div>
+              {# ▲ 2要素認証 ▲ #}
+              {# ▼ 2要素認証マスターキー ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_tfa_master_key'|trans }}
+                  </span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.option_tfa_master_key) }}
+                  {{ form_errors(form.option_tfa_master_key) }}
+                  <p class="form-text text-danger small">
+                    {{ 'jsys_asi.admin.config.master_key.describe'|trans|nl2br }}
+                  </p>
+                </div>
+              </div>
+              {# ▲ 2要素認証マスターキー ▲ #}
+              {# ▼ ログイン成功通知 ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_login_success_mail'|trans }}
+                  </span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.option_login_success_mail) }}
+                  {{ form_errors(form.option_login_success_mail) }}
+                </div>
+              </div>
+              {# ▲ ログイン成功通知 ▲ #}
+              {# ▼ ログイン失敗通知 ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_login_failure_mail'|trans }}
+                  </span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.option_login_failure_mail) }}
+                  {{ form_errors(form.option_login_failure_mail) }}
+                </div>
+              </div>
+              {# ▲ ログイン失敗通知 ▲ #}
+              {# ▼ IPアドレスロック ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_ip_address_lock'|trans }}
+                  </span>
+                </div>
+                <div class="col mb-2">
+                  {{ form_widget(form.option_ip_address_lock) }}
+                  {{ form_errors(form.option_ip_address_lock) }}
+                </div>
+              </div>
+              {# ▲ IPアドレスロック ▲ #}
+              {# ▼ ロックまでの回数 ▼ #}
+              <div class="row">
+                <div class="col-3">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_ip_address_lock_count'|trans }}
+                  </span>
+                </div>
+                <div class="col-3">
+                  {{ form_widget(form.option_ip_address_lock_count) }}
+                  {{ form_errors(form.option_ip_address_lock_count) }}
+                </div>
+                <div class="col mb-2 pl-0">
+                  <span>
+                    {{ 'jsys_asi.admin.config.option_ip_address_lock_count.after'|trans }}
+                  </span>
+                </div>
+              </div>
+              {# ▲ ロックまでの回数 ▲ #}
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="c-conversionArea">
+      <div class="c-conversionArea__container">
+        <div class="row justify-content-between align-items-center">
+          <div class="col-6">
+            <div class="c-conversionArea__leftBlockItem">
+              <a class="c-baseLink" href="{{ url('admin_store_plugin') }}">
+                <i class="fa fa-backward" aria-hidden="true"></i>
+                <span>プラグイン一覧</span>
+              </a>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="row align-items-center justify-content-end">
+              <div class="col-auto">
+                <button class="btn btn-ec-conversion px-5" type="submit">登録</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+{% endblock %}
