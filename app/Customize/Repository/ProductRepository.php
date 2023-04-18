@@ -55,9 +55,9 @@ class ProductRepository extends BaseRepository
     public function getQueryBuilderBySearchData($searchData)
     {
         $qb = $this->createQueryBuilder('p')
-            ->andWhere('p.Status = 1')
-            ->andWhere('p.launch_date <= :today')
-            ->setParameter('today', new \DateTime());
+            ->andWhere('p.Status = 1');
+            // ->andWhere('p.launch_date <= :today')
+            // ->setParameter('today', new \DateTime());
 
         // category
         $categoryJoin = false;

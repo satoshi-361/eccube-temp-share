@@ -490,6 +490,12 @@ file that was distributed with this source code.
 {% endblock %}
 
 {% block main %}
+    {% set now = 'now'|date('Y年m月d日 H:i') %}
+    {% set launch_date = Product.launch_date|date('Y年m月d日 H:i') %}
+    {% set is_visible = false %}
+    {% if now >= launch_date or is_owner %}
+        {% set is_visible = true %}
+    {% endif %}
     <div class="ec-productRole">
         <div class="image top">
             <img src="{{ asset(blog_image(Product, 'large'), "save_image") }}">
@@ -512,6 +518,7 @@ file that was distributed with this source code.
                         </div>
                     </div>
 
+                    {% if is_visible %}
                     <form action="{{ url('product_add_cart', {id:Product.id}) }}" method="post" id="form1" name="form1">
                         {% if Product.stock_find %}
                             <div class="ec-productRole__actions">
@@ -554,6 +561,7 @@ file that was distributed with this source code.
 
                         {{ form_rest(form) }}
                     </form>
+                    {% endif %}
                     {# <a class="ec-inlineBtn--action">{{ Product.getPrice01IncTaxMax|price }}</a> #}
                 </div>
                 <div class="d-flex align-center" style="margin-top: 25px">
@@ -574,6 +582,7 @@ file that was distributed with this source code.
                     </div>
                 </div>
             </div>
+            {% if is_visible %}
             <div class="cs-productRole__detail">
                 {# {% if is_owner or app.session.has('_security_admin') %} #}
                 {% if is_owner %}
@@ -601,7 +610,13 @@ file that was distributed with this source code.
                     {% endif %}
                 {% endif %}
             </div>
+            {% else %}
+                <p class="message_purchase_necessary">
+                    この記事は{{ launch_date }}に発売です。記事の発売まで、もうしばらくお待ちください。
+                </p>
+            {% endif %}
             <div class="ec-productRole__utils">
+                {% if is_visible %}
                 <div class="d-flex align-center space-between">
                     <div class="d-flex align-center">
                         <div class="image profile">
@@ -676,6 +691,7 @@ file that was distributed with this source code.
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
                 <div class="affiliate-panel">
                     <div class="d-flex">
                         <h3 class="title">知識をみんなでシェアしよう!</h3>

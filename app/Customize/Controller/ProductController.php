@@ -558,7 +558,7 @@ class ProductController extends AbstractController
             // }
             // date_default_timezone_set('Asia/Tokyo');
 
-            if ( ($Product->getStatus()->getId() === ProductStatus::DISPLAY_SHOW && $Product->getLaunchDate() <= new \DateTime())
+            if ( ($Product->getStatus()->getId() === ProductStatus::DISPLAY_SHOW)
                 || ($this->getUser() && $this->getUser() == $Product->getCustomer()) )
             {
                 return true;
