@@ -342,4 +342,55 @@ class PaypalTransferHelper
     // public function startPaypalPayout1() {
     //     $this->mailService->sendCronTestMail();
     // }
+    
+    /**
+     * テスト用振込
+     */
+    public function startTestPaypalPayout() {
+        // $now = new \DateTime();
+        // $firstDayPrevMonth = $now->modify('first day of previous month');
+        // $now = new \DateTime();
+        // $lastDayPrevMonth = $now->modify('last day of previous month');
+        // dd($firstDayPrevMonth, new \DateTime($lastDayPrevMonth->format('Y-m-d 23:59:59')), 'eee');
+
+        $clientId = $this->paypalConfig->getClientId();
+        $clientSecret = $this->paypalConfig->getClientSecret();
+
+        $apiContext = new \PayPal\Rest\ApiContext(
+            new \PayPal\Auth\OAuthTokenCredential( $clientId, $clientSecret )
+        );
+
+        $Customer = $this->customerRepository->find(32);
+        $payouts0 = new Payout();
+
+        $senderBatchHeader = new PayoutSenderBatchHeader();
+        $senderBatchHeader->setSenderBatchId(uniqid())
+            ->setEmailSubject('ペイパルで振り込みます。');
+        $payouts0->setSenderBatchHeader($senderBatchHeader);
+        
+
+        $senderItem = new PayoutItem();
+        $senderItem->setRecipientType('Email')
+            ->setNote('ありがとうございます。')
+            ->setReceiver($Customer->getPaypalEmail())
+            ->setSenderItemId('customer' . uniqid())
+            ->setAmount(new \PayPal\Api\Currency('{
+                "value":"100",
+                "currency":"JPY"
+            }'));
+
+        $payouts = clone $payouts0;
+        $payouts->addItem($senderItem);
+        
+        try {
+            $output = $payouts->createSynchronous($apiContext);
+        } catch (\PayPal\Exception\PayPalConnectionException $ex) {
+            dd($ex);
+        }
+
+        $this->mailService->sendTransferSuccessMail( $Customer, [
+            'month' =>  'テスト',
+            'transfer_money' => 100
+        ]);
+    }
 }

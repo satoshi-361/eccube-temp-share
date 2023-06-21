@@ -55,6 +55,7 @@ class ProductRepository extends BaseRepository
     public function getQueryBuilderBySearchData($searchData)
     {
         $qb = $this->createQueryBuilder('p')
+            ->innerJoin('p.ProductClasses', 'pc')
             ->andWhere('p.Status = 1');
             // ->andWhere('p.launch_date <= :today')
             // ->setParameter('today', new \DateTime());
@@ -96,13 +97,26 @@ class ProductRepository extends BaseRepository
                 ->setParameter('customer_id', $searchData['customer_id']);
         }
 
+        // price_min
+        if (!empty($searchData['price_min']) && $searchData['price_min']) {
+            $qb
+                ->andWhere('pc.price02 >= :price_min')
+                ->setParameter('price_min', $searchData['price_min']);
+        }
+        
+        // price_max
+        if (!empty($searchData['price_max']) && $searchData['price_max']) {
+            $qb
+                ->andWhere('pc.price02 <= :price_max')
+                ->setParameter('price_max', $searchData['price_max']);
+        }
+
         // Order By
         // 価格低い順
         $config = $this->eccubeConfig;
         if (!empty($searchData['orderby']) && $searchData['orderby']->getId() == $config['eccube_product_order_price_lower']) {
             //@see http://doctrine-orm.readthedocs.org/en/latest/reference/dql-doctrine-query-language.html
             $qb->addSelect('MIN(pc.price02) as HIDDEN price02_min');
-            $qb->innerJoin('p.ProductClasses', 'pc');
             $qb->andWhere('pc.visible = true');
             $qb->groupBy('p.id');
             $qb->orderBy('price02_min', 'ASC');
@@ -110,7 +124,6 @@ class ProductRepository extends BaseRepository
         // 価格高い順
         } elseif (!empty($searchData['orderby']) && $searchData['orderby']->getId() == $config['eccube_product_order_price_higher']) {
             $qb->addSelect('MAX(pc.price02) as HIDDEN price02_max');
-            $qb->innerJoin('p.ProductClasses', 'pc');
             $qb->andWhere('pc.visible = true');
             $qb->groupBy('p.id');
             $qb->orderBy('price02_max', 'DESC');
@@ -120,7 +133,6 @@ class ProductRepository extends BaseRepository
             // 在庫切れ商品非表示の設定が有効時対応
             // @see https://github.com/EC-CUBE/ec-cube/issues/1998
             if ($this->getEntityManager()->getFilters()->isEnabled('option_nostock_hidden') == true) {
-                $qb->innerJoin('p.ProductClasses', 'pc');
                 $qb->andWhere('pc.visible = true');
             }
             $qb->orderBy('p.create_date', 'DESC');

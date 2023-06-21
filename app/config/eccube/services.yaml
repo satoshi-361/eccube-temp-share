@@ -226,6 +226,12 @@ services:
     Customize\Form\Type\Admin\SearchCustomerType:
         decorates: Eccube\Form\Type\Admin\SearchCustomerType
 
+    Customize\Form\Type\SearchProductBlockType:
+        decorates: Eccube\Form\Type\SearchProductBlockType
+
+    Customize\Form\Type\SearchProductType:
+        decorates: Eccube\Form\Type\SearchProductType
+
     Customize\Service\OrderHelper:
         decorates: Eccube\Service\OrderHelper
 

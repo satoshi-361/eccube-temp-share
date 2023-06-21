@@ -483,9 +483,9 @@ file that was distributed with this source code.
         });
     </script>
     {# <script type="text/javascript" src="{{ asset('assets/tinymce/tinymce.min.js', 'user_data') }}"></script> #}
+    {# <script src="https://cdn.tiny.cloud/1/y261gab4ne1sen4v4xswuikh5l3zf8ann8r8v9gwracqgjql/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> #}
+    <script src="https://cdn.tiny.cloud/1/zitscctvud2vie83akfsu0sh7sbgofy26msr5djkt8mqxnmt/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://unpkg.com/twemoji@14.0.2/dist/twemoji.min.js"></script>
-    {# <script src="https://cdn.tiny.cloud/1/mwr1xyp2cwjqjr7qlbbqdyn8ag0xotu83m221miypxxd2r67/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script> #}
-    <script src="https://cdn.tiny.cloud/1/kcy63ic5ffr8km2dupvno51khjxbnt7pltu6ir5ccntz1w6c/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script type="text/javascript">
         twemoji.parse(document.body);
         function generateToc( content ) {
@@ -539,8 +539,10 @@ file that was distributed with this source code.
             // content_style: 'body { font-family:Helvetica,Arial,sans-serif; }',
             setup: function(editor) {
                 editor.on('SaveContent', function(e) {
-                    var content = generateToc(e.content);
-                    editor.setContent(content);
+                    if (e.content.trim()) {
+                        const content = generateToc(e.content);
+                        editor.setContent(content);
+                    }
                 });
             }
         });
@@ -565,8 +567,10 @@ file that was distributed with this source code.
             hidden_input: false,
             setup: function(editor) {
                 editor.on('SaveContent', function(e) {
-                    var content = generateToc(e.content);
-                    editor.setContent(content);
+                    if (e.content.trim()) {
+                        const content = generateToc(e.content);
+                        editor.setContent(content);
+                    }
                 });
             }
         });

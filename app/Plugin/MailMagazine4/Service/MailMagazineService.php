@@ -197,15 +197,16 @@ class MailMagazineService
         // メール送信
         /** @var \Swift_Message $message */
         $message = (new \Swift_Message())
+            ->setContentType('text/plain; charset=UTF-8')
             ->setSubject($formData['subject'])
             ->setFrom([$this->BaseInfo->getEmail01() => $this->BaseInfo->getShopName()])
             ->setTo([$formData['email']])
             ->setReplyTo($this->BaseInfo->getEmail03())
             ->setReturnPath($this->BaseInfo->getEmail04())
-            ->setBody($formData['body']);
+            ->setBody($formData['body'], 'text/plain');
 
         if ($formData['htmlBody']) {
-            $message->addPart($formData['htmlBody'], 'text/html');
+            $message->addPart(nl2br($formData['htmlBody']), 'text/html');
         }
 
         return $this->mailer->send($message);

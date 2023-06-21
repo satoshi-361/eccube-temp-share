@@ -49,10 +49,7 @@ class EntryType extends BaseType
     {
         $builder
             ->add('image', TextType::class, [
-                'required' => true,
-                'constraints' => [
-                    new Assert\NotBlank(),
-                ],
+                'required' => false,
             ])
             ->add('name', NameType::class, [
                 'required' => true,

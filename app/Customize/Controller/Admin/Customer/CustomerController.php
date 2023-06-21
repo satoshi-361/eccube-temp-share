@@ -376,9 +376,11 @@ class CustomerController extends AbstractController
         // $this->entityManager->flush();
         // return $this->redirectToRoute('admin_customer');
 
-        $this->paypalTransferHelper->startPaypalPayout();
+        // $this->addSuccess( '送金完了しました。', 'admin' );
+        // return $this->redirectToRoute('admin_customer');
+        
+        $this->paypalTransferHelper->startTestPaypalPayout();
 
-        $this->addSuccess( '送金完了しました。', 'admin' );
         return $this->redirectToRoute('admin_customer');
     }
 }

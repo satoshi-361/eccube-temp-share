@@ -549,6 +549,9 @@ a:hover img {
 }
 
 @media only screen and (min-width: 768px) {
+    .ec-headerSearch .ec-headerSearch__price {
+        display: none;
+    }
     .ec-newsRole {
         padding: 10px 0 70px;
     }
@@ -632,6 +635,33 @@ a:hover img {
     .ec-drawerRole .ec-headerSearch {
         color: black;
         background: white;
+    }
+
+    .ec-headerSearch .ec-headerSearch__price {
+        margin-top: 15px;
+        margin-left: 5px;
+    }
+    .ec-headerSearch .ec-headerSearch__price p {
+        margin-bottom: 7px;
+        font-weight: 600;
+    }
+    .ec-headerSearch .ec-headerSearch__price span {
+        margin-right: 2px;
+        font-size: 13px;
+        color: crimson;
+        font-weight: bold;
+    }
+    .ec-headerSearch .ec-headerSearch__price span.between {
+        margin: 0 3px;
+    }
+    /* .ec-headerSearch .ec-headerSearch__price span.price {
+        margin: 0;
+        font-size: 12px;
+        color: black;
+        font-weight: bold;
+    } */
+    .ec-headerSearch .ec-headerSearch__price input.search_price {
+        width: 56px;
     }
 
     .ec-layoutRole .ec-layoutRole__contents {

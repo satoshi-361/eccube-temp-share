@@ -623,6 +623,10 @@ class ProductController extends AbstractController
                     // 管理画面で記事公開に設定した場合「記事承認メール」を配信する
                     $this->mailService->sendArticleApproveMail($Product);
                     $Product->setApprovedDate(new \DateTime());
+                    if ( empty($Product->getLaunchDate()) ) {
+                        $Product->setLaunchDate(new \DateTime());
+                    }
+
                     $this->entityManager->persist($Product);
                 } 
                 if ( $ProductStatus->getId() == ProductStatus::DISPLAY_DENY ) {

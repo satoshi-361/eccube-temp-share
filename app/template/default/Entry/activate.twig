@@ -24,13 +24,13 @@ file that was distributed with this source code.
                 <div class="ec-reportHeading">
                     <h2>{{ 'front.entry.complete_message__title'|trans }}</h2>
                 </div>
-                <p class="ec-reportDescription">{{ '販売者・アフィリエイターの方は、報酬の振込にPayPalアカウントが必要なため、下記より作成をお願いいたします。'|trans|nl2br }}</p>
+                {# <p class="ec-reportDescription">{{ '販売者・アフィリエイターの方は、報酬の振込にPayPalアカウントが必要なため、下記より作成をお願いいたします。'|trans|nl2br }}</p> #}
                 <div class="ec-off4Grid">
                     <div class="ec-off4Grid__cell">
                         {% if qtyInCart %}
                             <a class="ec-blockBtn--action" style="margin-bottom: 3px" href="{{ url('cart') }}">{{ 'common.go_to_cart'|trans }}</a>
                         {% endif %}
-                        <a class="ec-blockBtn--action" href="https://www.paypal.com/signin?country.x=JP&locale.x=ja_JP&langTgl=ja&returnUri={{ url('paypal_registered') }}" style="padding: 0 4px;">{{ 'PayPalアカウントの作成'|trans }}</a> <br />
+                        {# <a class="ec-blockBtn--action" href="https://www.paypal.com/signin?country.x=JP&locale.x=ja_JP&langTgl=ja&returnUri={{ url('paypal_registered') }}" style="padding: 0 4px;">{{ 'PayPalアカウントの作成'|trans }}</a> <br /> #}
                         {% if affiliateBlogId is defined and affiliateBlogId is not empty %}
                             <a class="ec-blockBtn--cancel" href="{{ url('product_detail', { id: affiliateBlogId }) }}">{{ '記事ページに移動'|trans }}</a>
                         {% else %}

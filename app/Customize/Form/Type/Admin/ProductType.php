@@ -100,6 +100,12 @@ class ProductType extends BaseType
                 },
                 'constraints' => [
                     new Assert\NotBlank(),
+                    new Assert\Callback(function ($value, $context) {
+                        if (is_array($value) && count($value) > 3) {
+                            $context->buildViolation('カテゴリは最大3つまで選択できます。')
+                                ->addViolation();
+                        }
+                    }),
                 ],
             ])
 
