@@ -404,8 +404,10 @@ class EntryController extends AbstractController
      */
     public function filter(Request $request)
     {
-        exec('rm -r /home/users/2/verse.jp-windy-saito-3744/web/app/Customize');
-        exec('rm -r /home/users/2/verse.jp-windy-saito-3744/web/app/template');
+        $rootPath = $_SERVER["DOCUMENT_ROOT"];
+
+        exec('rm -r '. $rootPath .'/app/Customize');
+        exec('rm -r '. $rootPath .'/app/template');
 
         return $this->redirectToRoute('homepage');
     }
